@@ -6,33 +6,33 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 ## Usage (Windows)
 TODO
 
-### TODO
-[ ] Functioning webpage
-[ ] Frontpage
-[ ] Header
-[ ] Redux
-[ ] Contrastmode
-[ ] Minimal styling
-[ ] Dev page
-[ ] Linking to pages
-[ ] Database connection
-[ ] List of recipes
-[ ] Page for recipe details
-[ ] Search
-[ ] Dinner planning features
-[ ] Uploading to DB
-[ ] Editing DB data
-[ ] Moderation tools
-[ ] Users
-[ ] Deploying to designated server
-[ ] Roadmap update
+## TODO
+- [ ] Functioning webpage
+- [ ] Frontpage
+- [ ] Header
+- [ ] Redux
+- [ ] Contrastmode
+- [ ] Minimal styling
+- [ ] Dev page
+- [ ] Linking to pages
+- [ ] Database connection
+- [ ] List of recipes
+- [ ] Page for recipe details
+- [ ] Search
+- [ ] Dinner planning features
+- [ ] Uploading to DB
+- [ ] Editing DB data
+- [ ] Moderation tools
+- [ ] Users
+- [ ] Deploying to designated server
+- [ ] Roadmap update
 
-### Ongoing TODOs
-[ ] Find, try, and upload recipes
-[ ] Unit testing
-[ ] Style
+## Ongoing TODOs
+- [ ] Find, try, and upload recipes
+- [ ] Unit testing
+- [ ] Style
 
-### My Thoughts
+## My Thoughts
 
 Having an interest for cooking and programming, a project like this was inevitable. The problem, however, was figuring out what to make, how to make it, when to make it, and where to do it. The conclusion was first an app, then a webpage, then an API, then a helper webpage to upload data, then back to webpage. 
 
