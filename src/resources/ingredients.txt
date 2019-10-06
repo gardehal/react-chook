@@ -1,0 +1,15 @@
+Format (replace words in brackets[] with the symbol or fitting text/number):
+
+[Exclamation mark]
+ingredient_name (Text)
+ingredient_type (Text)
+ingredient_price (Price in NOK, Decimal or Whole number)
+
+(example):
+[Exclamation mark]
+Pepper
+krydder
+13
+
+(Repeat for each recipe)
+----- Do not edit the text above, only write you ingredients below this line. -----
