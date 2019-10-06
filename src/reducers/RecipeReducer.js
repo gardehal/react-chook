@@ -1,6 +1,8 @@
 import {
-    RECIPE_LOADING, RECIPE_LOADING_COMPLETE, GET_DATABASE_DATA_SUCCESS
+    RECIPE_LOADING, RECIPE_LOADING_COMPLETE, GET_DATABASE_DATA_SUCCESS, GET_DATABASE_DATA_FAIL
 } from "../actions/types";
+
+import { DB_FETCH_FAILED } from "../resources/language-no";
 
 const INITIAL_STATE = 
 { 
@@ -22,8 +24,8 @@ export default (state = INITIAL_STATE, action) =>
 
         case GET_DATABASE_DATA_SUCCESS:
             return { ...state, recipeLoading: false, recipeError: "", databaseResult: action.payload };
-            case GET_DATABASE_DATA_SUCCESS:
-                return { ...state, recipeLoading: false, recipeError: "", databaseResult: action.payload };
+        case GET_DATABASE_DATA_FAIL:
+            return { ...state, recipeLoading: false, recipeError: DB_FETCH_FAILED };
             
         default:
             return state;

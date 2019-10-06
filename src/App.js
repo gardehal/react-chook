@@ -1,6 +1,8 @@
 import React from "react";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import env from "./secrets/env";
+import { Provider } from "react-redux";
+import store from "./store";
 
 import { NOT_FOUND_404, ERROR, PAGE_NOT_FOUND } from "./resources/language-no";
 
@@ -12,7 +14,7 @@ class App extends React.Component
 
         firebase.initializeApp(env);
     }
-
+   
     notFound() 
     {
         return (
@@ -28,13 +30,16 @@ class App extends React.Component
     render()
     {
         return (
-            <div className="App">
-                <header className="App-header">
-                    Hello World!
-                </header>
-            </div>
+            <Provider store={store}>
+                <div className="App">
+                    <header className="App-header">
+                        Hello World!
+                    </header>
+                </div>
+            </Provider>
         );
     }
 }
 
 export default App;
+
