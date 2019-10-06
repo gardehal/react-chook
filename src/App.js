@@ -6,6 +6,8 @@ import store from "./store";
 
 import { NOT_FOUND_404, ERROR, PAGE_NOT_FOUND } from "./resources/language-no";
 
+import HomePage from "./components/HomePage";
+
 class App extends React.Component 
 {
     constructor(props) 
@@ -32,9 +34,7 @@ class App extends React.Component
         return (
             <Provider store={store}>
                 <div className="App">
-                    <header className="App-header">
-                        Hello World!
-                    </header>
+                    <HomePage/>
                 </div>
             </Provider>
         );
@@ -42,4 +42,3 @@ class App extends React.Component
 }
 
 export default App;
-
