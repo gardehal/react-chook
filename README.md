@@ -4,10 +4,11 @@ A React website for recipes and general dinner planning. "Chook" is a combinatio
 Considering the double O's, the name has a chance of becoming a famous internet company, according to Gwyneth Paltrow; "successful internet companies have double O's in their name".
 
 ## Usage (Windows)
-TODO
+1. $ `npm install`
+2. $ `npm start`
 
 ## TODO
-- [ ] Functioning webpage
+- [x] Functioning webpage
 - [ ] Frontpage
 - [ ] Header
 - [ ] Redux
