@@ -30,7 +30,8 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 
 ## Ongoing TODOs
 - [ ] Find, try, and upload recipes
-- [ ] Unit testing
+- [ ] Testing
+- [ ] Use EM
 - [ ] Style
 
 ## My Thoughts

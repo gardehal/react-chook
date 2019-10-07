@@ -26,7 +26,8 @@ export class ClickableImage extends React.Component
         {
             // position: "relative",
             cursor: this.props.cursor || "pointer",
-            overflow: "hidden"
+            overflow: "hidden",
+            marginBottom: "0.5em",
         };
         this.titleContainerStyle =
         {
@@ -40,17 +41,20 @@ export class ClickableImage extends React.Component
         };
         this.titleStyle =
         {
-            margin: "10px",
-            paddingTop: (this.props.coverText ? "10%" : "0"),
+            fontSize: "25px",
+            margin: "0em",
+            marginLeft: "1em",
+            paddingTop: (this.props.coverText ? "3em" : "0.5em"),
         };
         this.imageStyle =
         {
             backgroundImage: 'url(' + this.props.image + ')',
             zIndex: "1",
-            height: "25vh",
+            height: "20em",
+            // height: "25vh",
             backgroundPosition: this.props.backgroundPosition || "bottom",
             backgroundSize: "100%",
-            bottom: "300px"
+            bottom: "12em"
         };
     }
 
