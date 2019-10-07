@@ -9,14 +9,14 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 
 ## TODO
 - [x] Functioning webpage
-- [ ] Frontpage
+- [x] Frontpage
 - [ ] Header
-- [ ] Redux
+- [x] Redux
 - [ ] Contrastmode
 - [ ] Minimal styling
 - [ ] Dev page
 - [ ] Linking to pages
-- [ ] Database connection
+- [x] Database connection
 - [ ] List of recipes
 - [ ] Page for recipe details
 - [ ] Search
@@ -38,6 +38,8 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 Having an interest for cooking and programming, a project like this was inevitable. The problem, however, was figuring out what to make, how to make it, when to make it, and where to do it. The conclusion was first an app, then a webpage, then an API, then a helper webpage to upload data, then back to webpage. 
 
 I think I've come to a final conclusion that a webpage is the superior option, and that I will first make a simple one with React, then add API functions as necessary.
+
+Special thank you to [Pexels](https://www.pexels.com) for the pictures.
 
 -------------------------------------------------------------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
 
-import {MAIN_TITLE, SEARCH, SEARCH_SOMETHING, RELOAD, HOME, ALL_RECIPES, UPLOAD, LOG_IN, CONTRASTMODE} from "../../../public/language-no";
+import {MAIN_TITLE, SEARCH, SEARCH_SOMETHING, RELOAD, HOME, ALL_RECIPES, UPLOAD, LOG_IN, CONTRASTMODE} from "../../../public";
 import { getAccentColor, getTextColor, getBackgroundColor } from "../../../public/colors";
 
 class Header extends React.Component

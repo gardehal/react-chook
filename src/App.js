@@ -4,7 +4,7 @@ import env from "./secrets/env";
 import { Provider } from "react-redux";
 import store from "./store";
 
-import { NOT_FOUND_404, ERROR, PAGE_NOT_FOUND } from "./resources/language-no";
+import { NOT_FOUND_404, ERROR, PAGE_NOT_FOUND } from "./resources/language";
 
 import HomePage from "./components/HomePage";
 

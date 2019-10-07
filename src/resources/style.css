@@ -5,6 +5,16 @@ body
     margin: 0;
 }
 
+.pageRootContainer
+{
+    width: 70%;
+    /* justify-self: center;
+    align-self: center; */
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 100%;
+}
+
 .containerStyle
 {
     width: 80%;

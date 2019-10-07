@@ -1,7 +1,7 @@
 import React from "react";
 
 import { getLightBackgroundColor, getTextColor } from "../../../public/colors";
-import { DB_RECIPE } from "../../../public/language-no";
+import { DB_RECIPE } from "../../../public";
 
 export class RecipeCard extends React.Component
 {

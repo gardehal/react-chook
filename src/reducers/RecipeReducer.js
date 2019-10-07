@@ -2,7 +2,7 @@ import {
     RECIPE_LOADING, RECIPE_LOADING_COMPLETE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL
 } from "../actions/types";
 
-import { DB_FETCH_FAILED } from "../resources/language-no";
+import { DB_FETCH_FAILED } from "../resources/language";
 
 const INITIAL_STATE = 
 { 

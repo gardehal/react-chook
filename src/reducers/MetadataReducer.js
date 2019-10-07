@@ -2,7 +2,7 @@ import {
     METADATA_LOADING, METADATA_LOADING_COMPLETE, GET_METADATA_DATA_SUCCESS, GET_METADATA_DATA_FAIL 
 } from "../actions/types";
 
-import { DB_FETCH_FAILED } from "../resources/language-no";
+import { DB_FETCH_FAILED } from "../resources/language";
 
 const INITIAL_STATE = 
 { 
