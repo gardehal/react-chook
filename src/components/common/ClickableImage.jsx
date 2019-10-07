@@ -26,6 +26,7 @@ export class ClickableImage extends React.Component
         {
             // position: "relative",
             cursor: this.props.cursor || "pointer",
+            overflow: "hidden"
         };
         this.titleContainerStyle =
         {
