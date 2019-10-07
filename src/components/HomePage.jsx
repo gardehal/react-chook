@@ -77,7 +77,8 @@ class HomePage extends React.Component
                     backgroundPosition={"top"} onClick={this.getRandomDinner}/>
                 <ClickableImage image={require("../resources/pictures/plates.jpg")} alttext={GET_DINNER_WEEK_MENU + BUTTON} title={GET_DINNER_WEEK_MENU}/>
                 <ClickableImage image={require("../resources/pictures/menu-waterglass.jpg")} alttext={ABOUT_US+ BUTTON} title={ABOUT_US} backgroundPosition={"center"}/>
-                <ClickableImage image={require("../resources/pictures/pineapple-bottom.jpg")} alttext={CONTRIBUTE_TO_PAGE + BUTTON} title={CONTRIBUTE_TO_PAGE}/>
+                <ClickableImage image={require("../resources/pictures/basil-tomato.jpg")} alttext={CONTRIBUTE_TO_PAGE + BUTTON} title={CONTRIBUTE_TO_PAGE}
+                    backgroundPosition={"top"}/>
             </div>);
     }
 
