@@ -6,6 +6,7 @@ import { GET_RANDOM_DINNER, DB_RECIPE, DINNER, DB_META, TOTAL_RECIPES, TOTAL_ING
     BUTTON, METADATA, GET_DINNER_WEEK_MENU, ABOUT_US, CONTRIBUTE_TO_PAGE } from "../resources/language";
 import { renderLoading, renderError, getLongFormatDate } from "../actions/Shared";
 import { ClickableImage } from "./common/ClickableImage";
+import Header from "./common/Header";
 
 class HomePage extends React.Component
 {
@@ -50,10 +51,10 @@ class HomePage extends React.Component
             return (
                     <div>
                         <div>
-                            {TOTAL_INGREDIENTS + this.props.metadataResult[0].meta_total_ingredients}
+                            {this.props.metadataResult[0].meta_total_ingredients + TOTAL_INGREDIENTS}
                         </div>
                         <div>
-                            {TOTAL_RECIPES + this.props.metadataResult[0].meta_total_recipes}
+                            {this.props.metadataResult[0].meta_total_recipes + TOTAL_RECIPES}
                         </div>
                         <div>
                             {LAST_UPDATED + result}
@@ -85,8 +86,12 @@ class HomePage extends React.Component
     render()
     {
         return (
+            <div>
+                {/* TODO remove header from page, put in router or similar */}
+            <Header/> 
             <div className="pageRootContainer">
                 {this.renderContent()}
+            </div>
             </div>
         );
     }

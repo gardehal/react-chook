@@ -27,7 +27,7 @@ export class ClickableImage extends React.Component
             // position: "relative",
             cursor: this.props.cursor || "pointer",
             overflow: "hidden",
-            marginBottom: "0.5em",
+            marginTop: "0.5em",
         };
         this.titleContainerStyle =
         {
@@ -61,7 +61,7 @@ export class ClickableImage extends React.Component
     render()
     {
         return (
-            <div style={this.containerStyle}>
+            <div className={this.props.coverText ? "" : "moveable-btn"} style={this.containerStyle}>
                 <div style={this.imageStyle} aria-label={this.props.alttext} onClick={this.props.onClick}>
                     <div style={this.titleContainerStyle}>
                         <h2 style={this.titleStyle}>

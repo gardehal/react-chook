@@ -1,6 +1,6 @@
 # Chook
 
-A React website for recipes and general dinner planning. "Chook" is a combination of "chef" and "cook", and also happens to be a slang term for chicken.
+A React website for recipes and general dinner planning. "Chook" (tʃʊk) is a combination of "chef" and "cook", and also happens to be a slang term for chicken.
 Considering the double O's, the name has a chance of becoming a famous internet company, according to Gwyneth Paltrow; "successful internet companies have double O's in their name".
 
 ## Usage (Windows)

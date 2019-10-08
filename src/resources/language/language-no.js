@@ -36,21 +36,21 @@ export const ALL_RECIPES = "Alle oppskrifter";
 export const LOG_IN = "Logg inn";
 
 // Misc.
-export const MAIN_TITLE = "Recipe Firebase Uploader";
+export const MAIN_TITLE = "Chook";
 export const LOADING = "Laster inn...";
 export const NORWEGIAN_KRONER = "kr";
 export const MINUTES = "minutter";
 export const THERE_ARE = "Det er ";
 export const RECIPES_IN_DB = " oppskrifter i databasen.";
-export const GET_RANDOM_DINNER = "Hent tilfeldig middag";
+export const GET_RANDOM_DINNER = "Middagsforslag";
 export const GET_DINNER_WEEK_MENU = "Lag en meny for uken";
 export const DINNER = "middag";
 export const PORTIONS = "porsjoner";
 export const PREP_TIME = "Forberedelse: ";
 export const TOTAL_TIME = "Total tid: ";
-export const TOTAL_RECIPES = "Antall oppskrifter i database: ";
-export const TOTAL_INGREDIENTS = "Antall ingredienser i database: ";
-export const LAST_UPDATED = "Sist oppdatert: ";
+export const TOTAL_RECIPES = " oppskrifter i databasen";
+export const TOTAL_INGREDIENTS = " ingredienser i databasen";
+export const LAST_UPDATED = "Oppdatert ";
 export const UPDATE_METADATA = "Oppdater metadata";
 export const SUBRECIPES = "Underoverskrifter";
 export const INSTRUCTIONS = "Instruksjoner";
