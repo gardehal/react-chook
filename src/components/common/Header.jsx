@@ -12,8 +12,10 @@ class Header extends React.Component
 
         this.initStyle();
         this.doSearch = this.doSearch.bind(this);
-        this.doHome = this.doHome.bind(this);
-        // this.toggleContrastmode = this.toggleContrastmode.bind(this);
+        this.gotoHome = this.gotoHome.bind(this);
+        
+        this.toggleHover = this.toggleHover.bind(this);
+        this.state= {hover: false};
     }
 
     initStyle()
@@ -24,7 +26,7 @@ class Header extends React.Component
             height: "5em"
         };
         // Merge banner obj with colour obj
-        this.bannerStyle = { ...this.bannerStyle, ...getAccentColor(this.props.contrastmode || false)};
+        this.bannerStyle = { ...this.bannerStyle, ...getAccentColor(this.props.contrastmode)};
 
         this.mainContainerStyle =
         {
@@ -88,19 +90,41 @@ class Header extends React.Component
         };
         this.settingsContainerStyle =
         {
-            maxWidth: "50%"
-        };
-        this.settingsStyle =
-        {
             cursor: "pointer",
             position: "absolute",
             right: "1em",
             top: "1em",
             height: "3em",
             width: "3em",
+        };
+        this.settingsButtonStyle =
+        {
+            position: "absolute",
+            height: "100%",
+            width: "100%",
             backgroundImage: "url(" + require("../../resources/icons/cog.png") + ")",
-            backgroundSize: "100%",
+            backgroundSize: "contain",
             zIndex: "3",
+        };
+        this.dropdownContainerStyle = 
+        {
+            position: "absolute",
+            display: "flex",
+            flexDirection: "column",
+            top: "3em",
+            right: "-0.5em",
+            backgroundColor: "gray",
+            zIndex: "4",
+        };
+        this.dropdownContainerItemStyle = 
+        {
+            position: "relative",
+            display: "flex",
+            margin: "0.2em",
+            float: "left",
+            whiteSpace: "nowrap",
+            fontSize: "1em",
+            zIndex: "5",
         };
     }
 
@@ -117,38 +141,55 @@ class Header extends React.Component
         // }
     }
 
-    doHome()
+    gotoHome()
     {
         // this.props.history.push("/");
     }
 
-    // toggleContrastmode()
-    // {
-    //     console.log("toggleContrastmode1 " + localStorage.getItem("contrastmode"));
-        
-    //     let contrast = true;
-    //     if(localStorage.getItem("contrastmode") === "true")
-    //         contrast = false;
-
-    //     // let contrast = (localStorage.getItem("contrastmode") === "true" ? true : false);
-
-    //     localStorage.setItem("contrastmode", contrast);
-    //     this.setState({ contrastmode: contrast });
-
-    //     this.forceUpdate();
-
-    //     console.log("toggleContrastmode2 " + localStorage.getItem("contrastmode"));
-    // }
-
     // TODO need drop down menu for settings, profile, dev options
     renderSettings()
     {
-        return (<div style={this.settingsStyle}></div>);
+        return (
+            <div style={this.settingsContainerStyle}>
+                <div style={this.settingsButtonStyle} onClick={this.toggleHover}>
+                    
+                </div>
+                {
+                    this.state.hover ? 
+                    <div onClick={console.log(1)} style={this.dropdownContainerStyle}>
+                        <div onClick={console.log(2)} style={this.dropdownContainerItemStyle}>
+                            Profile
+                        </div>
+                        <div onClick={console.log(3)} style={this.dropdownContainerItemStyle}>
+                            Settings
+                        </div>
+                        <div style={this.dropdownContainerItemStyle}>
+                            Reload
+                        </div>
+                        <div style={this.dropdownContainerItemStyle}>
+                            Dev options
+                        </div>
+                        <div style={this.dropdownContainerItemStyle}>
+                            Log out
+                        </div>
+                    </div>
+                    :
+                    null
+                }
+            </div>
+        );
+    }
+
+    toggleHover()
+    {
+        this.setState({hover: !this.state.hover});
+        console.log(0);
     }
 
     render()
     {
         const title = this.props.title || MAIN_TITLE;
+          
 
         return (
             <div style={this.bannerStyle}>
@@ -157,7 +198,7 @@ class Header extends React.Component
                         <h1 style={this.titleStyle}>{title}</h1>
                     </div>
 
-                    <div style={this.searchContainerStyle} >
+                    <div className="hide-650" style={this.searchContainerStyle} >
                         <form style={this.searchFormStyle} onSubmit={this.doSearch}>
                             <input style={this.searchFieldStyle} id="searchFieldHeader" type="text" placeholder={SEARCH_SOMETHING}/>
                             <div className="btn-with-shadow" style={this.searchButtonStyle} onClick={this.doSearch}>
@@ -170,7 +211,7 @@ class Header extends React.Component
 
                 {this.renderSettings()}
                 
-                <div style={this.linkContainerStyle}>
+                <div className="hide-400" style={this.linkContainerStyle}>
                     <div className="btn-with-shadow" style={this.linkStyle} to="/">{HOME}</div>
                     <div className="btn-with-shadow" style={this.linkStyle} to="/list">{ALL_RECIPES}</div>
                     <div className="btn-with-shadow" style={this.linkStyle} to="/upload">{UPLOAD}</div>
