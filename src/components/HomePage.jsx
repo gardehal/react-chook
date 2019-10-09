@@ -14,6 +14,7 @@ class HomePage extends React.Component
     {
         super(props);
         this.state = this.initState();
+        this.initStyle();
     }
 
     componentWillMount()
@@ -25,6 +26,14 @@ class HomePage extends React.Component
     initState()
     {
         return { loading: false, error: "", mData: {} };
+    }
+    
+    initStyle()
+    {
+        this.contentContainerStyle =
+        {
+            position: "relative",
+        };
     }
 
     renderMetadata()
@@ -71,7 +80,7 @@ class HomePage extends React.Component
     renderContent()
     {
         return (
-            <div>
+            <div style={this.contentContainerStyle}>
                 <ClickableImage image={require("../resources/pictures/vegetable-market-shelf.jpg")} alttext={METADATA} title={this.renderMetadata()}
                     coverText={true} cursor="cursor"/>
                 <ClickableImage image={require("../resources/pictures/flour-pizza-hands.jpg")} alttext={GET_RANDOM_DINNER + BUTTON} title={GET_RANDOM_DINNER} 

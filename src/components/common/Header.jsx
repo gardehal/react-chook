@@ -1,7 +1,7 @@
 import React from "react";
 // import { Link, withRouter } from "react-router-dom";
 
-import {MAIN_TITLE, SEARCH, SEARCH_SOMETHING, RELOAD, HOME, ALL_RECIPES, UPLOAD, LOG_IN, CONTRASTMODE} from "../../resources/language";
+import {MAIN_TITLE, SEARCH, SEARCH_SOMETHING, HOME, ALL_RECIPES, UPLOAD, CONTRASTMODE} from "../../resources/language";
 import { getAccentColor, getTextColor, getBackgroundColor } from "../../resources/colors";
 
 class Header extends React.Component
@@ -21,7 +21,7 @@ class Header extends React.Component
         this.bannerStyle =
         {
             width: "100%",
-            height: "3em"
+            height: "5em"
         };
         // Merge banner obj with colour obj
         this.bannerStyle = { ...this.bannerStyle, ...getAccentColor(this.props.contrastmode || false)};
@@ -76,16 +76,31 @@ class Header extends React.Component
             marginLeft: "auto",
             marginRight: "auto",
             
-            display: "flex",
-            flexDirection: "row",
-            alignSelf: "stretch",
             justifyContent: "space-evenly",
+            borderTop: "1px solid black"
 
-            height: "10px",
         };
         this.linkStyle =
         {
             cursor: "pointer",
+            fontSize: "1em",
+            // border: "1px solid black"
+        };
+        this.settingsContainerStyle =
+        {
+            maxWidth: "50%"
+        };
+        this.settingsStyle =
+        {
+            cursor: "pointer",
+            position: "absolute",
+            right: "1em",
+            top: "1em",
+            height: "3em",
+            width: "3em",
+            backgroundImage: "url(" + require("../../resources/icons/cog.png") + ")",
+            backgroundSize: "100%",
+            zIndex: "3",
         };
     }
 
@@ -125,6 +140,12 @@ class Header extends React.Component
     //     console.log("toggleContrastmode2 " + localStorage.getItem("contrastmode"));
     // }
 
+    // TODO need drop down menu for settings, profile, dev options
+    renderSettings()
+    {
+        return (<div style={this.settingsStyle}></div>);
+    }
+
     render()
     {
         const title = this.props.title || MAIN_TITLE;
@@ -139,23 +160,21 @@ class Header extends React.Component
                     <div style={this.searchContainerStyle} >
                         <form style={this.searchFormStyle} onSubmit={this.doSearch}>
                             <input style={this.searchFieldStyle} id="searchFieldHeader" type="text" placeholder={SEARCH_SOMETHING}/>
-                            <div style={this.searchButtonStyle} onClick={this.doSearch}>
+                            <div className="btn-with-shadow" style={this.searchButtonStyle} onClick={this.doSearch}>
                                 {SEARCH}
                             </div>
                         </form>
                     </div>
 
-                    {/* <div className="btn">{"todo: settings/profile"}</div> */}
                 </div> 
+
+                {this.renderSettings()}
                 
-                {/* <div style={this.linkContainerStyle}>
-                    <div style={this.linkStyle} to="/">{HOME}</div>
-                    <div style={this.linkStyle} to="/search">{SEARCH}</div>
-                    <div style={this.linkStyle} to="/list">{ALL_RECIPES}</div>
-                    <div style={this.linkStyle} to="/upload">{UPLOAD}</div>
-                    <div style={this.linkStyle} to="/login">{LOG_IN}</div>
-                    <div style={this.linkStyle} to="/dev">DEV</div>
-                </div> */}
+                <div style={this.linkContainerStyle}>
+                    <div className="btn-with-shadow" style={this.linkStyle} to="/">{HOME}</div>
+                    <div className="btn-with-shadow" style={this.linkStyle} to="/list">{ALL_RECIPES}</div>
+                    <div className="btn-with-shadow" style={this.linkStyle} to="/upload">{UPLOAD}</div>
+                </div>
             </div>
         );
     }

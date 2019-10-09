@@ -48,7 +48,7 @@ export class ClickableImage extends React.Component
         };
         this.imageStyle =
         {
-            backgroundImage: 'url(' + this.props.image + ')',
+            backgroundImage: "url(" + this.props.image + ")",
             zIndex: "1",
             height: "20em",
             // height: "25vh",

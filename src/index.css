@@ -35,6 +35,11 @@ body
   top: -5px;
 }
 
+.btn-with-shadow:hover 
+{
+  border-bottom: 1px solid black;
+}
+
 /* input[type=text] 
 {
   -webkit-transition: left ease 0.5s;
