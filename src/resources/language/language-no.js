@@ -9,7 +9,6 @@ export const DB_INGREDIENT = "ingredient";
 export const DB_RECIPE = "recipe";
 
 // Days, Months
-
 export const MON = 'Mandag';
 export const TUE = 'Tirsdag';
 export const WED = 'Onsdag';
@@ -33,7 +32,11 @@ export const DEC = 'Desember';
 // Pages
 export const HOME = "Hjem";
 export const ALL_RECIPES = "Alle oppskrifter";
+export const PROFILE = "Profil";
+export const SETTINGS = "Innstillinger";
+export const DEV_OPTIONS = "Utvikler alternativer";
 export const LOG_IN = "Logg inn";
+export const LOG_OUT = "Logg ut";
 
 // Misc.
 export const MAIN_TITLE = "Chook";
@@ -59,7 +62,6 @@ export const CONTRASTMODE = "Kontrastmodus";
 export const ABOUT_US = "Om oss";
 export const CONTRIBUTE_TO_PAGE = "Bidra til siden";
 export const BUTTON = " knapp";
-
 export const METADATA = "Metadata";
 
 // Upload

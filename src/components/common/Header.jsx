@@ -1,21 +1,39 @@
 import React from "react";
 // import { Link, withRouter } from "react-router-dom";
 
-import {MAIN_TITLE, SEARCH, SEARCH_SOMETHING, HOME, ALL_RECIPES, UPLOAD, CONTRASTMODE} from "../../resources/language";
+import {MAIN_TITLE, SEARCH, SEARCH_SOMETHING, HOME, ALL_RECIPES, UPLOAD, PROFILE, SETTINGS, RELOAD, DEV_OPTIONS, LOG_OUT, LOG_IN} from "../../resources/language";
 import { getAccentColor, getTextColor, getBackgroundColor } from "../../resources/colors";
 
 class Header extends React.Component
 {
+    // Props:
+    // title: set title on page, default MAIN_TITLE
+    // useDropdown: render dropdown option and child-menus, default on
+    // useSearch: render search, default on
+    // useLinks: renders links under title/search, default on
+
     constructor(props)
     {
         super(props);
 
+        this.state = this.initState();
         this.initStyle();
+
         this.doSearch = this.doSearch.bind(this);
         this.gotoHome = this.gotoHome.bind(this);
-        
-        this.toggleHover = this.toggleHover.bind(this);
-        this.state= {hover: false};
+        this.gotoAllRecipes = this.gotoAllRecipes.bind(this);
+        this.gotoUpload = this.gotoUpload.bind(this);
+        this.gotoProfile = this.gotoProfile.bind(this);
+        this.gotoSettings = this.gotoSettings.bind(this);
+        this.doReload = this.doReload.bind(this);
+        this.gotoDev = this.gotoDev.bind(this);
+        this.toggleLogin = this.toggleLogin.bind(this);
+        this.toggleDropdown = this.toggleDropdown.bind(this);
+    }
+
+    initState()
+    {
+        return { showDropdown: false };
     }
 
     initStyle()
@@ -146,50 +164,110 @@ class Header extends React.Component
         // this.props.history.push("/");
     }
 
-    // TODO need drop down menu for settings, profile, dev options
+    gotoAllRecipes()
+    {
+        // this.props.history.push("/");
+    }
+
+    gotoUpload()
+    {
+        // this.props.history.push("/");
+    }
+
+    gotoProfile()
+    {
+        // this.props.history.push("/");
+    }
+
+    gotoSettings()
+    {
+        // this.props.history.push("/");
+    }
+
+    doReload()
+    {
+        window.location.reload();
+    }
+
+    gotoDev()
+    {
+        // this.props.history.push("/");
+    }
+
+    toggleLogin()
+    {
+        // this.props.history.push("/");
+    }
+    
+    toggleDropdown()
+    {
+        this.setState({showDropdown: !this.state.showDropdown});
+    }
+
     renderSettings()
     {
         return (
             <div style={this.settingsContainerStyle}>
-                <div style={this.settingsButtonStyle} onClick={this.toggleHover}>
+                <div style={this.settingsButtonStyle} onClick={this.toggleDropdown}>
                     
                 </div>
                 {
-                    this.state.hover ? 
-                    <div onClick={console.log(1)} style={this.dropdownContainerStyle}>
-                        <div onClick={console.log(2)} style={this.dropdownContainerItemStyle}>
-                            Profile
+                    this.state.showDropdown ? 
+                    <div style={this.dropdownContainerStyle}>
+                        <div onClick={() => this.gotoProfile()} style={this.dropdownContainerItemStyle}>
+                            {PROFILE}
                         </div>
-                        <div onClick={console.log(3)} style={this.dropdownContainerItemStyle}>
-                            Settings
+                        <div onClick={() => this.gotoSettings()} style={this.dropdownContainerItemStyle}>
+                            {SETTINGS}
                         </div>
-                        <div style={this.dropdownContainerItemStyle}>
-                            Reload
+                        <div onClick={() => this.doReload()} style={this.dropdownContainerItemStyle}>
+                            {RELOAD}
                         </div>
-                        <div style={this.dropdownContainerItemStyle}>
-                            Dev options
+                        <div onClick={() => this.gotoDev()} style={this.dropdownContainerItemStyle}>
+                            {DEV_OPTIONS}
                         </div>
-                        <div style={this.dropdownContainerItemStyle}>
-                            Log out
+                        <div onClick={() => this.toggleLogin()} style={this.dropdownContainerItemStyle}>
+                            {this.props.user ? LOG_OUT : LOG_IN}
                         </div>
                     </div>
                     :
-                    null
+                    (null)
                 }
             </div>
         );
     }
 
-    toggleHover()
+    renderSearch()
     {
-        this.setState({hover: !this.state.hover});
-        console.log(0);
+        return (
+            <div className="hide-650" style={this.searchContainerStyle} >
+                <form style={this.searchFormStyle} onSubmit={this.doSearch}>
+                    <input style={this.searchFieldStyle} id="searchFieldHeader" type="text" placeholder={SEARCH_SOMETHING}/>
+                    <div className="btn-with-shadow" style={this.searchButtonStyle} onClick={this.doSearch}>
+                        {SEARCH}
+                    </div>
+                </form>
+            </div>
+        );
+    }
+
+    renderLinks()
+    {
+        return (
+            <div className="hide-400" style={this.linkContainerStyle}>
+                <div className="btn-with-shadow" style={this.linkStyle} to="/">{HOME}</div>
+                <div className="btn-with-shadow" style={this.linkStyle} to="/list">{ALL_RECIPES}</div>
+                <div className="btn-with-shadow" style={this.linkStyle} to="/upload">{UPLOAD}</div>
+            </div>
+        );
     }
 
     render()
     {
-        const title = this.props.title || MAIN_TITLE;
-          
+        let title = this.props.title || MAIN_TITLE;
+        let useDropdown = this.props.useDropdown || true;
+        let useSearch = this.props.useSearch || true;
+        let useLinks = this.props.useLinks || true;
 
         return (
             <div style={this.bannerStyle}>
@@ -198,24 +276,12 @@ class Header extends React.Component
                         <h1 style={this.titleStyle}>{title}</h1>
                     </div>
 
-                    <div className="hide-650" style={this.searchContainerStyle} >
-                        <form style={this.searchFormStyle} onSubmit={this.doSearch}>
-                            <input style={this.searchFieldStyle} id="searchFieldHeader" type="text" placeholder={SEARCH_SOMETHING}/>
-                            <div className="btn-with-shadow" style={this.searchButtonStyle} onClick={this.doSearch}>
-                                {SEARCH}
-                            </div>
-                        </form>
-                    </div>
+                    {useSearch ? this.renderSearch() : (null)}
 
                 </div> 
 
-                {this.renderSettings()}
-                
-                <div className="hide-400" style={this.linkContainerStyle}>
-                    <div className="btn-with-shadow" style={this.linkStyle} to="/">{HOME}</div>
-                    <div className="btn-with-shadow" style={this.linkStyle} to="/list">{ALL_RECIPES}</div>
-                    <div className="btn-with-shadow" style={this.linkStyle} to="/upload">{UPLOAD}</div>
-                </div>
+                {useDropdown ? this.renderSettings() : (null)}
+                {useLinks ? this.renderLinks() : (null)}                
             </div>
         );
     }
