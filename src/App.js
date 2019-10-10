@@ -15,6 +15,7 @@ class App extends React.Component
         super(props);
 
         firebase.initializeApp(env);
+        // TODO initialize redux with localstorage settings
     }
    
     notFound() 

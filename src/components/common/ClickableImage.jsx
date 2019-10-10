@@ -1,9 +1,10 @@
 import React from "react";
-import { COLOR_ACCENT } from "../../resources/colors";
+import { COLOR_ACCENT, getTextColor, getAccentColor } from "../../resources/colors";
 
 export class ClickableImage extends React.Component
 {
     // Props:
+    // contrastmode: use contrastmode (aka nightmode/darkmode), default false
     // cursor: what cursor will do on hover, default "pointer"
     // coverText: should text cover image? boolean, default false
     // bannorColor: colour of textbackground, default COLOR_ACCENT
@@ -61,10 +62,10 @@ export class ClickableImage extends React.Component
     render()
     {
         return (
-            <div className={this.props.coverText ? "" : "moveable-btn"} style={this.containerStyle}>
-                <div style={this.imageStyle} aria-label={this.props.alttext} onClick={this.props.onClick}>
-                    <div style={this.titleContainerStyle}>
-                        <h2 style={this.titleStyle}>
+            <div className={this.props.coverText ? "" : "moveable-btn"} style={{ ...this.containerStyle }}>
+                <div style={{ ...this.imageStyle }} aria-label={this.props.alttext} onClick={this.props.onClick}>
+                    <div style={{ ...this.titleContainerStyle, ...getAccentColor(this.props.contrastmode) }}>
+                        <h2 style={{ ...this.titleStyle, ...getTextColor(this.props.contrastmode) }}>
                             {this.props.title}
                         </h2>
                     </div>

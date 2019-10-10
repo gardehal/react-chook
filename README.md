@@ -10,7 +10,7 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 ## TODO
 - [x] Functioning webpage
 - [x] Frontpage
-- [ ] Header
+- [x] Header
 - [x] Redux
 - [ ] Contrastmode
 - [ ] Minimal styling
@@ -33,6 +33,10 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Testing
 - [ ] Use EM
 - [ ] Style
+
+## Known issues
+
+- Things are not looking good. Not figuratively but literally, style is not my strong suit.
 
 ## My Thoughts
 

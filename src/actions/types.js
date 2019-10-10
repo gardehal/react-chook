@@ -1,3 +1,9 @@
+// Settings
+export const SETTINGS_LOADING = "settings_loading";
+export const SETTINGS_SET_LANGUAGE = "settings_set_language";
+export const SETTINGS_TOGGLE_CONTRASTMODE = "settings_toggle_contrastmode";
+export const SETTINGS_SET_FONTSIZE = "settings_set_fontsize";
+
 // Metadata
 export const METADATA_LOADING = "metadata_loading";
 export const METADATA_LOADING_COMPLETE = "metadata_loading_complete";

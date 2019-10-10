@@ -2,11 +2,13 @@ import React from "react";
 import { connect } from 'react-redux';
 
 import { getMetadataData } from "../actions/MetadataActions";
+import { renderLoading, renderError, getLongFormatDate } from "../actions/Shared";
+
 import { GET_RANDOM_DINNER, DB_RECIPE, DINNER, DB_META, TOTAL_RECIPES, TOTAL_INGREDIENTS, LAST_UPDATED, 
     BUTTON, METADATA, GET_DINNER_WEEK_MENU, ABOUT_US, CONTRIBUTE_TO_PAGE } from "../resources/language";
-import { renderLoading, renderError, getLongFormatDate } from "../actions/Shared";
 import { ClickableImage } from "./common/ClickableImage";
 import Header from "./common/Header";
+import { getBackgroundColor } from "../resources/colors";
 
 class HomePage extends React.Component
 {
@@ -80,27 +82,29 @@ class HomePage extends React.Component
     renderContent()
     {
         return (
-            <div style={this.contentContainerStyle}>
+            <div style={{ ...this.contentContainerStyle, ...getBackgroundColor(this.props.contrastmode) }}>
                 <ClickableImage image={require("../resources/pictures/vegetable-market-shelf.jpg")} alttext={METADATA} title={this.renderMetadata()}
-                    coverText={true} cursor="cursor"/>
+                    coverText={true} cursor="cursor" contrastmode={this.props.contrastmode}/>
                 <ClickableImage image={require("../resources/pictures/flour-pizza-hands.jpg")} alttext={GET_RANDOM_DINNER + BUTTON} title={GET_RANDOM_DINNER} 
-                    backgroundPosition={"top"} onClick={this.getRandomDinner}/>
-                <ClickableImage image={require("../resources/pictures/plates.jpg")} alttext={GET_DINNER_WEEK_MENU + BUTTON} title={GET_DINNER_WEEK_MENU}/>
-                <ClickableImage image={require("../resources/pictures/menu-waterglass.jpg")} alttext={ABOUT_US+ BUTTON} title={ABOUT_US} backgroundPosition={"center"}/>
+                    backgroundPosition={"top"} onClick={this.getRandomDinner} contrastmode={this.props.contrastmode}/>
+                <ClickableImage image={require("../resources/pictures/plates.jpg")} alttext={GET_DINNER_WEEK_MENU + BUTTON} title={GET_DINNER_WEEK_MENU}
+                    contrastmode={this.props.contrastmode}/>
+                <ClickableImage image={require("../resources/pictures/menu-waterglass.jpg")} alttext={ABOUT_US+ BUTTON} title={ABOUT_US} backgroundPosition={"center"}
+                    contrastmode={this.props.contrastmode}/>
                 <ClickableImage image={require("../resources/pictures/basil-tomato.jpg")} alttext={CONTRIBUTE_TO_PAGE + BUTTON} title={CONTRIBUTE_TO_PAGE}
-                    backgroundPosition={"top"}/>
+                    backgroundPosition={"top"} contrastmode={this.props.contrastmode}/>
             </div>);
     }
 
     render()
     {
         return (
-            <div>
+            <div style={{ ...getBackgroundColor(this.props.contrastmode) }}>
                 {/* TODO remove header from page, put in router or similar */}
-            <Header/> 
-            <div className="pageRootContainer">
-                {this.renderContent()}
-            </div>
+                <Header contrastmode={this.props.contrastmode}/> 
+                <div className="pageRootContainer" >
+                    {this.renderContent()}
+                </div>
             </div>
         );
     }
@@ -108,8 +112,9 @@ class HomePage extends React.Component
 
 const mapStateToProps = state => 
 {
+    const { contrastmode } = state.settings;
     const { metadataError, metadataLoading, metadataResult } = state.meta;
-    return { metadataError, metadataLoading, metadataResult };
+    return { contrastmode, metadataError, metadataLoading, metadataResult };
 };
   
 export default connect(
