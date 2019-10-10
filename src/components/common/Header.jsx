@@ -201,8 +201,7 @@ class Header extends React.Component
     // Go to devpage, or call some function under development
     gotoDev()
     {
-        toggleContrastmode();
-        
+        toggleContrastmode(this.props.contrastmode);
     }
 
     // TODO rename or find out what to do

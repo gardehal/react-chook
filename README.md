@@ -12,7 +12,7 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Frontpage
 - [x] Header
 - [x] Redux
-- [ ] Contrastmode
+- [x] Contrastmode
 - [ ] Minimal styling
 - [ ] Dev page
 - [ ] Linking to pages
@@ -44,7 +44,7 @@ Having an interest for cooking and programming, a project like this was inevitab
 
 I think I've come to a final conclusion that a webpage is the superior option, and that I will first make a simple one with React, then add API functions as necessary.
 
-Special thank you to [Pexels](https://www.pexels.com) for the pictures.
+Special thanks to [Pexels](https://www.pexels.com) for the pictures.
 
 -------------------------------------------------------------------------------------------------------------------------------
 

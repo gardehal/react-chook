@@ -3,10 +3,10 @@ import firebase from "firebase/app";
 import env from "./secrets/env";
 import { Provider } from "react-redux";
 import store from "./store";
-
 import { NOT_FOUND_404, ERROR, PAGE_NOT_FOUND } from "./resources/language";
 
 import HomePage from "./components/HomePage";
+import { SETTINGS_TOGGLE_CONTRASTMODE } from "./actions/types";
 
 class App extends React.Component 
 {
@@ -15,7 +15,10 @@ class App extends React.Component
         super(props);
 
         firebase.initializeApp(env);
-        // TODO initialize redux with localstorage settings
+
+        // Get stored settings from localStorage
+        if(localStorage.getItem("contrastmode") === "true")
+            store.dispatch({ type: SETTINGS_TOGGLE_CONTRASTMODE });
     }
    
     notFound() 
