@@ -37,6 +37,7 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 ## Known issues
 
 - Things are not looking good. Not figuratively but literally, style is not my strong suit.
+- White line (padding due to some elements, varies per page) visible on the bottom of the screen.
 
 ## My Thoughts
 
