@@ -6,6 +6,7 @@ import store from "./store";
 import { NOT_FOUND_404, ERROR, PAGE_NOT_FOUND } from "./resources/language";
 
 import HomePage from "./components/HomePage";
+import DevPage from "./components/DevPage";
 import { SETTINGS_TOGGLE_CONTRASTMODE } from "./actions/types";
 
 class App extends React.Component 

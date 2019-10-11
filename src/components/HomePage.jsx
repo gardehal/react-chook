@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { getMetadataData } from "../actions/MetadataActions";
 import { renderLoading, renderError, getLongFormatDate } from "../actions/Shared";
 
-import { GET_RANDOM_DINNER, DB_RECIPE, DINNER, DB_META, TOTAL_RECIPES, TOTAL_INGREDIENTS, LAST_UPDATED, 
+import { GET_RANDOM_DINNER, DB_RECIPE, DINNER, TOTAL_RECIPES, TOTAL_INGREDIENTS, LAST_UPDATED, 
     BUTTON, METADATA, GET_DINNER_WEEK_MENU, ABOUT_US, CONTRIBUTE_TO_PAGE } from "../resources/language";
 import { ClickableImage } from "./common/ClickableImage";
 import Header from "./common/Header";
@@ -21,7 +21,7 @@ class HomePage extends React.Component
 
     componentWillMount()
     {
-        getMetadataData(DB_META);
+        getMetadataData();
         console.log(this.props.metadataResult);
     }
 

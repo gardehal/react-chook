@@ -94,4 +94,5 @@ export const UNKNOWN_ERROR = "Ukjent feil";
 export const NOT_FOUND_404 = "Siden finnes ikke: 404";
 export const PAGE_NOT_FOUND = "Siden du leter etter finnes ikke.";
 export const DB_FETCH_FAILED = "Kunne ikke hente data fra databasen.";
+export const DB_SET_FAILED = "Kunne ikke laste opp data til databasen.";
 export const TEST_ERROR = "Dette er en test feil.";

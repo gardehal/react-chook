@@ -5,42 +5,60 @@ import store from "../store";
 import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC } from "../resources/language";
 
 // Get
-export const getDatabaseData = async (tableName, reduxSuccessType, reduxFailType, reduxLoadingType, orderByChild = "", equalTo = "", limit = 0) =>
+export const getDatabaseData = async (tableName, reduxSuccessType = "", reduxFailType = "", reduxLoadingType = "", orderByChild = "", equalTo = "", limit = 0) =>
 {
-    // return dispatch => 
-    {
-        store.dispatch({ type: reduxLoadingType });
-        let data = [];
-        let ref = firebase.database().ref("/" + tableName + "/");
+    store.dispatch({ type: reduxLoadingType });
+    let data = [];
+    let ref = firebase.database().ref("/" + tableName + "/");
 
-        if(orderByChild)
-            ref = ref.orderByChild(orderByChild);
-        if(equalTo)
-            ref = ref.equalTo(equalTo);
-        if(limit > 1)
-            ref = ref.limitToFirst(limit);
+    if(orderByChild)
+        ref = ref.orderByChild(orderByChild);
+    if(equalTo)
+        ref = ref.equalTo(equalTo);
+    if(limit > 1)
+        ref = ref.limitToFirst(limit);
 
-        console.log("getDatabaseData for table \"" + tableName + "\"" 
-            + (orderByChild ? ", orderByChild: \"" + orderByChild + "\"" : "") 
-            + (equalTo ? ", equalTo: \"" + equalTo + "\"" : "")
-            + (limit ? ", limit: \"" + limit + "\"" : ""));
+    console.log("getDatabaseData for table \"" + tableName + "\"" 
+        + (orderByChild ? ", orderByChild: \"" + orderByChild + "\"" : "") 
+        + (equalTo ? ", equalTo: \"" + equalTo + "\"" : "")
+        + (limit ? ", limit: \"" + limit + "\"" : ""));
 
-        await ref
-            .once("value", snapshot =>
-            {
-                if(snapshot.val())
-                    data = Object.values(snapshot.val());
+    await ref
+        .once("value", snapshot =>
+        {
+            if(snapshot.val())
+                data = Object.values(snapshot.val());
 
-                console.log("getDatabaseData result: ");
-                console.log(data);
-                store.dispatch({ type: reduxSuccessType, payload: data });
-            })
-            .catch((err) =>
-            {
-                console.error("getDatabaseData error: " + err);
-                store.dispatch({ type: reduxFailType });
-            });
-    };
+            console.log("getDatabaseData for \"" + tableName + "\" result: ");
+            console.log(data);
+            store.dispatch({ type: reduxSuccessType, payload: data });
+        })
+        .catch((err) =>
+        {
+            console.error("getDatabaseData error: " + err);
+            store.dispatch({ type: reduxFailType });
+        });
+
+    return data;
+}
+
+// Set
+export const setDatabaseData = async (tableName, uploadObject, reduxSuccessType = "", reduxFailType = "", reduxLoadingType = "",  path = "") =>
+{
+    store.dispatch({ type: reduxLoadingType });
+
+    firebase.database().ref("/" + tableName + "/" + path)
+        .set(uploadObject)
+        .then(() =>
+        {
+            console.log("setDatabaseData for \"" + tableName + "/" + path + "\" complete.");
+            store.dispatch({ type: reduxSuccessType });
+        })
+        .catch((err) =>
+        {
+            console.error(err);
+            store.dispatch({ type: reduxFailType });
+        });
 }
 
 export const getRandomInt = (max) =>
