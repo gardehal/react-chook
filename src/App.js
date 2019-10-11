@@ -39,8 +39,8 @@ class App extends React.Component
         return (
             <Provider store={store}>
                 <div className="App">
-                    <DevPage/>
-                    {/* <HomePage/> */}
+                    {/* <DevPage/> */}
+                    <HomePage/>
                 </div>
             </Provider>
         );
