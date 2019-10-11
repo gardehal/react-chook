@@ -1,13 +1,17 @@
 import React from "react";
 
-import { getLightBackgroundColor, getTextColor } from "../../../public/colors";
-import { DB_RECIPE } from "../../../public";
+// Variable imports
+import { getLightBackgroundColor, getTextColor } from "../../resources/colors";
 
 export class RecipeCard extends React.Component
 {
+    // Props
+    //
+
     gotoDetails(id)
     {
-        this.props.history.history.push("/details/?" + DB_RECIPE + "=" + id);
+        // this.props.history.history.push("/details/?" + DB_RECIPE + "=" + id);
+        console.log("TODO add and link details page");
     }
 
     render()
@@ -22,7 +26,7 @@ export class RecipeCard extends React.Component
         let rTTotal = recipe.recipe_time_total;
 
         return (
-            <div className="rowStyle" style={getLightBackgroundColor(this.props.contrastmode)} onClick={this.gotoDetails.bind(this, rId)}>
+            <div className="rowStyle" style={{ ...getLightBackgroundColor(this.props.contrastmode) }} onClick={this.gotoDetails.bind(this, rId)}>
                 <p style={getTextColor(this.props.contrastmode)}>{rTitle}</p>
                 <p>{rType}</p>
                 <p>{rGrade}</p>

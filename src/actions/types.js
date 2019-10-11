@@ -23,3 +23,10 @@ export const RECIPE_LOADING_COMPLETE = "recipe_loading_complete";
 
 export const GET_RECIPE_DATA_SUCCESS = "get_recipe_data_success";
 export const GET_RECIPE_DATA_FAIL = "get_recipe_data_fail";
+
+// Ingredient
+export const INGREDIENT_LOADING = "ingredient_loading";
+export const INGREDIENT_LOADING_COMPLETE = "ingredient_loading_complete";
+
+export const GET_INGREDIENT_DATA_SUCCESS = "get_ingredient_data_success";
+export const GET_INGREDIENT_DATA_FAIL = "get_ingredient_data_fail";

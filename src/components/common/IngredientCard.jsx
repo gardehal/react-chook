@@ -1,7 +1,7 @@
 import React from "react";
 
-import { getLightBackgroundColor, getTextColor } from "../../../public/colors";
-import { NORWEGIAN_KRONER } from "../../../public";
+import { getLightBackgroundColor, getTextColor } from "../../resources/colors";
+import { NORWEGIAN_KRONER } from "../../resources/language";
 
 export class IngredientCard extends React.Component
 {

@@ -15,6 +15,7 @@ import { NOT_FOUND_404, ERROR, PAGE_NOT_FOUND } from "./resources/language";
 import HomePage from "./components/HomePage";
 import DevPage from "./components/DevPage";
 import Header from "./components/common/Header";
+import ListPage from "./components/ListPage";
 
 class App extends React.Component 
 {
@@ -50,6 +51,7 @@ class App extends React.Component
 
                         <Route exact path="/" component={HomePage}/>
                         <Route exact path="/dev" component={DevPage}/>
+                        <Route exact path="/list" component={ListPage}/>
                         
                         {/* <Footer/>  */}
                     </BrowserRouter >
