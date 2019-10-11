@@ -43,7 +43,7 @@ class ListPage extends React.Component
             recipeJsx.push(renderLoading(false, this.props.contrastmode));
         else if(recipes && recipes.length > 0)
             for(let recipeIndex = 0; recipeIndex < recipes.length; recipeIndex++)
-                recipeJsx.push(<RecipeCard key={"recipe" + recipeIndex} recipe={recipes[recipeIndex]} history={this.props} 
+                recipeJsx.push(<RecipeCard key={"recipe" + recipeIndex} recipe={recipes[recipeIndex]} history={this.props}
                     contrastmode={this.props.contrastmode}/>);
         else
             recipeJsx.push(renderError(DB_FETCH_FAILED, false, this.props.contrastmode));
@@ -59,7 +59,7 @@ class ListPage extends React.Component
         //         ingredientJsx.push(<IngredientCard key={"ingredient" + ingredientIndex} ingredient={ingredients[ingredientIndex]} history={this.props} 
         //             contrastmode={this.props.contrastmode}/>);
         // else
-            ingredientJsx.push(renderError(DB_FETCH_FAILED, false, this.props.contrastmode));
+        //     ingredientJsx.push(renderError(DB_FETCH_FAILED, false, this.props.contrastmode));
 
         // Render the arrays
         return (

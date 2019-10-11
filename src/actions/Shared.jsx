@@ -71,7 +71,7 @@ export const renderLoading = (bigSpinner = false, contrastmode = false) =>
 {
     if(bigSpinner)
         return (
-            <div className="centerContentDiv"> 
+            <div key="renderLoadingLarge" className="centerContentDiv"> 
                 {/* <Spinner/> */}
                 <h1 style={{ ...getTextColor(contrastmode) }}>
                     {LOADING}
@@ -79,7 +79,7 @@ export const renderLoading = (bigSpinner = false, contrastmode = false) =>
             </div>);
 
     return (
-        <div> 
+        <div key="renderLoadingSmall"> 
             <p style={{ ...getTextColor(contrastmode) }}>
                 {LOADING}
             </p> 
@@ -91,7 +91,7 @@ export const renderError = (error = UNKNOWN_ERROR, bigText = false, contrastmode
 {
     if(bigText)
         return (
-            <div className="centerContentDiv"> 
+            <div key="renderErrorlarge" className="centerContentDiv"> 
                 <h1 style={{ ...getTextColor(contrastmode) }}>
                     {error}
                     {/* Refresh */}
@@ -99,7 +99,7 @@ export const renderError = (error = UNKNOWN_ERROR, bigText = false, contrastmode
             </div>);
 
     return (
-        <div>
+        <div key="renderErrorSmall">
             <p style={{ ...getTextColor(contrastmode) }}>
                 {error}
                 {/* Refresh/Go to home */}

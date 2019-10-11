@@ -15,11 +15,11 @@ export const COLOR_BUTTON = "#b76e79";
 export const COLOR_ACCENT = "#90EE90";
 
 export const CONTRAST_BACKGROUND = "#1e1e1e";
-export const CONTRAST_LIGHT_BACKGROUND = "#2e3a50";
+export const CONTRAST_LIGHT_BACKGROUND = "#333333";
 export const CONTRAST_TEXT = "#dddddd";
 export const CONTRAST_BUTTON_TEXT = "#ffffff";
 export const CONTRAST_BUTTON = "#b995af";
-export const CONTRAST_ACCENT = "#333333";
+export const CONTRAST_ACCENT = "#103310";
 
 export const getBackgroundColor = (contrastmode) =>
 {
