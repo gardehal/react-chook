@@ -40,6 +40,7 @@ class App extends React.Component
             <Provider store={store}>
                 <div className="App">
                     <DevPage/>
+                    {/* <HomePage/> */}
                 </div>
             </Provider>
         );

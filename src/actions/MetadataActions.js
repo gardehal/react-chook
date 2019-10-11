@@ -22,10 +22,8 @@ export const setMetadataData = async () =>
     let meta_total_recipes = rRes.length;
     
     let d = new Date();
-    let min = addLeadingZeros(d.getUTCMinutes());
-    console.log("test " + min);
     let meta_last_updated_utc = d.getUTCFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + addLeadingZeros(d.getUTCDate()) 
-        + " " + addLeadingZeros(d.getUTCHours()) + ":" + min;
+        + " " + addLeadingZeros(d.getUTCHours()) + ":" + addLeadingZeros(d.getUTCMinutes());
 
     let uploadObject = 
     {

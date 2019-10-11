@@ -3,6 +3,7 @@ import firebase from "firebase";
 import store from "../store";
 
 import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC } from "../resources/language";
+import { getBackgroundColor, getTextColor } from "../resources/colors";
 
 // Get
 export const getDatabaseData = async (tableName, reduxSuccessType = "", reduxFailType = "", reduxLoadingType = "", orderByChild = "", equalTo = "", limit = 0) =>
@@ -66,43 +67,43 @@ export const getRandomInt = (max) =>
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-export const renderLoading = (bigSpinner = false) =>
+export const renderLoading = (bigSpinner = false, contrastmode = false) =>
 {
     if(bigSpinner)
         return (
-            <div> 
+            <div className="centerContentDiv" style={{ ...getBackgroundColor(contrastmode) }}> 
                 {/* <Spinner/> */}
-                <p>
+                <h1 style={{ ...getTextColor(contrastmode) }}>
                     {LOADING}
-                </p> 
+                </h1> 
             </div>);
 
     return (
-        <div> 
-            <p>
+        <div style={{ ...getBackgroundColor(contrastmode) }}> 
+            <p style={{ ...getTextColor(contrastmode) }}>
                 {LOADING}
             </p> 
             {/* <Spinner/> */}
         </div>);
 }
 
-export const renderError = (error = UNKNOWN_ERROR, bigText = false) =>
+export const renderError = (error = UNKNOWN_ERROR, bigText = false, contrastmode = false) =>
 {
     if(bigText)
         return (
-            <div>
-                <p>
+            <div className="centerContentDiv" style={{ ...getBackgroundColor(contrastmode) }}> 
+                <h1 style={{ ...getTextColor(contrastmode) }}>
                     {error}
                     {/* Refresh */}
-                </p>
+                </h1>
             </div>);
 
     return (
-        <div>
-            <h3>
+        <div style={{ ...getBackgroundColor(contrastmode) }}>
+            <p style={{ ...getTextColor(contrastmode) }}>
                 {error}
                 {/* Refresh/Go to home */}
-            </h3>
+            </p>
         </div>);
 }
 
@@ -170,6 +171,5 @@ export const addLeadingZeros = (n, nOfZeros = 1, leadingLimit = 10) =>
         for (let i = 0; i < nOfZeros; i++) 
             res = "0" + JSON.stringify(res);
 
-    console.log("leading " + res);
     return res;
 };
