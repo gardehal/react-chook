@@ -35,6 +35,7 @@ export const ALL_RECIPES = "Alle oppskrifter";
 export const PROFILE = "Profil";
 export const SETTINGS = "Innstillinger";
 export const DEV_OPTIONS = "Utvikler alternativer";
+export const DEV = "Utvikler";
 export const LOG_IN = "Logg inn";
 export const LOG_OUT = "Logg ut";
 

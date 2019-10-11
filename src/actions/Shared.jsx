@@ -2,7 +2,7 @@ import React from "react";
 import firebase from "firebase";
 import store from "../store";
 
-import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC } from "../resources/language";
+import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC, MAIN_TITLE } from "../resources/language";
 import { getBackgroundColor, getTextColor } from "../resources/colors";
 
 // Get
@@ -172,4 +172,9 @@ export const addLeadingZeros = (n, nOfZeros = 1, leadingLimit = 10) =>
             res = "0" + JSON.stringify(res);
 
     return res;
+};
+
+export const setTitle = (title = "") =>
+{
+    document.title = MAIN_TITLE + (title ? " | " + title : "");
 };

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 // Redux imports
 import { getRecipeData } from "../actions/RecipeActions";
 import { getIngredientData } from "../actions/IngredientActions";
-import { renderLoading, renderError } from "../actions/Shared";
+import { renderLoading, renderError, setTitle } from "../actions/Shared";
 
 // Variable imports
 import { DB_FETCH_FAILED } from "../resources/language";
@@ -26,6 +26,8 @@ class ListPage extends React.Component
     {
         getRecipeData();
         getIngredientData();
+        
+        setTitle();
     }
 
     initState()
@@ -63,19 +65,21 @@ class ListPage extends React.Component
 
         // Render the arrays
         return (
-            <div style={getBackgroundColor(this.props.contrastmode)}>
-                <div className="pageRootContainer">
-                    {recipeJsx}
-                    {ingredientJsx}
-                </div>
+            <div>
+                {recipeJsx}
+                {ingredientJsx}
             </div>);
     }
 
     render()
     {
         return (
-            <div style={{ ...getBackgroundColor(this.props.contrastmode) }}>
-                {this.renderContent()}
+            <div style={getBackgroundColor(this.props.contrastmode)}>
+                <div className="pageRootContainer">
+                    <div style={{ ...getBackgroundColor(this.props.contrastmode) }}>
+                        {this.renderContent()}
+                    </div>
+                </div>
             </div>
         );
     }
