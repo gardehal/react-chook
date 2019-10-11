@@ -23,6 +23,35 @@ body
   text-align: center;
 }
 
+.rowStyle
+{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-self: stretch;
+}
+
+.rowStyle > *
+{
+    position: relative;
+    display: inline-block;
+}
+
+.row
+{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-self: stretch;
+}
+
+.row > *
+{
+    position: relative;
+    display: inline-block;
+    margin: 1px;
+}
+
 .moveable-btn 
 {
   position: relative;

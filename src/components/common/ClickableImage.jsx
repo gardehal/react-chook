@@ -1,4 +1,6 @@
 import React from "react";
+
+// Variable imports
 import { COLOR_ACCENT, getTextColor, getAccentColor } from "../../resources/colors";
 
 export class ClickableImage extends React.Component

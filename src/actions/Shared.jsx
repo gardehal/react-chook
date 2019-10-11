@@ -3,44 +3,63 @@ import firebase from "firebase";
 import store from "../store";
 
 import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC } from "../resources/language";
+import { getBackgroundColor, getTextColor } from "../resources/colors";
 
 // Get
-export const getDatabaseData = async (tableName, reduxSuccessType, reduxFailType, reduxLoadingType, orderByChild = "", equalTo = "", limit = 0) =>
+export const getDatabaseData = async (tableName, reduxSuccessType = "", reduxFailType = "", reduxLoadingType = "", orderByChild = "", equalTo = "", limit = 0) =>
 {
-    // return dispatch => 
-    {
-        store.dispatch({ type: reduxLoadingType });
-        let data = [];
-        let ref = firebase.database().ref("/" + tableName + "/");
+    store.dispatch({ type: reduxLoadingType });
+    let data = [];
+    let ref = firebase.database().ref("/" + tableName + "/");
 
-        if(orderByChild)
-            ref = ref.orderByChild(orderByChild);
-        if(equalTo)
-            ref = ref.equalTo(equalTo);
-        if(limit > 1)
-            ref = ref.limitToFirst(limit);
+    if(orderByChild)
+        ref = ref.orderByChild(orderByChild);
+    if(equalTo)
+        ref = ref.equalTo(equalTo);
+    if(limit > 1)
+        ref = ref.limitToFirst(limit);
 
-        console.log("getDatabaseData for table \"" + tableName + "\"" 
-            + (orderByChild ? ", orderByChild: \"" + orderByChild + "\"" : "") 
-            + (equalTo ? ", equalTo: \"" + equalTo + "\"" : "")
-            + (limit ? ", limit: \"" + limit + "\"" : ""));
+    console.log("getDatabaseData for table \"" + tableName + "\"" 
+        + (orderByChild ? ", orderByChild: \"" + orderByChild + "\"" : "") 
+        + (equalTo ? ", equalTo: \"" + equalTo + "\"" : "")
+        + (limit ? ", limit: \"" + limit + "\"" : ""));
 
-        await ref
-            .once("value", snapshot =>
-            {
-                if(snapshot.val())
-                    data = Object.values(snapshot.val());
+    await ref
+        .once("value", snapshot =>
+        {
+            if(snapshot.val())
+                data = Object.values(snapshot.val());
 
-                console.log("getDatabaseData result: ");
-                console.log(data);
-                store.dispatch({ type: reduxSuccessType, payload: data });
-            })
-            .catch((err) =>
-            {
-                console.error("getDatabaseData error: " + err);
-                store.dispatch({ type: reduxFailType });
-            });
-    };
+            console.log("getDatabaseData for \"" + tableName + "\" result: ");
+            console.log(data);
+            store.dispatch({ type: reduxSuccessType, payload: data });
+        })
+        .catch((err) =>
+        {
+            console.error("getDatabaseData error: " + err);
+            store.dispatch({ type: reduxFailType });
+        });
+
+    return data;
+}
+
+// Set
+export const setDatabaseData = async (tableName, uploadObject, reduxSuccessType = "", reduxFailType = "", reduxLoadingType = "",  path = "") =>
+{
+    store.dispatch({ type: reduxLoadingType });
+
+    firebase.database().ref("/" + tableName + "/" + path)
+        .set(uploadObject)
+        .then(() =>
+        {
+            console.log("setDatabaseData for \"" + tableName + "/" + path + "\" complete.");
+            store.dispatch({ type: reduxSuccessType });
+        })
+        .catch((err) =>
+        {
+            console.error(err);
+            store.dispatch({ type: reduxFailType });
+        });
 }
 
 export const getRandomInt = (max) =>
@@ -48,43 +67,43 @@ export const getRandomInt = (max) =>
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-export const renderLoading = (bigSpinner = false) =>
+export const renderLoading = (bigSpinner = false, contrastmode = false) =>
 {
     if(bigSpinner)
         return (
-            <div> 
+            <div className="centerContentDiv" style={{ ...getBackgroundColor(contrastmode) }}> 
                 {/* <Spinner/> */}
-                <p>
+                <h1 style={{ ...getTextColor(contrastmode) }}>
                     {LOADING}
-                </p> 
+                </h1> 
             </div>);
 
     return (
-        <div> 
-            <p>
+        <div style={{ ...getBackgroundColor(contrastmode) }}> 
+            <p style={{ ...getTextColor(contrastmode) }}>
                 {LOADING}
             </p> 
             {/* <Spinner/> */}
         </div>);
 }
 
-export const renderError = (error = UNKNOWN_ERROR, bigText = false) =>
+export const renderError = (error = UNKNOWN_ERROR, bigText = false, contrastmode = false) =>
 {
     if(bigText)
         return (
-            <div>
-                <p>
+            <div className="centerContentDiv" style={{ ...getBackgroundColor(contrastmode) }}> 
+                <h1 style={{ ...getTextColor(contrastmode) }}>
                     {error}
                     {/* Refresh */}
-                </p>
+                </h1>
             </div>);
 
     return (
-        <div>
-            <h3>
+        <div style={{ ...getBackgroundColor(contrastmode) }}>
+            <p style={{ ...getTextColor(contrastmode) }}>
                 {error}
                 {/* Refresh/Go to home */}
-            </h3>
+            </p>
         </div>);
 }
 
@@ -140,7 +159,17 @@ export const getLongFormatDate = (date, includeDay = true, includeYear = true ) 
 
     // Format: "Mandag 17. Juni 2019", "Fredag 20. Januar"
     var d = new Date(date);
-    var full = (includeDay ? days[d.getDay()] : "") + " " + d.getDate() + ". " + months[d.getMonth()] + (includeYear ? " " + d.getFullYear() : "");
+    var full = (includeDay ? days[d.getDay()] : "") + " " + addLeadingZeros(d.getDate()) + ". " + months[d.getMonth()] + (includeYear ? " " + d.getFullYear() : "");
 
     return full;
+};
+
+export const addLeadingZeros = (n, nOfZeros = 1, leadingLimit = 10) =>
+{
+    let res = n;
+    if(n < leadingLimit)
+        for (let i = 0; i < nOfZeros; i++) 
+            res = "0" + JSON.stringify(res);
+
+    return res;
 };

@@ -7,9 +7,15 @@ export const SETTINGS_SET_FONTSIZE = "settings_set_fontsize";
 // Metadata
 export const METADATA_LOADING = "metadata_loading";
 export const METADATA_LOADING_COMPLETE = "metadata_loading_complete";
+export const METADATA_ERROR = "metadata_error";
+export const METADATA_TEST_ERROR = "metadata_test_error";
+export const METADATA_ERROR_RESOLVED = "metadata_error_resolved";
 
 export const GET_METADATA_DATA_SUCCESS = "get_metadata_data_success";
 export const GET_METADATA_DATA_FAIL = "get_metadata_data_fail";
+
+export const SET_METADATA_DATA_SUCCESS = "set_metadata_data_success";
+export const SET_METADATA_DATA_FAIL = "set_metadata_data_fail";
 
 // Recipe
 export const RECIPE_LOADING = "recipe_loading";

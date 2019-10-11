@@ -1,8 +1,10 @@
 import React from "react";
 import { connect } from 'react-redux';
 
+// Redux imports
 import { toggleContrastmode } from "../../actions/SettingsActions";
 
+// Variable imports
 import {MAIN_TITLE, SEARCH, SEARCH_SOMETHING, HOME, ALL_RECIPES, UPLOAD, PROFILE, SETTINGS, RELOAD, DEV_OPTIONS, LOG_OUT, LOG_IN} from "../../resources/language";
 import { getAccentColor, getTextColor, getBackgroundColor } from "../../resources/colors";
 
