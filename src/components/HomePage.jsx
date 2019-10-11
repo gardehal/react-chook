@@ -12,7 +12,6 @@ import { getBackgroundColor } from "../resources/colors";
 
 // Component imports
 import { ClickableImage } from "./common/ClickableImage";
-import Header from "./common/Header";
 
 class HomePage extends React.Component
 {
@@ -104,9 +103,7 @@ class HomePage extends React.Component
     {
         return (
             <div style={{ ...getBackgroundColor(this.props.contrastmode) }}>
-                {/* TODO remove header from page, put in router or similar */}
-                <Header contrastmode={this.props.contrastmode}/> 
-                <div className="pageRootContainer" >
+                <div className="pageRootContainer">
                     {this.renderContent()}
                 </div>
             </div>
