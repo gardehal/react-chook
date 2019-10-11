@@ -1,4 +1,4 @@
-import { getDatabaseData, setDatabaseData } from "./Shared";
+import { getDatabaseData, setDatabaseData, addLeadingZeros } from "./Shared";
 
 import { GET_METADATA_DATA_SUCCESS, GET_METADATA_DATA_FAIL, METADATA_LOADING, SET_METADATA_DATA_SUCCESS, SET_METADATA_DATA_FAIL } from "./types";
 import { DB_META, DB_INGREDIENT, DB_RECIPE } from "../resources/language";
@@ -20,9 +20,12 @@ export const setMetadataData = async () =>
 
     let meta_total_ingredients = iRes.length;
     let meta_total_recipes = rRes.length;
-
+    
     let d = new Date();
-    let meta_last_updated_utc = d.getUTCFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + d.getUTCDate() + " " + d.getUTCHours() + ":" + d.getUTCMinutes();
+    let min = addLeadingZeros(d.getUTCMinutes());
+    console.log("test " + min);
+    let meta_last_updated_utc = d.getUTCFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + addLeadingZeros(d.getUTCDate()) 
+        + " " + addLeadingZeros(d.getUTCHours()) + ":" + min;
 
     let uploadObject = 
     {
@@ -31,5 +34,7 @@ export const setMetadataData = async () =>
         meta_last_updated_utc,
     };
 
-    setDatabaseData(DB_META, uploadObject, SET_METADATA_DATA_SUCCESS, SET_METADATA_DATA_FAIL, METADATA_LOADING, "content");
+    let path = "content";
+
+    setDatabaseData(DB_META, uploadObject, SET_METADATA_DATA_SUCCESS, SET_METADATA_DATA_FAIL, METADATA_LOADING, path);
 }

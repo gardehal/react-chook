@@ -1,13 +1,20 @@
 import React from "react";
 import { connect } from 'react-redux';
-
-import { getMetadataData, setMetadataData } from "../actions/MetadataActions";
-import { TEST_ERROR, DB_META, TOTAL_RECIPES, TOTAL_INGREDIENTS, 
-    LAST_UPDATED, UPDATE_METADATA } from "../resources/language";
-import { renderLoading, renderError, getLongFormatDate } from "../actions/Shared";
-import { getBackgroundColor } from "../resources/colors";
 import store from "../store";
+
+// Redux imports
 import { METADATA_LOADING, METADATA_LOADING_COMPLETE, METADATA_TEST_ERROR, METADATA_ERROR_RESOLVED } from "../actions/types";
+import { getMetadataData, setMetadataData } from "../actions/MetadataActions";
+import { renderLoading, renderError, getLongFormatDate, addLeadingZeros } from "../actions/Shared";
+import { toggleContrastmode } from "../actions/SettingsActions";
+
+// Variable imports
+import { TEST_ERROR, DB_META, TOTAL_RECIPES, TOTAL_INGREDIENTS, 
+    LAST_UPDATED, UPDATE_METADATA, METADATA } from "../resources/language";
+import { getBackgroundColor } from "../resources/colors";
+
+// Component imports
+import { ClickableImage } from "./common/ClickableImage";
 
 class DevPage extends React.Component
 {
@@ -91,7 +98,7 @@ class DevPage extends React.Component
             adjustedTime.setMinutes(parseInt(time[1]) + Math.abs(offset));
 
             let result = getLongFormatDate(adjustedTime.getDate() + "-" + (adjustedTime.getMonth() + 1) + "-" + adjustedTime.getFullYear()) + " "
-                + adjustedTime.getHours() + ":" + adjustedTime.getMinutes();
+                + addLeadingZeros(adjustedTime.getHours()) + ":" + addLeadingZeros(adjustedTime.getMinutes());
 
             return (
                     <div>
@@ -121,33 +128,39 @@ class DevPage extends React.Component
             return renderError(this.props.metadataError, true);
 
         return (
-            <div className="containerStyle"  style={getBackgroundColor(this.props.contrastmode)}>
-                {this.renderMetadata()}
+            <div style={getBackgroundColor(this.props.contrastmode)}>
+                <div className="pageRootContainer">
+                    <ClickableImage image={require("../resources/pictures/vegetable-market-shelf.jpg")} alttext={METADATA} title={this.renderMetadata()}
+                        coverText={true} cursor="cursor" contrastmode={this.props.contrastmode}/>
 
-                <div className="btnSection">
+                    <div className="btnSection">
 
-                    <div className="btnPart">
-                        <div className="btn" onClick={this.updateMetaData}>
-                            {UPDATE_METADATA}
-                        </div>                        
-                        <div>
-                            <a href="https://console.firebase.google.com/u/0/">Firebase</a>
+                        <div className="btnPart">
+                            <div className="btn" onClick={this.updateMetaData}>
+                                {UPDATE_METADATA}
+                            </div>       
+                            <div onClick={() => toggleContrastmode(this.props.contrastmode)}>
+                                Contrast
+                            </div>                 
+                            <div>
+                                <a href="https://console.firebase.google.com/u/0/">Firebase</a>
+                            </div>
+                            <div>
+                                <a href="https://kolonial.no">Kolonial</a>
+                            </div>
                         </div>
-                        <div>
-                            <a href="https://kolonial.no">Kolonial</a>
-                        </div>
-                    </div>
 
-                    <div className="btnPart">
-                        <div className="btn" onClick={this.testLoading}>Test Loading</div>
-                        <div className="btn" onClick={this.testSmallLoading}>Test Small Loading</div>
-                        <div>{this.state.smallLoading ? renderLoading(false) : "Click Test Small Loading"}</div>
-                    </div>
-                    
-                    <div className="btnPart">
-                        <div className="btn" onClick={this.testError}>Test Error</div>
-                        <div className="btn" onClick={this.testSmallError}>Test Small Error</div>
-                        <div>{this.state.smallError ? renderError(this.state.smallError, false) : "Click Test Small Error"}</div>
+                        <div className="btnPart">
+                            <div className="btn" onClick={this.testLoading}>Test Loading</div>
+                            <div className="btn" onClick={this.testSmallLoading}>Test Small Loading</div>
+                            <div>{this.state.smallLoading ? renderLoading(false) : "Click Test Small Loading"}</div>
+                        </div>
+                        
+                        <div className="btnPart">
+                            <div className="btn" onClick={this.testError}>Test Error</div>
+                            <div className="btn" onClick={this.testSmallError}>Test Small Error</div>
+                            <div>{this.state.smallError ? renderError(this.state.smallError, false) : "Click Test Small Error"}</div>
+                        </div>
                     </div>
                 </div>
             </div>);
@@ -171,5 +184,5 @@ const mapStateToProps = state =>
 };
   
 export default connect(
-    mapStateToProps, { getMetadataData, setMetadataData }
+    mapStateToProps, { getMetadataData, setMetadataData, toggleContrastmode }
 )(DevPage);

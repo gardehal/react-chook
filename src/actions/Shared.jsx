@@ -158,7 +158,18 @@ export const getLongFormatDate = (date, includeDay = true, includeYear = true ) 
 
     // Format: "Mandag 17. Juni 2019", "Fredag 20. Januar"
     var d = new Date(date);
-    var full = (includeDay ? days[d.getDay()] : "") + " " + d.getDate() + ". " + months[d.getMonth()] + (includeYear ? " " + d.getFullYear() : "");
+    var full = (includeDay ? days[d.getDay()] : "") + " " + addLeadingZeros(d.getDate()) + ". " + months[d.getMonth()] + (includeYear ? " " + d.getFullYear() : "");
 
     return full;
+};
+
+export const addLeadingZeros = (n, nOfZeros = 1, leadingLimit = 10) =>
+{
+    let res = n;
+    if(n < leadingLimit)
+        for (let i = 0; i < nOfZeros; i++) 
+            res = "0" + JSON.stringify(res);
+
+    console.log("leading " + res);
+    return res;
 };
