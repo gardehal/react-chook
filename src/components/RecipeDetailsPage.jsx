@@ -1,5 +1,5 @@
 import React from "react";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
 // Redux imports
 import { getRecipeData } from "../actions/RecipeActions";
@@ -9,16 +9,16 @@ import { renderLoading, renderError, setTitle } from "../actions/Shared";
 // Variable imports
 import { getBackgroundColor, getLightBackgroundColor, getTextColor } from "../resources/colors";
 import { DB_RECIPE, DB_FETCH_FAILED, NORWEGIAN_KRONER, MINUTES, PREPARATION, TOTAL, PORTIONS } from "../resources/language";
-import { RecipeCard } from "./common/RecipeCard";
 
 // Component imports
+import { RecipeCard } from "./common/RecipeCard";
 
 class RecipeDetailsPage extends React.Component
 {
     constructor(props)
     {
         super(props);
-        this.state = this.initState();
+        this.initStyle();
     }
 
     componentWillMount()
@@ -30,9 +30,20 @@ class RecipeDetailsPage extends React.Component
         getRecipeData();
     }
 
-    initState()
+    initStyle()
     {
-        return { };
+        this.containerStyle = 
+        {
+            padding: "0.5em",
+        };
+        this.titleStyle =
+        {
+            paddingBottom: "0.5em",
+        };
+        this.infoContainerStyle =
+        {
+
+        };
     }
 
     renderContent()
@@ -85,21 +96,29 @@ class RecipeDetailsPage extends React.Component
                     </p>);
 
         return (
-            <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
-                <h3 style={{ ...getTextColor(this.props.contrastmode) }}>{recipe.recipe_title}</h3>
-                <p style={{ ...getTextColor(this.props.contrastmode) }}>{recipe.recipe_grade + " " + recipe.recipe_type + ", " + recipe.recipe_rating + "/10"}</p>
-                <p style={{ ...getTextColor(this.props.contrastmode) }}>{recipe.recipe_portions + " " + PORTIONS
-                    + ", " + recipe.recipe_time_preparation + " " + MINUTES + " " + PREPARATION
-                    + ", " + recipe.recipe_time_total + " " + MINUTES + " " + TOTAL
-                    + ", " + recipe.recipe_price + " " + NORWEGIAN_KRONER}</p>
+            <div style={{ ...this.containerStyle, ...getLightBackgroundColor(this.props.contrastmode) }}>
+                <h3 style={{ ...this.titleStyle, ...getTextColor(this.props.contrastmode) }}>{recipe.recipe_title}</h3>
+
+                <div style={{ ...this.infoContainerStyle }}>
+                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{recipe.recipe_grade + " " + recipe.recipe_type + ", " + recipe.recipe_rating + "/10"}</p>
+                    
+                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{recipe.recipe_portions + " " + PORTIONS
+                        + ", " + recipe.recipe_time_preparation + " " + MINUTES + " " + PREPARATION
+                        + ", " + recipe.recipe_time_total + " " + MINUTES + " " + TOTAL
+                        + ", " + recipe.recipe_price + " " + NORWEGIAN_KRONER}</p>
+                </div>
                 {method ? <hr/> : (null)}
+
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{method + " " + methodTemp + " " + methodTempUnit}</p>
                 <hr/>
+
                 {subRecipeJsx}
                 {ingredientsJsx}
                 <hr/>
+
                 {instructionsJsx}
                 {recipe.recipe_notes ? <hr/> : (null)}
+
                 {recipeNotesJsx}
             </div>);
     }

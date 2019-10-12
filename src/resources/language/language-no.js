@@ -90,6 +90,8 @@ export const SEARCH_RESULTS_FOR = "Søkeresultater for: ";
 export const SEARCH_RESULTS = "Søkeresultater";
 export const NO_RESULTS_FOR = "Ingen resultater for: ";
 export const INVALID_SEARCH_TERM = "Ugyldig søkeord!";
+export const LOAD = "Last inn";
+
 
 // Errormessages
 export const ERROR = "FEIL";
