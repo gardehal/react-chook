@@ -13,20 +13,22 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Header
 - [x] Redux
 - [x] Contrastmode
-- [ ] Minimal styling
-- [ ] Dev page
-- [ ] Linking to pages
+- [x] Minimal styling
+- [x] Dev page
+- [x] Linking to pages
 - [x] Database connection
-- [ ] List of recipes
-- [ ] Page for recipe details
+- [x] List of recipes
+- [x] Page for recipe details
 - [ ] Search
-- [ ] Dinner planning features
-- [ ] Uploading to DB
 - [ ] Editing DB data
-- [ ] Moderation tools
+- [ ] Uploading to DB
+- [ ] Dinner planning features
 - [ ] Users
+- [ ] Moderation tools
 - [ ] Deploying to designated server
 - [ ] Roadmap update
+- [ ] Better sorting (ex alphabetical order)
+- [ ] General optimization 
 
 ## Ongoing TODOs
 - [ ] Find, try, and upload recipes
@@ -37,6 +39,7 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 ## Known issues
 
 - Things are not looking good. Not figuratively but literally, style is not my strong suit.
+- White line (padding due to some elements, varies per page) visible on the bottom of the screen.
 
 ## My Thoughts
 
@@ -45,6 +48,8 @@ Having an interest for cooking and programming, a project like this was inevitab
 I think I've come to a final conclusion that a webpage is the superior option, and that I will first make a simple one with React, then add API functions as necessary.
 
 Special thanks to [Pexels](https://www.pexels.com) for the pictures.
+
+![logo](./src/resources/icons/chook-icon-1-bg.png)
 
 -------------------------------------------------------------------------------------------------------------------------------
 

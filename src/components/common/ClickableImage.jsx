@@ -1,4 +1,6 @@
 import React from "react";
+
+// Variable imports
 import { COLOR_ACCENT, getTextColor, getAccentColor } from "../../resources/colors";
 
 export class ClickableImage extends React.Component
@@ -28,7 +30,7 @@ export class ClickableImage extends React.Component
             // position: "relative",
             cursor: this.props.cursor || "pointer",
             overflow: "hidden",
-            marginTop: "0.5em",
+            marginBottom: "0.5em",
         };
         this.titleContainerStyle =
         {

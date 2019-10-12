@@ -35,6 +35,7 @@ export const ALL_RECIPES = "Alle oppskrifter";
 export const PROFILE = "Profil";
 export const SETTINGS = "Innstillinger";
 export const DEV_OPTIONS = "Utvikler alternativer";
+export const DEV = "Utvikler";
 export const LOG_IN = "Logg inn";
 export const LOG_OUT = "Logg ut";
 
@@ -63,6 +64,8 @@ export const ABOUT_US = "Om oss";
 export const CONTRIBUTE_TO_PAGE = "Bidra til siden";
 export const BUTTON = " knapp";
 export const METADATA = "Metadata";
+export const PREPARATION = "forberedelse";
+export const TOTAL = "totalt";
 
 // Upload
 export const RECIPE_TEXT_FORMAT = "Oppskriftsformat";
@@ -87,6 +90,8 @@ export const SEARCH_RESULTS_FOR = "Søkeresultater for: ";
 export const SEARCH_RESULTS = "Søkeresultater";
 export const NO_RESULTS_FOR = "Ingen resultater for: ";
 export const INVALID_SEARCH_TERM = "Ugyldig søkeord!";
+export const LOAD = "Last inn";
+
 
 // Errormessages
 export const ERROR = "FEIL";
@@ -94,4 +99,5 @@ export const UNKNOWN_ERROR = "Ukjent feil";
 export const NOT_FOUND_404 = "Siden finnes ikke: 404";
 export const PAGE_NOT_FOUND = "Siden du leter etter finnes ikke.";
 export const DB_FETCH_FAILED = "Kunne ikke hente data fra databasen.";
+export const DB_SET_FAILED = "Kunne ikke laste opp data til databasen.";
 export const TEST_ERROR = "Dette er en test feil.";

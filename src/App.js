@@ -3,10 +3,20 @@ import firebase from "firebase/app";
 import env from "./secrets/env";
 import { Provider } from "react-redux";
 import store from "./store";
+import { BrowserRouter , Route, Link } from "react-router-dom";
+
+// Redux imports
+import { SETTINGS_TOGGLE_CONTRASTMODE } from "./actions/types";
+
+// Variable imports
 import { NOT_FOUND_404, ERROR, PAGE_NOT_FOUND } from "./resources/language";
 
+// Component imports
 import HomePage from "./components/HomePage";
-import { SETTINGS_TOGGLE_CONTRASTMODE } from "./actions/types";
+import DevPage from "./components/DevPage";
+import Header from "./components/common/Header";
+import ListPage from "./components/ListPage";
+import RecipeDetailsPage from "./components/RecipeDetailsPage";
 
 class App extends React.Component 
 {
@@ -36,11 +46,18 @@ class App extends React.Component
     render()
     {
         return (
-            <Provider store={store}>
-                <div className="App">
-                    <HomePage/>
-                </div>
-            </Provider>
+                <Provider store={store}>
+                    <BrowserRouter>
+                        <Header/> 
+
+                        <Route exact path="/" component={HomePage}/>
+                        <Route exact path="/dev" component={DevPage}/>
+                        <Route exact path="/list" component={ListPage}/>
+                        <Route exact path="/details" component={RecipeDetailsPage}/>
+                        
+                        {/* <Footer/>  */}
+                    </BrowserRouter >
+                </Provider>
         );
     }
 }

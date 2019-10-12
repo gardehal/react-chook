@@ -8,7 +8,7 @@ const INITIAL_STATE =
 { 
     recipeError: "", 
     recipeLoading: false,
-    recipeResult: {},
+    recipeResult: [],
 };
 
 export default (state = INITIAL_STATE, action) =>

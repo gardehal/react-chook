@@ -1,14 +1,17 @@
 import React from "react";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
+// Redux imports
 import { getMetadataData } from "../actions/MetadataActions";
-import { renderLoading, renderError, getLongFormatDate } from "../actions/Shared";
+import { renderLoading, renderError, getLongFormatDate, setTitle } from "../actions/Shared";
 
-import { GET_RANDOM_DINNER, DB_RECIPE, DINNER, DB_META, TOTAL_RECIPES, TOTAL_INGREDIENTS, LAST_UPDATED, 
+// Variable imports
+import { GET_RANDOM_DINNER, TOTAL_RECIPES, TOTAL_INGREDIENTS, LAST_UPDATED, 
     BUTTON, METADATA, GET_DINNER_WEEK_MENU, ABOUT_US, CONTRIBUTE_TO_PAGE } from "../resources/language";
-import { ClickableImage } from "./common/ClickableImage";
-import Header from "./common/Header";
 import { getBackgroundColor } from "../resources/colors";
+
+// Component imports
+import { ClickableImage } from "./common/ClickableImage";
 
 class HomePage extends React.Component
 {
@@ -21,8 +24,9 @@ class HomePage extends React.Component
 
     componentWillMount()
     {
-        getMetadataData(DB_META);
-        console.log(this.props.metadataResult);
+        getMetadataData();
+        
+        setTitle();
     }
 
     initState()
@@ -41,10 +45,10 @@ class HomePage extends React.Component
     renderMetadata()
     {
         if(this.props.metadataLoading)
-            return renderLoading(true);
+            return renderLoading(false, this.props.contrastmode);
 
         if(this.props.metadataError)
-            return renderError(this.state.error, true);
+            return renderError(this.state.error, false, this.props.contrastmode);
 
         if(this.props.metadataResult[0])
         {   
@@ -82,7 +86,7 @@ class HomePage extends React.Component
     renderContent()
     {
         return (
-            <div style={{ ...this.contentContainerStyle, ...getBackgroundColor(this.props.contrastmode) }}>
+            <div>
                 <ClickableImage image={require("../resources/pictures/vegetable-market-shelf.jpg")} alttext={METADATA} title={this.renderMetadata()}
                     coverText={true} cursor="cursor" contrastmode={this.props.contrastmode}/>
                 <ClickableImage image={require("../resources/pictures/flour-pizza-hands.jpg")} alttext={GET_RANDOM_DINNER + BUTTON} title={GET_RANDOM_DINNER} 
@@ -100,10 +104,10 @@ class HomePage extends React.Component
     {
         return (
             <div style={{ ...getBackgroundColor(this.props.contrastmode) }}>
-                {/* TODO remove header from page, put in router or similar */}
-                <Header contrastmode={this.props.contrastmode}/> 
-                <div className="pageRootContainer" >
-                    {this.renderContent()}
+                <div className="pageRootContainer">
+                    <div style={{ ...this.contentContainerStyle, ...getBackgroundColor(this.props.contrastmode) }}>
+                        {this.renderContent()}
+                    </div>
                 </div>
             </div>
         );

@@ -1,8 +1,8 @@
 import React from "react";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
-import { toggleContrastmode } from "../../actions/SettingsActions";
-
+// Variable imports
 import {MAIN_TITLE, SEARCH, SEARCH_SOMETHING, HOME, ALL_RECIPES, UPLOAD, PROFILE, SETTINGS, RELOAD, DEV_OPTIONS, LOG_OUT, LOG_IN} from "../../resources/language";
 import { getAccentColor, getTextColor, getBackgroundColor } from "../../resources/colors";
 
@@ -29,7 +29,6 @@ class Header extends React.Component
         this.gotoProfile = this.gotoProfile.bind(this);
         this.gotoSettings = this.gotoSettings.bind(this);
         this.doReload = this.doReload.bind(this);
-        this.gotoDev = this.gotoDev.bind(this);
         this.toggleLogin = this.toggleLogin.bind(this);
         this.toggleDropdown = this.toggleDropdown.bind(this);
     }
@@ -198,12 +197,6 @@ class Header extends React.Component
         window.location.reload();
     }
 
-    // Go to devpage, or call some function under development
-    gotoDev()
-    {
-        toggleContrastmode(this.props.contrastmode);
-    }
-
     // TODO rename or find out what to do
     toggleLogin()
     {
@@ -239,9 +232,10 @@ class Header extends React.Component
                         <div className="btn-with-shadow" style={{ ...this.dropdownContainerItemStyle, ...getTextColor(this.props.contrastmode) }} onClick={() => this.doReload()}>
                             {RELOAD}
                         </div>
-                        <div className="btn-with-shadow" style={{ ...this.dropdownContainerItemStyle, ...getTextColor(this.props.contrastmode) }} onClick={() => this.gotoDev()}>
-                            {DEV_OPTIONS}
-                        </div>
+                        
+
+                        <Link className="btn-with-shadow" style={{ ...this.dropdownContainerItemStyle, ...getTextColor(this.props.contrastmode) }}  to="/dev">{DEV_OPTIONS}</Link>
+                        
                         <div className="btn-with-shadow" style={{ ...this.dropdownContainerItemStyle, ...getTextColor(this.props.contrastmode) }} onClick={() => this.toggleLogin()}>
                             {this.props.user ? LOG_OUT : LOG_IN}
                         </div>
@@ -273,9 +267,9 @@ class Header extends React.Component
     {
         return (
             <div className="hide-400" style={{ ...this.linkContainerStyle }}>
-                <div className="btn-with-shadow" style={{ ...this.linkStyle, ...getTextColor(this.props.contrastmode) }} to="/">{HOME}</div>
-                <div className="btn-with-shadow" style={{ ...this.linkStyle, ...getTextColor(this.props.contrastmode) }} to="/list">{ALL_RECIPES}</div>
-                <div className="btn-with-shadow" style={{ ...this.linkStyle, ...getTextColor(this.props.contrastmode) }} to="/upload">{UPLOAD}</div>
+                <Link className="btn-with-shadow" style={{ ...this.linkStyle, ...getTextColor(this.props.contrastmode) }} to="/">{HOME}</Link>
+                <Link className="btn-with-shadow" style={{ ...this.linkStyle, ...getTextColor(this.props.contrastmode) }} to="/list">{ALL_RECIPES}</Link>
+                <Link className="btn-with-shadow" style={{ ...this.linkStyle, ...getTextColor(this.props.contrastmode) }} to="/">{UPLOAD}</Link>
             </div>
         );
     }
@@ -290,9 +284,12 @@ class Header extends React.Component
         return (
             <div style={{ ...this.bannerStyle, ...getAccentColor(this.props.contrastmode) }}>
                 <div style={{ ...this.mainContainerStyle }}>
-                    <div style={{ ...this.titleContainerStyle }} onClick={this.doHome}>
-                        <h1 style={{ ...this.titleStyle, ...getTextColor(this.props.contrastmode) }}>{title}</h1>
-                    </div>
+                    {/* <Link className="btn-with-shadow" style={{ ...this.linkStyle, ...getTextColor(this.props.contrastmode) }} to="/">{HOME}</Link> */}
+                    <Link style={{ ...this.titleContainerStyle }} to="/">
+                        <h1 style={{ ...this.titleStyle, ...getTextColor(this.props.contrastmode) }}>
+                            {title}
+                        </h1>
+                    </Link>
 
                     {useSearch ? this.renderSearch() : (null)}
 
@@ -305,6 +302,12 @@ class Header extends React.Component
     }
 }
 
+const mapStateToProps = state => 
+{
+    const { contrastmode } = state.settings;
+    return { contrastmode };
+};
+
 export default connect(
-    null, { toggleContrastmode }
+    mapStateToProps, { }
 )(Header);

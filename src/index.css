@@ -6,6 +6,27 @@ body
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
+  padding: 0;
+}
+
+a
+{
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, p
+{
+  margin: 0;
+  padding: 0;
+}
+
+#root
+{
+  /* background-color: blue; */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
 }
 
 .pageRootContainer
@@ -18,9 +39,44 @@ body
     margin-right: auto;
 }
 
+.pageRootContainer:last-child
+{
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
 .centerContentDiv
 {
   text-align: center;
+}
+
+.rowStyle
+{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-self: stretch;
+}
+
+.rowStyle > *
+{
+    position: relative;
+    display: inline-block;
+}
+
+.row
+{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-self: stretch;
+}
+
+.row > *
+{
+    position: relative;
+    display: inline-block;
+    margin: 1px;
 }
 
 .moveable-btn 
