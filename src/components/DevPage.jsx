@@ -124,41 +124,33 @@ class DevPage extends React.Component
 
     renderContent()
     {
-        // if(this.props.metadataLoading)
-        //     return renderLoading(true, this.props.contrastmode);
-
-        // if(this.props.metadataError)
-        //     return renderError(this.props.metadataError, true, this.props.contrastmode);
-
         return (
-            <div style={getBackgroundColor(this.props.contrastmode)}>
-                <div className="pageRootContainer">
-                    <ClickableImage image={require("../resources/pictures/vegetable-market-shelf.jpg")} alttext={METADATA} title={this.renderMetadata()}
-                        coverText={true} cursor="cursor" contrastmode={this.props.contrastmode}/>
+            <div>
+                <ClickableImage image={require("../resources/pictures/vegetable-market-shelf.jpg")} alttext={METADATA} title={this.renderMetadata()}
+                    coverText={true} cursor="cursor" contrastmode={this.props.contrastmode}/>
 
-                    <div>
-                        <div className="rowStyle">
-                            <Button onClick={this.updateMetaData} contrastmode={this.props.contrastmode} text={UPDATE_METADATA}/>   
-                            <Button onClick={() => toggleContrastmode(this.props.contrastmode)} contrastmode={this.props.contrastmode} text={CONTRASTMODE}/>         
-                        </div> 
+                <div>
+                    <div className="rowStyle">
+                        <Button onClick={this.updateMetaData} contrastmode={this.props.contrastmode} text={UPDATE_METADATA}/>   
+                        <Button onClick={() => toggleContrastmode(this.props.contrastmode)} contrastmode={this.props.contrastmode} text={CONTRASTMODE}/>         
+                    </div> 
 
-                        <div className="rowStyle">
-                            <Button onClick={() => window.location.href="https://console.firebase.google.com/u/0/"} contrastmode={this.props.contrastmode} text={"Firebase"}/> 
-                            <Button onClick={() => window.location.href="https://kolonial.no"} contrastmode={this.props.contrastmode} text={"Kolonial"}/>      
-                        </div> 
+                    <div className="rowStyle">
+                        <Button onClick={() => window.location.href="https://console.firebase.google.com/u/0/"} contrastmode={this.props.contrastmode} text={"Firebase"}/> 
+                        <Button onClick={() => window.location.href="https://kolonial.no"} contrastmode={this.props.contrastmode} text={"Kolonial"}/>      
+                    </div> 
 
-                        <div className="rowStyle">
-                            <Button onClick={this.testLoading} contrastmode={this.props.contrastmode} text={"Test Loading"}/> 
-                            <Button onClick={this.testSmallLoading} contrastmode={this.props.contrastmode} text={"Test Small Loading"}/> 
-                        </div>   
-                        <div style={getTextColor(this.props.contrastmode)}>{this.state.smallLoading ? renderLoading(false, this.props.contrastmode) : "Click Test Small Loading"}</div>  
-                        
-                        <div className="rowStyle">
-                            <Button onClick={this.testError} contrastmode={this.props.contrastmode} text={"Test Error"}/>   
-                            <Button onClick={this.testSmallError} contrastmode={this.props.contrastmode} text={"Test Small Error"}/>
-                        </div>
-                        <div style={getTextColor(this.props.contrastmode)}>{this.state.smallError ? renderError(this.state.smallError, false, this.props.contrastmode) : "Click Test Small Error"}</div>
+                    <div className="rowStyle">
+                        <Button onClick={this.testLoading} contrastmode={this.props.contrastmode} text={"Test Loading"}/> 
+                        <Button onClick={this.testSmallLoading} contrastmode={this.props.contrastmode} text={"Test Small Loading"}/> 
+                    </div>   
+                    <div style={getTextColor(this.props.contrastmode)}>{this.state.smallLoading ? renderLoading(false, this.props.contrastmode) : "Click Test Small Loading"}</div>  
+                    
+                    <div className="rowStyle">
+                        <Button onClick={this.testError} contrastmode={this.props.contrastmode} text={"Test Error"}/>   
+                        <Button onClick={this.testSmallError} contrastmode={this.props.contrastmode} text={"Test Small Error"}/>
                     </div>
+                    <div style={getTextColor(this.props.contrastmode)}>{this.state.smallError ? renderError(this.state.smallError, false, this.props.contrastmode) : "Click Test Small Error"}</div>
                 </div>
             </div>);
     }
@@ -167,7 +159,11 @@ class DevPage extends React.Component
     {
         return (
             <div style={{ ...getBackgroundColor(this.props.contrastmode) }}>
-                {this.renderContent()}
+                <div style={getBackgroundColor(this.props.contrastmode)}>
+                    <div className="pageRootContainer">
+                        {this.renderContent()}
+                    </div>
+                </div>
             </div>
         );
     }
