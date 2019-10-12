@@ -49,7 +49,7 @@ I think I've come to a final conclusion that a webpage is the superior option, a
 
 Special thanks to [Pexels](https://www.pexels.com) for the pictures.
 
-![logo](src\resources\icons\chook-icon-1-bg.png)
+![logo](./src/resources/icons/chook-icon-1-bg.png)
 
 -------------------------------------------------------------------------------------------------------------------------------
 
