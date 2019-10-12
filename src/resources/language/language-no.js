@@ -64,6 +64,8 @@ export const ABOUT_US = "Om oss";
 export const CONTRIBUTE_TO_PAGE = "Bidra til siden";
 export const BUTTON = " knapp";
 export const METADATA = "Metadata";
+export const PREPARATION = "forberedelse";
+export const TOTAL = "totalt";
 
 // Upload
 export const RECIPE_TEXT_FORMAT = "Oppskriftsformat";
