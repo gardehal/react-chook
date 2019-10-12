@@ -10,6 +10,7 @@ export class RecipeCard extends React.Component
     // contrastmode: use contrastmode (aka nightmode/darkmode), default false
     // recipe: the recipe whos data we are displaying: no defaults
     // doLink: allows clicking on the recipe to go to details, default true
+    // subRecipe: if data is a subrecipe in another recipe, will use special fields to display, false
 
     constructor(props)
     {
@@ -48,7 +49,14 @@ export class RecipeCard extends React.Component
     gotoDetails(id)
     {
         if(this.props.doLink || this.props.doLink === undefined)
+        {
             this.props.history.history.push("/details/?" + DB_RECIPE + "=" + id);
+            
+            //TODO: when clicking subrecipe, this is needed to make the page reload and show the subrecipe instead of the parent recipe
+            // However, the screen flashes white, which can be painful for the eyes in contrastmode
+            if(this.props.subRecipe)
+                window.location.reload();
+        }
         else    
             console.log("The recipe (" + this.props.recipe.recipe_title + ") was not linked intentionally to due to the prop \"doLink\" being: " + this.props.doLink);
     }
@@ -56,6 +64,17 @@ export class RecipeCard extends React.Component
     render()
     {
         let recipe = this.props.recipe;
+
+        if(this.props.subRecipe)
+            return (
+                <div className="btn-with-shadow" style={{ ...this.containerStyle, ...getLightBackgroundColor(this.props.contrastmode) }} 
+                    onClick={this.gotoDetails.bind(this, recipe.sub_recipe_id)}>
+                    <div style={{ ...this.titleContainerStyle }}>
+                        <p style={{ ...this.titleStyle, ...getTextColor(this.props.contrastmode) }}>{recipe.sub_recipe_title}</p>
+                    </div>
+                </div>
+            );
+
         let recipeId = recipe.recipe_id;
         let recipeTitle = recipe.recipe_title;
         let recipeType = recipe.recipe_type;

@@ -9,6 +9,7 @@ import { renderLoading, renderError, setTitle } from "../actions/Shared";
 // Variable imports
 import { getBackgroundColor, getLightBackgroundColor, getTextColor } from "../resources/colors";
 import { DB_RECIPE, DB_FETCH_FAILED, NORWEGIAN_KRONER, MINUTES, PREPARATION, TOTAL, PORTIONS } from "../resources/language";
+import { RecipeCard } from "./common/RecipeCard";
 
 // Component imports
 
@@ -27,7 +28,6 @@ class RecipeDetailsPage extends React.Component
         getRecipeData("recipe_id", id, 1);
 
         getRecipeData();
-        // getIngredientData();
     }
 
     initState()
@@ -47,17 +47,27 @@ class RecipeDetailsPage extends React.Component
 
         setTitle(recipe.recipe_title);
 
+        // Extract data that can be undefined to local vars and display based on undefined or not
         let method = (recipe.recipe_cooking_method ? recipe.recipe_cooking_method : "");
         let methodTemp = (recipe.recipe_cooking_method_temperature ? recipe.recipe_cooking_method_temperature : "");
         let methodTempUnit = (recipe.recipe_cooking_method_temperature_unit ? recipe.recipe_cooking_method_temperature_unit : "")
 
+        // Make a JSX array of all the ingredients and render this array later
         let ingredientsJsx = [];
         for(let ingredientsIndex = 0; ingredientsIndex < recipe.recipe_ingredients.length; ingredientsIndex++)
-        ingredientsJsx.push(
+            ingredientsJsx.push(
                 <p key={"ingredient" + ingredientsIndex} style={{ ...getTextColor(this.props.contrastmode) }}>
                     {recipe.recipe_ingredients[ingredientsIndex].ingredient_name}
                 </p>);
+                
+        // Make a JSX array of all the sub recipes (if any) and render this array later
+        let subRecipeJsx = [];
+        if(recipe.recipe_sub_recipes)
+            for(let subRecipeIndex = 0; subRecipeIndex < recipe.recipe_sub_recipes.length; subRecipeIndex++)
+                subRecipeJsx.push(<RecipeCard key={"subRecipe" + subRecipeIndex} recipe={recipe.recipe_sub_recipes[subRecipeIndex]} history={this.props}
+                    subRecipe={true} contrastmode={this.props.contrastmode}/>);
 
+        // Make a JSX array of all the instructions and render this array later
         let instructionsJsx = [];
         for(let instructionsIndex = 0; instructionsIndex < recipe.recipe_instructions.length; instructionsIndex++)
             instructionsJsx.push(
@@ -65,10 +75,11 @@ class RecipeDetailsPage extends React.Component
                     {recipe.recipe_instructions[instructionsIndex]}
                 </p>);
 
-        let recipesJsx = [];
+        // Make a JSX array of all the notes (if any) and render this array later
+        let recipeNotesJsx = [];
         if(recipe.recipe_notes)
             for(let instructionsIndex = 0; instructionsIndex < recipe.recipe_notes.length; instructionsIndex++)
-                recipesJsx.push(
+                recipeNotesJsx.push(
                     <p key={"instruction" + instructionsIndex} style={{ ...getTextColor(this.props.contrastmode) }}>
                         {recipe.recipe_notes[instructionsIndex]}
                     </p>);
@@ -84,11 +95,12 @@ class RecipeDetailsPage extends React.Component
                 {method ? <hr/> : (null)}
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{method + " " + methodTemp + " " + methodTempUnit}</p>
                 <hr/>
+                {subRecipeJsx}
                 {ingredientsJsx}
                 <hr/>
                 {instructionsJsx}
                 {recipe.recipe_notes ? <hr/> : (null)}
-                {recipesJsx}
+                {recipeNotesJsx}
             </div>);
     }
 
