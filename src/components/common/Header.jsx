@@ -1,5 +1,5 @@
 import React from "react";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
 // Variable imports
@@ -268,7 +268,7 @@ class Header extends React.Component
         return (
             <div className="hide-400" style={{ ...this.linkContainerStyle }}>
                 <Link className="btn-with-shadow" style={{ ...this.linkStyle, ...getTextColor(this.props.contrastmode) }} to="/">{HOME}</Link>
-                <Link className="btn-with-shadow" style={{ ...this.linkStyle, ...getTextColor(this.props.contrastmode) }} to="/">{ALL_RECIPES}</Link>
+                <Link className="btn-with-shadow" style={{ ...this.linkStyle, ...getTextColor(this.props.contrastmode) }} to="/list">{ALL_RECIPES}</Link>
                 <Link className="btn-with-shadow" style={{ ...this.linkStyle, ...getTextColor(this.props.contrastmode) }} to="/">{UPLOAD}</Link>
             </div>
         );

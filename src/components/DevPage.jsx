@@ -1,16 +1,16 @@
 import React from "react";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import store from "../store";
 
 // Redux imports
 import { METADATA_LOADING, METADATA_LOADING_COMPLETE, METADATA_TEST_ERROR, METADATA_ERROR_RESOLVED } from "../actions/types";
 import { getMetadataData, setMetadataData } from "../actions/MetadataActions";
-import { renderLoading, renderError, getLongFormatDate, addLeadingZeros } from "../actions/Shared";
+import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle } from "../actions/Shared";
 import { toggleContrastmode } from "../actions/SettingsActions";
 
 // Variable imports
 import { TEST_ERROR, DB_META, TOTAL_RECIPES, TOTAL_INGREDIENTS, 
-    LAST_UPDATED, UPDATE_METADATA, METADATA, CONTRASTMODE } from "../resources/language";
+    LAST_UPDATED, UPDATE_METADATA, METADATA, CONTRASTMODE, DEV } from "../resources/language";
 import { getBackgroundColor, getTextColor } from "../resources/colors";
 
 // Component imports
@@ -35,6 +35,8 @@ class DevPage extends React.Component
     {
         getMetadataData(DB_META);
         console.log(this.props.metadataResult);
+        
+        setTitle(DEV);
     }
 
     initState()
