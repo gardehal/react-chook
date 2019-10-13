@@ -150,15 +150,17 @@ class Header extends React.Component
     // Calling a search and moving to searchresult page
     doSearch()
     {
-        // let term = document.getElementById("searchTermHeader").value;
+        // let term = document.getElementById("searchTermHeader").value || "";
 
-        // if(this.props.location.pathname !== "/search/")
+        // if(this.props.location.pathname !== "/search/" && term)
         //     this.props.history.push("/search/?term=" + term);
         // else
         // {
-        //     this.props.history.push("/search/?term=" + term);
-        //     location.reload();
+            // this.props.history.push("/search/?term=" );
+            // location.reload();
         // }
+        
+        window.location.assign("/search/?term=");
     }
 
     // Go to frontpage ("Home" page)
