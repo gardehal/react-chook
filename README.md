@@ -20,15 +20,17 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] List of recipes
 - [x] Page for recipe details
 - [ ] Search
+- [ ] Alert toast
 - [ ] Editing DB data
 - [ ] Uploading to DB
 - [ ] Dinner planning features
 - [ ] Users
 - [ ] Moderation tools
 - [ ] Deploying to designated server
-- [ ] Roadmap update
 - [ ] Better sorting (ex alphabetical order)
-- [ ] General optimization 
+- [ ] General optimization
+- [ ] Timer
+- [ ] Roadmap update
 
 ## Ongoing TODOs
 - [ ] Find, try, and upload recipes
@@ -49,7 +51,7 @@ I think I've come to a final conclusion that a webpage is the superior option, a
 
 Special thanks to [Pexels](https://www.pexels.com) for the pictures.
 
-![logo](./src/resources/icons/chook-icon-1-bg.png)
+![Chook logo](./src/resources/icons/chook-icon-1-bg.png)
 
 -------------------------------------------------------------------------------------------------------------------------------
 
