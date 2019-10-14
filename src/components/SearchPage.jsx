@@ -7,13 +7,12 @@ import { getIngredientData } from "../actions/IngredientActions";
 import { renderLoading, renderError, setTitle } from "../actions/Shared";
 
 // Variable imports
-import { DB_FETCH_FAILED, LOAD, INGREDIENTS, SEARCH_SOMETHING, SEARCH, INVALID_SEARCH_TERM, NO_RESULTS_FOR } from "../resources/language";
+import { SEARCH_SOMETHING, SEARCH, INVALID_SEARCH_TERM, NO_RESULTS_FOR } from "../resources/language";
 import { getBackgroundColor, getTextColor } from "../resources/colors";
 
 // Component imports
 import { RecipeCard } from "./common/RecipeCard";
 import { IngredientCard } from "./common/IngredientCard";
-import { Button } from "./common/Button";
 
 class SearchPage extends React.Component
 {

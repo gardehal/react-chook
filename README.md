@@ -19,7 +19,7 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Database connection
 - [x] List of recipes
 - [x] Page for recipe details
-- [ ] Search
+- [x] Search
 - [ ] Alert toast
 - [ ] Editing DB data
 - [ ] Uploading to DB
