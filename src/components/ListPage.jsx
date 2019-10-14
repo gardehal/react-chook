@@ -14,23 +14,57 @@ import { getBackgroundColor } from "../resources/colors";
 import { RecipeCard } from "./common/RecipeCard";
 import { IngredientCard } from "./common/IngredientCard";
 import { Button } from "./common/Button";
-import { deepEqual } from "assert";
 
 class ListPage extends React.Component
 {
     constructor(props)
     {
         super(props);
+        this.state = { ingredientJsx: [] };
 
-        this.state = {load: false};
+        this.renderIngredient = this.renderIngredient.bind(this);
     }
 
     componentWillMount()
     {
         getRecipeData();
-        getIngredientData();
         
         setTitle();
+    }
+
+    loadIngredients()
+    { 
+        getIngredientData();
+    
+        // Since the get methods from database are async and only updates the props, set an interval to run a method every X milliseconds
+        this.loadedCheckerInterval = setInterval(() => this.renderIngredient(), 250);
+    }
+
+    renderIngredient()
+    {
+        // If loading is true, return since we don't have the data yet
+        if(this.props.ingredientLoading)
+        {
+            this.setState({ ingredientJsx: renderLoading(false, this.props.contrastmode)} );
+            return;
+        }
+
+        // Clear interval since it has completed it's task
+        clearInterval(this.loadedCheckerInterval);
+
+        if(this.props.ingredientError)
+            this.ingredientJsx.push(renderError(DB_FETCH_FAILED, false, this.props.contrastmode));
+
+        // Make a JSX array of all the ingredients in a card component
+        let ingredientJsx = [];
+        let ingredients = this.props.ingredientResult;
+
+        for(let ingredientIndex = 0; ingredientIndex < ingredients.length; ingredientIndex++)
+            ingredientJsx.push(<IngredientCard key={"ingredient" + ingredientIndex} ingredient={ingredients[ingredientIndex]} history={this.props} 
+                contrastmode={this.props.contrastmode}/>);
+
+        // The setState method forces the component to re-render with the new data
+        this.setState({ ingredientJsx: ingredientJsx });
     }
 
     renderContent()
@@ -47,29 +81,15 @@ class ListPage extends React.Component
                     contrastmode={this.props.contrastmode}/>);
         else
             recipeJsx.push(renderError(DB_FETCH_FAILED, false, this.props.contrastmode));
-            
-        // TODO implement actual loading of ingredients, not just trigger display
-        // Make a JSX array of all the ingredients in a card component
-        let ingredientJsx = [];
-        let ingredients = this.props.ingredientResult;
 
-        if(this.props.ingredientLoading)
-            ingredientJsx.push(renderLoading(false, this.props.contrastmode));
-        else if(ingredients || ingredients.length > 0)
-            for(let ingredientIndex = 0; ingredientIndex < ingredients.length; ingredientIndex++)
-            ingredientJsx.push(<IngredientCard key={"ingredient" + ingredientIndex} ingredient={ingredients[ingredientIndex]} history={this.props} contrastmode={this.props.contrastmode}/>);
-            // this.ingredientJsx.push( <p>{ingredientIndex}</p> );
-        else
-            ingredientJsx.push(renderError(DB_FETCH_FAILED, false, this.props.contrastmode));
-
-        // Render the arrays
+        // Render the array
         return (
             <div>
                 {recipeJsx}
                 <hr/>
                 
-                <Button onClick={() => this.setState({load: true})} contrastmode={this.props.contrastmode} text={LOAD + " " + INGREDIENTS}/> 
-                {this.state.load ? ingredientJsx : null}
+                <Button onClick={() => this.loadIngredients()} contrastmode={this.props.contrastmode} text={LOAD + " " + INGREDIENTS}/> 
+                {this.state.ingredientJsx}
             </div>);
     }
 
