@@ -20,15 +20,20 @@ class SearchPage extends React.Component
     constructor(props)
     {
         super(props);
+        this.state = { result: [] };
         this.initStyle();
+
+        this.doSearch = this.doSearch.bind(this);
     }
 
     componentWillMount()
     {
-        getRecipeData();
-        getIngredientData();
+        // Get term from url
+        let url = window.location.href;
+        let term = url.split("search/?term=")[1];
         
-        setTitle();
+        if(term)
+            this.doSearch(decodeURIComponent(term));
     }
 
     initStyle()
@@ -63,13 +68,33 @@ class SearchPage extends React.Component
         };
     }
 
+    doSearch(term = undefined)
+    {
+        // Get term from the searchfield in body
+        if(term.value === undefined && this.refs.searchFieldBody)
+            term = this.refs.searchFieldBody.value;
+
+        // Sanitized by default; see https://reactjs.org/docs/introducing-jsx.html#jsx-prevents-injection-attacks 
+
+        if(term.length < 1 || term === undefined)
+            return;
+
+        console.log("Searching for: \"" + term + "\"");
+        setTitle(term);
+
+        // Search
+        getRecipeData();
+        getIngredientData();
+        
+        this.setState({ result: [term] });
+    }
 
     renderSearch()
     {
         return (
             <div style={{ ...this.searchContainerStyle }} >
                 <form style={{ ...this.searchFormStyle, ...getTextColor(this.props.contrastmode) }} onSubmit={this.doSearch}>
-                    <input style={{ ...this.searchFieldStyle, ...getTextColor(this.props.contrastmode) }} id="searchFieldHeader" type="text" placeholder={SEARCH_SOMETHING}/>
+                    <input id="searchFieldBody" ref="searchFieldBody" style={{ ...this.searchFieldStyle, ...getTextColor(this.props.contrastmode) }} type="text" placeholder={SEARCH_SOMETHING}/>
                     <div className="btn-with-shadow" style={{ ...this.searchButtonStyle, ...getTextColor(this.props.contrastmode) }} onClick={this.doSearch}>
                         {SEARCH}
                     </div>
@@ -80,18 +105,12 @@ class SearchPage extends React.Component
 
     renderContent()
     {
-        let result = [];
-        // get search term
-        // handle search
-        // collate data
-
         return (
             <div>
                 {this.renderSearch()}
                 <hr/>
-                
-                results goes here
-                {result}
+            
+                {this.state.result}
             </div>);
     }
 

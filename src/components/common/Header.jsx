@@ -150,17 +150,9 @@ class Header extends React.Component
     // Calling a search and moving to searchresult page
     doSearch()
     {
-        // let term = document.getElementById("searchTermHeader").value || "";
+        let term = encodeURIComponent(this.refs.searchFieldHeader.value);
 
-        // if(this.props.location.pathname !== "/search/" && term)
-        //     this.props.history.push("/search/?term=" + term);
-        // else
-        // {
-            // this.props.history.push("/search/?term=" );
-            // location.reload();
-        // }
-        
-        window.location.assign("/search/?term=");
+        window.location.assign("/search/?term=" + term);
     }
 
     // Go to frontpage ("Home" page)
@@ -255,7 +247,7 @@ class Header extends React.Component
         return (
             <div className="hide-650" style={{ ...this.searchContainerStyle }} >
                 <form style={{ ...this.searchFormStyle, ...getTextColor(this.props.contrastmode) }} onSubmit={this.doSearch}>
-                    <input style={{ ...this.searchFieldStyle, ...getTextColor(this.props.contrastmode) }} id="searchFieldHeader" type="text" placeholder={SEARCH_SOMETHING}/>
+                    <input id="searchFieldHeader" ref="searchFieldHeader" style={{ ...this.searchFieldStyle, ...getTextColor(this.props.contrastmode) }} type="text" placeholder={SEARCH_SOMETHING}/>
                     <div className="btn-with-shadow" style={{ ...this.searchButtonStyle, ...getTextColor(this.props.contrastmode) }} onClick={this.doSearch}>
                         {SEARCH}
                     </div>
