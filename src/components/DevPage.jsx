@@ -51,7 +51,7 @@ class DevPage extends React.Component
 
     sleep(milliseconds)
     {
-        return new Promise(resolve => setTimeout(resolve, milliseconds))
+        return new Promise(resolve => setTimeout(resolve, milliseconds));
     }
 
     testLoading()

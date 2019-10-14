@@ -7,7 +7,7 @@ import { getIngredientData } from "../actions/IngredientActions";
 import { renderLoading, renderError, setTitle } from "../actions/Shared";
 
 // Variable imports
-import { DB_FETCH_FAILED, LOAD, INGREDIENTS, SEARCH_SOMETHING, SEARCH } from "../resources/language";
+import { DB_FETCH_FAILED, LOAD, INGREDIENTS, SEARCH_SOMETHING, SEARCH, INVALID_SEARCH_TERM, NO_RESULTS_FOR } from "../resources/language";
 import { getBackgroundColor, getTextColor } from "../resources/colors";
 
 // Component imports
@@ -24,6 +24,7 @@ class SearchPage extends React.Component
         this.initStyle();
 
         this.doSearch = this.doSearch.bind(this);
+        this.setSearchResults = this.setSearchResults.bind(this);
     }
 
     componentWillMount()
@@ -77,16 +78,52 @@ class SearchPage extends React.Component
         // Sanitized by default; see https://reactjs.org/docs/introducing-jsx.html#jsx-prevents-injection-attacks 
 
         if(term.length < 1 || term === undefined)
+        {
+            this.setState({ result: INVALID_SEARCH_TERM });
             return;
+        }
 
         console.log("Searching for: \"" + term + "\"");
         setTitle(term);
 
-        // Search
+        // Get our data
         getRecipeData();
         getIngredientData();
-        
-        this.setState({ result: [term] });
+    
+        // Since the get methods from database are async and only updates the props, set an interval to run a method every X milliseconds
+        this.searchCheckerInterval = setInterval(() => this.setSearchResults(term), 250);
+    }
+
+    setSearchResults(term)
+    {
+        // If loading is true, return since we don't have the data yet
+        if(this.props.recipeLoading || this.props.ingredientLoading)
+            return;
+
+        // Clear interval since it has completed it's task
+        clearInterval(this.searchCheckerInterval);
+
+        // Sort and collate data - NB: Currently only searches on title and name
+        let resultJsx = [];
+        let recipes = this.props.recipeResult;
+
+        for(let resultIndex = 0; resultIndex < recipes.length; resultIndex++)
+            if(recipes[resultIndex].recipe_title.includes(term))
+                resultJsx.push(<RecipeCard key={"recipe_result" + resultIndex} recipe={recipes[resultIndex]} history={this.props}
+                    contrastmode={this.props.contrastmode}/>);
+
+        let ingredients = this.props.ingredientResult;
+
+        for(let resultIndex = 0; resultIndex < ingredients.length; resultIndex++)
+            if(ingredients[resultIndex].ingredient_name.includes(term))
+                resultJsx.push(<IngredientCard key={"ingredient_result" + resultIndex} ingredient={ingredients[resultIndex]} history={this.props} 
+                    contrastmode={this.props.contrastmode}/>);
+
+        if(resultJsx.length < 1)
+            resultJsx.push(renderError(NO_RESULTS_FOR + "\"" + term + "\"", true, this.props.contrastmode));
+          
+        // The setState method forces the component to re-render with the new data
+        this.setState({ result: resultJsx });
     }
 
     renderSearch()
@@ -103,6 +140,18 @@ class SearchPage extends React.Component
         );
     }
 
+    renderSearchContent()
+    {
+        if(this.props.recipeLoading)
+            return renderLoading(false, this.props.contrastmode);
+
+        if(this.props.recipeError)
+            return renderError(this.props.recipeError, false, this.props.contrastmode);
+
+        if(this.props.recipeResult[0])
+            return this.state.result;
+    }
+
     renderContent()
     {
         return (
@@ -110,7 +159,7 @@ class SearchPage extends React.Component
                 {this.renderSearch()}
                 <hr/>
             
-                {this.state.result}
+                {this.renderSearchContent()}
             </div>);
     }
 
