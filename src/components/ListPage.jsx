@@ -57,8 +57,8 @@ class ListPage extends React.Component
             ingredientJsx.push(renderLoading(false, this.props.contrastmode));
         else if(ingredients || ingredients.length > 0)
             for(let ingredientIndex = 0; ingredientIndex < ingredients.length; ingredientIndex++)
-            ingredientJsx.push(<IngredientCard key={"ingredient" + ingredientIndex} ingredient={ingredients[ingredientIndex]} history={this.props} contrastmode={this.props.contrastmode}/>);
-            // this.ingredientJsx.push( <p>{ingredientIndex}</p> );
+                ingredientJsx.push(<IngredientCard key={"ingredient" + ingredientIndex} ingredient={ingredients[ingredientIndex]} history={this.props} 
+                    contrastmode={this.props.contrastmode}/>);
         else
             ingredientJsx.push(renderError(DB_FETCH_FAILED, false, this.props.contrastmode));
 

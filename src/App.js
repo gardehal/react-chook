@@ -3,7 +3,7 @@ import firebase from "firebase/app";
 import env from "./secrets/env";
 import { Provider } from "react-redux";
 import store from "./store";
-import { BrowserRouter , Route, Link } from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
 
 // Redux imports
 import { SETTINGS_TOGGLE_CONTRASTMODE } from "./actions/types";
@@ -17,6 +17,7 @@ import DevPage from "./components/DevPage";
 import Header from "./components/common/Header";
 import ListPage from "./components/ListPage";
 import RecipeDetailsPage from "./components/RecipeDetailsPage";
+import SearchPage from "./components/SearchPage";
 
 class App extends React.Component 
 {
@@ -54,6 +55,7 @@ class App extends React.Component
                         <Route exact path="/dev" component={DevPage}/>
                         <Route exact path="/list" component={ListPage}/>
                         <Route exact path="/details" component={RecipeDetailsPage}/>
+                        <Route exact path="/search" component={SearchPage}/>
                         
                         {/* <Footer/>  */}
                     </BrowserRouter >
