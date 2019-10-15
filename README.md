@@ -21,9 +21,10 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Page for recipe details
 - [x] Search
 - [x] Alert toast
-- [ ] Editing DB data
 - [ ] Uploading to DB
+- [ ] Editing DB data
 - [ ] Dinner planning features
+- [ ] Footer
 - [ ] Users
 - [ ] Moderation tools
 - [ ] Deploying to designated server

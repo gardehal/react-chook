@@ -7,6 +7,7 @@ import { BrowserRouter, Route } from "react-router-dom";
 
 // Redux imports
 import { SETTINGS_TOGGLE_CONTRASTMODE } from "./actions/types";
+import { getApiExample } from "./resources/ApiExample";
 
 // Variable imports
 import { NOT_FOUND_404, ERROR, PAGE_NOT_FOUND } from "./resources/language";
@@ -18,7 +19,7 @@ import Header from "./components/common/Header";
 import ListPage from "./components/ListPage";
 import RecipeDetailsPage from "./components/RecipeDetailsPage";
 import SearchPage from "./components/SearchPage";
-import { getApiExample } from "./resources/ApiExample";
+import UploadPage from "./components/UploadPage";
 
 class App extends React.Component 
 {
@@ -59,6 +60,7 @@ class App extends React.Component
                         <Route exact path="/list" component={ListPage}/>
                         <Route exact path="/details" component={RecipeDetailsPage}/>
                         <Route exact path="/search" component={SearchPage}/>
+                        <Route exact path="/upload" component={UploadPage}/>
                         
                         {/* <Footer/>  */}
                     </BrowserRouter >
