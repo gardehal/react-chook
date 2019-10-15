@@ -1,6 +1,6 @@
-import { DB_RECIPE, DB_INGREDIENT } from "../resources/language";
+import { DB_INGREDIENT } from "../resources/language";
 import { GET_INGREDIENT_DATA_SUCCESS, GET_INGREDIENT_DATA_FAIL, INGREDIENT_LOADING } from "./types";
-import { getDatabaseData } from "./Shared";
+import { getDatabaseData } from "../resources/Shared";
 
 
 // Get

@@ -79,7 +79,7 @@ export class RecipeCard extends React.Component
         let recipeTitle = recipe.recipe_title;
         let recipeType = recipe.recipe_type;
         let recipeGrade = recipe.recipe_grade;
-        let recipeRating = recipe.recipe_rating;
+        // let recipeRating = recipe.recipe_rating;
         let recipePrice = recipe.recipe_price;
         let recipeTTotal = recipe.recipe_time_total;
 

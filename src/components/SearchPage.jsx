@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 // Redux imports
 import { getRecipeData } from "../actions/RecipeActions";
 import { getIngredientData } from "../actions/IngredientActions";
-import { renderLoading, renderError, setTitle } from "../actions/Shared";
+import { renderLoading, renderError, setTitle } from "../resources/Shared";
 
 // Variable imports
 import { SEARCH_SOMETHING, SEARCH, INVALID_SEARCH_TERM, NO_RESULTS_FOR } from "../resources/language";

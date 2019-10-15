@@ -32,6 +32,8 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Timer
 - [ ] Roadmap update
 
+add screenshots and API example usage
+
 ## Ongoing TODOs
 - [ ] Find, try, and upload recipes
 - [ ] Testing

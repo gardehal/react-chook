@@ -18,6 +18,7 @@ import Header from "./components/common/Header";
 import ListPage from "./components/ListPage";
 import RecipeDetailsPage from "./components/RecipeDetailsPage";
 import SearchPage from "./components/SearchPage";
+import { getApiExample } from "./resources/ApiExample";
 
 class App extends React.Component 
 {
@@ -26,6 +27,8 @@ class App extends React.Component
         super(props);
 
         firebase.initializeApp(env);
+
+        // getApiExample("https://rallycoding.herokuapp.com/api/music_albums");
 
         // Get stored settings from localStorage
         if(localStorage.getItem("contrastmode") === "true")
