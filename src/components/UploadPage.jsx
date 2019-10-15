@@ -20,7 +20,8 @@ class UploadPage extends React.Component
         super(props);
         this.state = { queue: [] };
 
-        // this.renderIngredient = this.renderIngredient.bind(this);
+        this.validateData = this.validateData.bind(this);
+        this.upload = this.upload.bind(this);
     }
 
     componentWillMount()
@@ -71,16 +72,35 @@ class UploadPage extends React.Component
         );
     }
 
+    validateData()
+    {
+        console.log("validateData");
+        
+        // TODO replace with validData boolean
+        if(new Date().getSeconds() % 5 === 0)
+            this.setState({ queue: [1, 2, 3] });
+    }
+
+    upload()
+    {
+        console.log("upload");
+        this.setState({ queue: [] });
+    }
+
     renderUploadButtons()
     {
+        // Since components can be stubborn and refuse to re-render with new props, 
+        // get a variable that chages (like ms) and set it as a key, this forces the component to re-render.
+        let ms = new Date().getMilliseconds();
+        
         return (
             <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
                 <h3 style={{ ...getTextColor(this.props.contrastmode) }}>{OVERVIEW}</h3>
                 {this.queue ? <p style={{ ...getTextColor(this.props.contrastmode) }}>{UPLOAD_QUEUE + ": " + this.queue}</p> : (null)}
 
                 <div className="rowStyle">
-                    <Button onClick={() => { this.setState({ queue: [1, 2, 3] }) }} contrastmode={this.props.contrastmode} text={VALIDATE_UPLOAD_QUEUE}/> 
-                    <Button onClick={(this.state.queue.length > 1 ? (() => { this.setState({ queue: [] }) }) : (null))} contrastmode={this.props.contrastmode} text={UPLOAD}/> 
+                    <Button onClick={this.validateData} contrastmode={this.props.contrastmode} text={VALIDATE_UPLOAD_QUEUE}/> 
+                    <Button key={"uploadButton" + ms} onClick={(this.state.queue.length > 1 ? this.upload : (null))} contrastmode={this.props.contrastmode} text={UPLOAD}/> 
                 </div>
             </div>
         );
