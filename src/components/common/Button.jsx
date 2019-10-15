@@ -23,9 +23,10 @@ export class Button extends React.Component
         this.containerStyle =
         {
             position: "relative",
-            cursor: (this.props.inactive ? "auto" : "pointer"),
+            cursor: (this.props.onClick ? "pointer" : "auto"),
             overflow: "hidden",
             margin: "0.5em",
+            opacity: (this.props.onClick ? "auto" : "0.5"),
         };
         this.buttonStyle = 
         {

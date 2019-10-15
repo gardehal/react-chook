@@ -24,6 +24,7 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Uploading to DB
 - [ ] Editing DB data
 - [ ] Dinner planning features
+- [ ] Settings
 - [ ] Footer
 - [ ] Users
 - [ ] Moderation tools
