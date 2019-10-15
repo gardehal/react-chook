@@ -20,7 +20,7 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] List of recipes
 - [x] Page for recipe details
 - [x] Search
-- [ ] Alert toast
+- [x] Alert toast
 - [ ] Editing DB data
 - [ ] Uploading to DB
 - [ ] Dinner planning features
@@ -52,6 +52,9 @@ I think I've come to a final conclusion that a webpage is the superior option, a
 Special thanks to [Pexels](https://www.pexels.com) for the pictures.
 
 ![Chook logo](./src/resources/icons/chook-icon-1-bg.png)
+![Frontpage without contrast mode](./docs/frontpage.png)
+![Frontpage with contrast mode](./docs/frontpage-contrast.png)
+
 
 -------------------------------------------------------------------------------------------------------------------------------
 

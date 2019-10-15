@@ -5,8 +5,8 @@ import store from "../store";
 // Redux imports
 import { METADATA_LOADING, METADATA_LOADING_COMPLETE, METADATA_TEST_ERROR, METADATA_ERROR_RESOLVED } from "../actions/types";
 import { getMetadataData, setMetadataData } from "../actions/MetadataActions";
-import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle } from "../actions/Shared";
-import { toggleContrastmode } from "../actions/SettingsActions";
+import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast } from "../resources/Shared";
+import { toggleContrastmode, callToast } from "../actions/SettingsActions";
 
 // Variable imports
 import { TEST_ERROR, DB_META, TOTAL_RECIPES, TOTAL_INGREDIENTS, 
@@ -29,6 +29,7 @@ class DevPage extends React.Component
         this.testSmallLoading = this.testSmallLoading.bind(this);
         this.testError = this.testError.bind(this);
         this.testSmallError = this.testSmallError.bind(this);
+        this.testToast = this.testToast.bind(this);
     }
 
     componentWillMount()
@@ -56,30 +57,36 @@ class DevPage extends React.Component
 
     testLoading()
     {
-        console.log("TestLoading");
+        console.log("testLoading");
         store.dispatch({ type: METADATA_LOADING });
         this.sleep(3000).then(() => store.dispatch({ type: METADATA_LOADING_COMPLETE }));
     }
 
     testSmallLoading()
     {
-        console.log("TestSmallLoading");
+        console.log("testSmallLoading");
         this.setState({ smallLoading: true });
         this.sleep(3000).then(() => this.setState({ smallLoading: false }));
     }
 
     testError()
     {
-        console.log("TestError");
+        console.log("testError");
         store.dispatch({ type: METADATA_TEST_ERROR });
         this.sleep(3000).then(() => store.dispatch({ type: METADATA_ERROR_RESOLVED }));
     }
 
     testSmallError()
     {
-        console.log("TestSmallError");
+        console.log("testSmallError");
         this.setState({ smallError: TEST_ERROR });
         this.sleep(3000).then(() => this.setState({ smallError: "" }));
+    }
+
+    testToast()
+    {
+        console.log("testToast");
+        callToast("Testing the Toast alert function!");
     }
 
     renderMetadata()
@@ -151,6 +158,11 @@ class DevPage extends React.Component
                         <Button onClick={this.testSmallError} contrastmode={this.props.contrastmode} text={"Test Small Error"}/>
                     </div>
                     <div style={getTextColor(this.props.contrastmode)}>{this.state.smallError ? renderError(this.state.smallError, false, this.props.contrastmode) : "Click Test Small Error"}</div>
+
+                    <div className="rowStyle">
+                        <Button onClick={this.testToast} contrastmode={this.props.contrastmode} text={"Test Toast"}/> 
+                    </div>
+                    {renderToast(this.props.toastMessage, 5000, this.props.contrastmode)}
                 </div>
             </div>);
     }
@@ -171,11 +183,11 @@ class DevPage extends React.Component
 
 const mapStateToProps = state => 
 {
-    const { contrastmode } = state.settings;
+    const { contrastmode, toastMessage } = state.settings;
     const { metadataError, metadataLoading, metadataResult } = state.meta;
-    return { contrastmode, metadataError, metadataLoading, metadataResult };
+    return { contrastmode, toastMessage, metadataError, metadataLoading, metadataResult };
 };
   
 export default connect(
-    mapStateToProps, { getMetadataData, setMetadataData, toggleContrastmode }
+    mapStateToProps, { getMetadataData, setMetadataData, toggleContrastmode, callToast }
 )(DevPage);

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 // Redux imports
 import { getRecipeData } from "../actions/RecipeActions";
 import { getIngredientData } from "../actions/IngredientActions";
-import { renderLoading, renderError, setTitle } from "../actions/Shared";
+import { renderLoading, renderError, setTitle } from "../resources/Shared";
 
 // Variable imports
 import { getBackgroundColor, getLightBackgroundColor, getTextColor } from "../resources/colors";

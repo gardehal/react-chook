@@ -1,6 +1,6 @@
 import { DB_RECIPE } from "../resources/language";
 import { GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING } from "./types";
-import { getDatabaseData } from "./Shared";
+import { getDatabaseData } from "../resources/Shared";
 
 
 // Get
