@@ -7,11 +7,12 @@ import { getIngredientData } from "../actions/IngredientActions";
 import { renderLoading, renderError, setTitle } from "../resources/Shared";
 
 // Variable imports
-import { UPLOAD, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, VALIDATE_UPLOAD_QUEUE, OVERVIEW } from "../resources/language";
+import { UPLOAD, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, VALIDATE_UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor } from "../resources/colors";
 
 // Component imports
 import { Button } from "./common/Button";
+import { Panel } from "./common/Panel";
 
 class UploadPage extends React.Component
 {
@@ -56,7 +57,6 @@ class UploadPage extends React.Component
     {
         return (
             <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
-                <h3 style={{ ...getTextColor(this.props.contrastmode) }}>{UPLOAD_FORM}</h3>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>bla bla bla</p>
             </div>
         );
@@ -64,10 +64,12 @@ class UploadPage extends React.Component
 
     renderUploadFile()
     {
+        // css-tricks.com/image-upload-manipulation-react/
+        // www.w3schools.com/jsref/dom_obj_fileupload.asp
         return (
             <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
-                <h3 style={{ ...getTextColor(this.props.contrastmode) }}>{UPLOAD_FILE}</h3>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>bla bla bla</p>
+                <Button onClick={null} contrastmode={this.props.contrastmode} text={UPLOAD_CHOOSE_FILE}/> 
             </div>
         );
     }
@@ -89,6 +91,12 @@ class UploadPage extends React.Component
 
     renderUploadButtons()
     {
+        if(this.props.ingredientLoading || this.props.recipeLoading)
+            return renderLoading(false, this.props.contrastmode);
+
+        if(this.props.ingredientError || this.props.recipeError)
+            return renderError((this.props.ingredientError || this.props.recipeError), false, this.props.contrastmode);
+
         // Since components can be stubborn and refuse to re-render with new props, 
         // get a variable that chages (like ms) and set it as a key, this forces the component to re-render.
         let ms = new Date().getMilliseconds();
@@ -113,14 +121,16 @@ class UploadPage extends React.Component
                 {this.renderGeneralInformation()}
                 <hr/>
 
-                {/* Option to upload using a form (make collapsable; panel) */}
-                {/* TODO: Wrap in collapsable panel */}
-                {this.renderUploadForm()}
+                {/* Option to upload using a html input form */}
+                <Panel title={UPLOAD_FORM} contrastmode={this.props.contrastmode}>
+                    {this.renderUploadForm()}
+                </Panel>
 
                 {/* Specific guide to formating the uploads (in case of upload from file) (make collapsable; panel)
                     -> Submit files buttons/ drag+drop area */}
-                {/* TODO: Wrap in collapsable panel */}
-                {this.renderUploadFile()}
+                <Panel title={UPLOAD_FILE} contrastmode={this.props.contrastmode}>
+                    {this.renderUploadFile()}
+                </Panel>
                 <hr/>
 
                 {/* Buttons to validate input

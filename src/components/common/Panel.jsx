@@ -1,9 +1,16 @@
 import React from "react";
 
-import { getTextColor, getLightBackgroundColor, COLOR_TEXT } from "../../../public/colors";
+import { getTextColor, getLightBackgroundColor, COLOR_TEXT } from "../../resources/colors";
 
 export class Panel extends React.Component
 {
+    // Props:
+    // alttext: alternative text of button, for text-to-speech tools, no default
+    // contrastmode: use contrastmode (aka nightmode/darkmode), default false
+    // text: the text on the button, no defaults
+    // children: content that will be show/hidden, no defaults - NB: must be given as a child, something like this: <Panel>{childContent}</Panel>
+    // startExpanded: should panel start expanded, default false
+
     constructor(props)
     {
         super(props);
@@ -24,17 +31,19 @@ export class Panel extends React.Component
 
     initStyle()
     {
+        this.containerStyle = 
+        {
+            marginBottom: "0.5em",
+        };
         this.titleContainerStyle =
         {
             cursor: "pointer",
-            padding: "5%",
-            borderBottom: "2px solid " + COLOR_TEXT
+            padding: "0.5em",
+            borderBottom: "2px solid black "
         };
         this.textContainerStyle =
         {
-            paddingLeft: "5%",
-            paddingRight: "5%",
-            paddingBottom: "5%",
+            padding: "0.5em",
         };
     }
 
@@ -49,11 +58,11 @@ export class Panel extends React.Component
     renderContent()
     {
         if(!this.state.expanded)
-            return <div/>;
+            return (null);
 
         return (
-                <div style={this.textContainerStyle}>
-                    <div className="wrap" style={getTextColor(this.props.contrastmode)}>
+                <div style={{ ...this.textContainerStyle }}>
+                    <div className="wrap" style={{ ...getTextColor(this.props.contrastmode) }}>
                         {this.props.children}
                     </div>
                 </div>
@@ -64,11 +73,11 @@ export class Panel extends React.Component
     {
         return (
             <div>
-                <div className={this.props.className} style={getLightBackgroundColor(this.props.contrastmode)}>
-                    <div style={this.titleContainerStyle} onClick={this.toggleExpanded}>
-                        <h4 className="wrap" style={getTextColor(this.props.contrastmode)}>
+                <div className={this.props.className} style={{ ...this.containerStyle, ...getLightBackgroundColor(this.props.contrastmode) }}>
+                    <div style={{ ...this.titleContainerStyle }} onClick={this.toggleExpanded}>
+                        <h3 className="wrap" style={{ ...getTextColor(this.props.contrastmode) }}>
                             {this.props.title}
-                        </h4>
+                        </h3>
                     </div>
 
                     {this.renderContent()}

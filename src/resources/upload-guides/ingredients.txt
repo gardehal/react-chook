@@ -1,0 +1,6 @@
+Utropstegn (!) må være FØR hver ingrediens.
+
+!
+ingredient_name (Streng, navn på ingrediens, må være unikt)
+ingredient_type (Streng, generelt hva det kan klassifiseres som: kjøtt, meieri, krydder, osv.)
+ingredient_price (Nummer, pris på gjenomsnittlig pakke eller enhet, i NOK)

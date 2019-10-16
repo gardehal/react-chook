@@ -68,19 +68,17 @@ export const PREPARATION = "forberedelse";
 export const TOTAL = "totalt";
 
 // Upload
-export const GENERAL_UPLOAD_INFORMATION = "På denne siden kan du laste opp ingredienser og oppskrifter til databasen. Alle ingredienser og oppskrifter har noen krav som må opfylles før de godkjennes. \nIngredienser krever et unikt navn, en type (kjøtt, krydder, grønnsak osv.), og en pris per enhet (gjennomsnittlig pris per pakke eller enhet det selges i). \nOppskrifter krever en unik tittel på oppskriften, en type (frokost, middag, drikke osv.), TODO...";
+export const GENERAL_UPLOAD_INFORMATION = "På denne siden kan du laste opp ingredienser og oppskrifter til databasen. Alle ingredienser og oppskrifter har noen krav som må opfylles før de godkjennes. Det finnes mer informasjon i panelene under.";
 export const UPLOAD_FORM = "Last opp via skjema";
 export const UPLOAD_FILE = "Last opp via fil";
+export const UPLOAD_CHOOSE_FILE = "Velg en fil som skal lastes opp";
 export const OVERVIEW = "Oversikt";
 export const UPLOAD_QUEUE = "Opplastningskø";
 export const VALIDATE_UPLOAD_QUEUE = "Valider opplastnings køen";
 
 export const RECIPE_TEXT_FORMAT = "Oppskriftsformat";
-export const INGREDIENT_TEXT_FORMAT = "Ingrediensformat";
-export const RECIPE_TEXT_FORMAT_TEXT = "Format (replace words in brackets[] with the symbol or fitting text/number, hashtag means optional, everything else is required): \n\n [Exclamation mark] \n recipe_title (Text, as you see fit) \n recipe_type (Text: dinner, entre, desert, breakfast, desert, drink..), #recipe_grade (Text: easy, hard, medium; norwegian), #recipe_rating (Number: whole or decimal, the rating, min 0, max 10) \n recipe_portions (Whole number) \n recipe_time_preparation (Whole number, minutes) \n recipe_time_total (Whole number, minutes) \n #recipe_cooking_method (Text, as in grill, oven, or other things that require pre-heating), #recipe_cooking_method_temprature (Whole number, the degrees the tool is to be set to, #recipe_cooking_method_temprature_unit (Text: one letter \"K\", \"c\", \"f\") \n [Pluss] \n recipe_ingredients (A list of ingredients, should look like this: \"400 g/gram løk, hakket\", i.e.: \"[quantity] [unit] [ingredient name], [preparation]\") \n [Pluss] \n recipe_instructions (List of textlines) \n [Pluss] \n #recipe_notes (List of textlines) \n\n (example:) \n [Exclamation mark] \n Dim Sum \n forrett, enkel, 7 \n 4 posjoner \n 15 min prep \n 90 min totalt \n dampkoker, 200 c \n [Pluss] \n 400 gram svinekjøttdeig \n 1 neve fersk koriander, finhakket \n 2 rød chili, finhakket \n 3 fedd hvitløk, finhakket \n 3 ss ingefær, finhakket \n Dim Sum ark \n [Pluss] \n Bland alle ingrediensene bortsett fra pasta flakene og la det stå en time. \n Pakk små porsjoner med kjøtt miksen inn i pastaplatene og damp dem i noen minutter. tiden det tar å dampe dem varierer etter størrelse og fasong, gjerne mellom 4 og 7 minutter. \n [Pluss] \n Serveres med Dim Sum dip. \n\n (Repeat for each recipe)";
-export const INGREDIENT_TEXT_FORMAT_TEXT = "Format (replace words in brackets[] with the symbol or fitting text/number): \n\n [Exclamation mark] \n ingredient_name (Text) \n ingredient_type (Text) \n ingredient_price (Price in NOK, Decimal or Whole number) \n\n (example): \n [Exclamation mark] \n Pepper \n krydder \n 13 \n\n (Repeat for each recipe)";
+export const INGREDIENT_TEXT_FORMAT = "Ingrediensformat"; 
 
-export const CHECK_PENDING = "Valider køen";
 export const RELOAD = "Last inn på nytt";
 export const UPLOAD = "Last opp";
 export const ELEMENTS_TO_UPLOAD = "Elementer som skal lastes opp";
@@ -88,7 +86,7 @@ export const RECIPES = "Oppskrifter";
 export const INGREDIENTS = "Ingredienser";
 
 export const FORMAT_GUIDE = "Kopier oppskriftene til filen og formater som forklart i eksempelet.";
-export const UPLOAD_GUIDE = "Klikk \"" + CHECK_PENDING + "\" for å begynne sjekken av data, deretter klikk \"" + UPLOAD + "\" får å laste opp. For å se mer informasjon, se konsoll-loggen (Høyreklikk > Inspiser > Klikk konsoll i toppen av vinduet som dukket opp).";
+export const UPLOAD_GUIDE = "Klikk \"" + VALIDATE_UPLOAD_QUEUE + "\" for å begynne sjekken av data, deretter klikk \"" + UPLOAD + "\" får å laste opp. For å se mer informasjon, se konsoll-loggen (Høyreklikk > Inspiser > Klikk konsoll i toppen av vinduet som dukket opp).";
 
 // Search
 export const SEARCH = "Søk";
