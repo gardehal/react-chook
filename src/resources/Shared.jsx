@@ -185,3 +185,26 @@ export const setTitle = (title = "") =>
 {
     document.title = MAIN_TITLE + (title ? " | " + title : "");
 };
+
+export const getRandomString = (length = 8, useUppercaseLetters = true, useNumber = true, useSymbols = true) =>
+{
+    let res = "";
+    let source = "abcdefghijklmnopqrstuvwxyz";
+
+    if(useUppercaseLetters)
+        source = source.concat("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+    if(useNumber)
+        source = source.concat("0123456789");
+
+    if(useSymbols)
+        source = source.concat(" !\"#$%&'()*+,-./:;<=>?@[\\]^_{|}");
+
+    // console.log(source);
+    // console.log(source.length);
+
+    for(let i = 0; i < length; i++)
+        res += source[getRandomInt(source.length)];
+
+    return res;
+};

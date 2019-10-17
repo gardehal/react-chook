@@ -7,8 +7,8 @@ import { getIngredientData } from "../actions/IngredientActions";
 import { renderLoading, renderError, setTitle } from "../resources/Shared";
 
 // Variable imports
-import { UPLOAD, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, VALIDATE_UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE } from "../resources/language";
-import { getBackgroundColor, getTextColor, getLightBackgroundColor } from "../resources/colors";
+import { UPLOAD, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, VALIDATE_UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, GRADE, RATING, PORTIONS, PREP_TIME, TOTAL_TIME, COOKING_METHOD, COOKING_METHOD_TEMPERATURE, COOKING_METHOD_TEMPERATURE_UNIT, INGREDIENTS, INSTRUCTIONS, TIPS_NOTES } from "../resources/language";
+import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
 // Component imports
 import { Button } from "./common/Button";
@@ -23,6 +23,7 @@ class UploadPage extends React.Component
 
         this.validateData = this.validateData.bind(this);
         this.upload = this.upload.bind(this);
+        this.selectFile = this.selectFile.bind(this);
     }
 
     componentWillMount()
@@ -42,36 +43,74 @@ class UploadPage extends React.Component
             </div>
         );
     }
-
-    renderGeneralInformation()
-    {
-        return (
-            <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
-                <h3 style={{ ...getTextColor(this.props.contrastmode) }}>{UPLOAD}</h3>
-                <p style={{ ...getTextColor(this.props.contrastmode) }}>{GENERAL_UPLOAD_INFORMATION}</p>
-            </div>
-        );
-    }
-
+    
     renderUploadForm()
     {
         return (
             <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
-                <p style={{ ...getTextColor(this.props.contrastmode) }}>bla bla bla</p>
+                <form ref="uploadForm" action="method">
+                    {TITLE}<span key="requiredNotifierTitle" style={{ ...{ color: RED } }}>*</span> <input type="text" name="" required/> 
+                    <br/>
+                    {TYPE}<span key="requiredNotifierType" style={{ ...{ color: RED } }}>*</span> <input type="text" name="" required/>
+                    <br/>
+                    {GRADE}<span key="requiredNotifierGrade" style={{ ...{ color: RED } }}>*</span> <input type="text" name="" required/>
+                    <br/>
+                    {RATING}<span key="requiredNotifierRating" style={{ ...{ color: RED } }}>*</span> <input type="text" name="" required/>
+                    <br/>
+                    {PORTIONS}<span key="requiredNotifierPortions" style={{ ...{ color: RED } }}>*</span> <input type="text" name="" required/>
+                    <br/>
+                    {PREP_TIME}<span key="requiredNotifierPrepTime" style={{ ...{ color: RED } }}>*</span> <input type="text" name="" required/>
+                    <br/>
+                    {TOTAL_TIME}<span key="requiredNotifierTotalTime" style={{ ...{ color: RED } }}>*</span> <input type="text" name="" required/>
+                    <br/>
+                    {COOKING_METHOD} <input type="text" name=""/>
+                    <br/>
+                    {COOKING_METHOD_TEMPERATURE} <input type="text" name=""/>
+                    <br/>
+                    {COOKING_METHOD_TEMPERATURE_UNIT} <input type="text" name=""/>
+                    <br/>
+                    {INGREDIENTS}<span key="requiredNotifierIngredients" style={{ ...{ color: RED } }}>*</span>
+                    // Ingredient array, multiple input with option to add more ingredients
+                    <br/>
+                    {INSTRUCTIONS}<span key="requiredNotifierInstructions" style={{ ...{ color: RED } }}>*</span> <input type="text" name="" required/>
+                    // Consider textarea for large text fields
+                    <br/>
+                    {TIPS_NOTES} <input type="text" name=""/>
+                    <br/>
+                    // Once all required fields are filled, validate with the button under {OVERVIEW}
+                </form>
             </div>
         );
     }
 
     renderUploadFile()
     {
+        this.filename = "";
         // css-tricks.com/image-upload-manipulation-react/
         // www.w3schools.com/jsref/dom_obj_fileupload.asp
         return (
             <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
-                <p style={{ ...getTextColor(this.props.contrastmode) }}>bla bla bla</p>
-                <Button onClick={null} contrastmode={this.props.contrastmode} text={UPLOAD_CHOOSE_FILE}/> 
+                <input id="uploadFileId" ref="uploadFile" type="file" style={{ ...{ display: "none"} }}/>
+                <Button onClick={this.selectFile} contrastmode={this.props.contrastmode} text={UPLOAD_CHOOSE_FILE}/> 
+                <p>
+                    {this.filename}
+                </p>
             </div>
         );
+    }
+
+    // Smoother way?
+    selectFile()
+    {
+        this.filename = "";
+        var fileElement = document.getElementById("uploadFileId");
+        fileElement.click();
+
+        fileElement.onchange = () =>
+        {
+            this.filename = fileElement.value;
+            console.log(this.filename);
+        };
     }
 
     validateData()

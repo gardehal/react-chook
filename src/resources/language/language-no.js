@@ -49,16 +49,10 @@ export const RECIPES_IN_DB = " oppskrifter i databasen.";
 export const GET_RANDOM_DINNER = "Middagsforslag";
 export const GET_DINNER_WEEK_MENU = "Lag en meny for uken";
 export const DINNER = "middag";
-export const PORTIONS = "porsjoner";
-export const PREP_TIME = "Forberedelse: ";
-export const TOTAL_TIME = "Total tid: ";
 export const TOTAL_RECIPES = " oppskrifter i databasen";
 export const TOTAL_INGREDIENTS = " ingredienser i databasen";
 export const LAST_UPDATED = "Oppdatert ";
 export const UPDATE_METADATA = "Oppdater metadata";
-export const SUBRECIPES = "Underoverskrifter";
-export const INSTRUCTIONS = "Instruksjoner";
-export const TIPS_NOTES = "Tips og notater";
 export const CONTRASTMODE = "Kontrastmodus";
 export const ABOUT_US = "Om oss";
 export const CONTRIBUTE_TO_PAGE = "Bidra til siden";
@@ -68,13 +62,27 @@ export const PREPARATION = "forberedelse";
 export const TOTAL = "totalt";
 
 // Upload
-export const GENERAL_UPLOAD_INFORMATION = "På denne siden kan du laste opp ingredienser og oppskrifter til databasen. Alle ingredienser og oppskrifter har noen krav som må opfylles før de godkjennes. Det finnes mer informasjon i panelene under.";
+export const GENERAL_UPLOAD_INFORMATION = "På denne siden kan du laste opp ingredienser og oppskrifter til databasen. Alle ingredienser og oppskrifter har noen krav som må oppfylles før de godkjennes. Det finnes mer informasjon i panelene under.";
 export const UPLOAD_FORM = "Last opp via skjema";
 export const UPLOAD_FILE = "Last opp via fil";
 export const UPLOAD_CHOOSE_FILE = "Velg en fil som skal lastes opp";
 export const OVERVIEW = "Oversikt";
 export const UPLOAD_QUEUE = "Opplastningskø";
 export const VALIDATE_UPLOAD_QUEUE = "Valider opplastnings køen";
+
+export const TITLE = "Tittel";
+export const TYPE = "type";
+export const GRADE = "Gradering";
+export const RATING = "";
+export const PORTIONS = "Porsjoner";
+export const PREP_TIME = "Forberedelsestid";
+export const TOTAL_TIME = "Total tid";
+export const COOKING_METHOD = "Metode";
+export const COOKING_METHOD_TEMPERATURE = "Tempratur";
+export const COOKING_METHOD_TEMPERATURE_UNIT = "Temperaturenhet";
+export const SUBRECIPES = "Underoverskrifter";
+export const INSTRUCTIONS = "Instruksjoner";
+export const TIPS_NOTES = "Tips og/eller notater";
 
 export const RECIPE_TEXT_FORMAT = "Oppskriftsformat";
 export const INGREDIENT_TEXT_FORMAT = "Ingrediensformat"; 
