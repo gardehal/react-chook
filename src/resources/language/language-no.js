@@ -60,6 +60,9 @@ export const BUTTON = " knapp";
 export const METADATA = "Metadata";
 export const PREPARATION = "forberedelse";
 export const TOTAL = "totalt";
+export const RECIPES = "Oppskrifter";
+export const INGREDIENTS = "Ingredienser";
+export const RELOAD = "Last inn på nytt";
 
 // Upload
 export const GENERAL_UPLOAD_INFORMATION = "På denne siden kan du laste opp ingredienser og oppskrifter til databasen. Alle ingredienser og oppskrifter har noen krav som må oppfylles før de godkjennes. Det finnes mer informasjon i panelene under.";
@@ -87,14 +90,13 @@ export const TIPS_NOTES = "Tips og/eller notater";
 export const RECIPE_TEXT_FORMAT = "Oppskriftsformat";
 export const INGREDIENT_TEXT_FORMAT = "Ingrediensformat"; 
 
-export const RELOAD = "Last inn på nytt";
 export const UPLOAD = "Last opp";
 export const ELEMENTS_TO_UPLOAD = "Elementer som skal lastes opp";
-export const RECIPES = "Oppskrifter";
-export const INGREDIENTS = "Ingredienser";
 
 export const FORMAT_GUIDE = "Kopier oppskriftene til filen og formater som forklart i eksempelet.";
 export const UPLOAD_GUIDE = "Klikk \"" + VALIDATE_UPLOAD_QUEUE + "\" for å begynne sjekken av data, deretter klikk \"" + UPLOAD + "\" får å laste opp. For å se mer informasjon, se konsoll-loggen (Høyreklikk > Inspiser > Klikk konsoll i toppen av vinduet som dukket opp).";
+
+export const FILE_SELECTED = "Valgt fil";
 
 // Search
 export const SEARCH = "Søk";
@@ -105,12 +107,13 @@ export const NO_RESULTS_FOR = "Ingen resultater for: ";
 export const INVALID_SEARCH_TERM = "Ugyldig søkeord!";
 export const LOAD = "Last inn";
 
-
 // Errormessages
 export const ERROR = "FEIL";
-export const UNKNOWN_ERROR = "Ukjent feil";
-export const NOT_FOUND_404 = "Siden finnes ikke: 404";
-export const PAGE_NOT_FOUND = "Siden du leter etter finnes ikke.";
-export const DB_FETCH_FAILED = "Kunne ikke hente data fra databasen.";
-export const DB_SET_FAILED = "Kunne ikke laste opp data til databasen.";
-export const TEST_ERROR = "Dette er en test feil.";
+export const UNKNOWN_ERROR = "Feil: Ukjent feil";
+export const NOT_FOUND_404 = "Feil: Siden finnes ikke: 404";
+export const PAGE_NOT_FOUND = "Feil: Siden du leter etter finnes ikke.";
+export const DB_FETCH_FAILED = "Feil: Kunne ikke hente data fra databasen.";
+export const DB_SET_FAILED = "Feil: Kunne ikke laste opp data til databasen.";
+export const TEST_ERROR = "Feil: Dette er en test feil.";
+export const FILE_UPLOAD_ERROR = "Feil: Det skjedde en feil ved opplasting av en fil.";
+export const NO_FILE_ERROR = "Feil: Finner ikke fil.";

@@ -22,6 +22,7 @@ export const SET_METADATA_DATA_FAIL = "set_metadata_data_fail";
 // Recipe
 export const RECIPE_LOADING = "recipe_loading";
 export const RECIPE_LOADING_COMPLETE = "recipe_loading_complete";
+export const RECIPE_ERROR = "recipe_error";
 
 export const GET_RECIPE_DATA_SUCCESS = "get_recipe_data_success";
 export const GET_RECIPE_DATA_FAIL = "get_recipe_data_fail";

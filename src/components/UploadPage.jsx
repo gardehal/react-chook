@@ -2,12 +2,12 @@ import React from "react";
 import { connect } from "react-redux";
 
 // Redux imports
-import { getRecipeData } from "../actions/RecipeActions";
+import { getRecipeData, setRecipeError } from "../actions/RecipeActions";
 import { getIngredientData } from "../actions/IngredientActions";
 import { renderLoading, renderError, setTitle } from "../resources/Shared";
 
 // Variable imports
-import { UPLOAD, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, VALIDATE_UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, GRADE, RATING, PORTIONS, PREP_TIME, TOTAL_TIME, COOKING_METHOD, COOKING_METHOD_TEMPERATURE, COOKING_METHOD_TEMPERATURE_UNIT, INGREDIENTS, INSTRUCTIONS, TIPS_NOTES } from "../resources/language";
+import { UPLOAD, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, VALIDATE_UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, GRADE, RATING, PORTIONS, PREP_TIME, TOTAL_TIME, COOKING_METHOD, COOKING_METHOD_TEMPERATURE, COOKING_METHOD_TEMPERATURE_UNIT, INGREDIENTS, INSTRUCTIONS, TIPS_NOTES, FILE_UPLOAD_ERROR, NO_FILE_ERROR, FILE_SELECTED } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
 // Component imports
@@ -19,11 +19,16 @@ class UploadPage extends React.Component
     constructor(props)
     {
         super(props);
-        this.state = { queue: [] };
+        this.state = this.initState();
 
         this.validateData = this.validateData.bind(this);
         this.upload = this.upload.bind(this);
         this.selectFile = this.selectFile.bind(this);
+    }
+
+    initState()
+    {
+        return { queue: [], filename: "" };
     }
 
     componentWillMount()
@@ -85,15 +90,15 @@ class UploadPage extends React.Component
 
     renderUploadFile()
     {
-        this.filename = "";
         // css-tricks.com/image-upload-manipulation-react/
         // www.w3schools.com/jsref/dom_obj_fileupload.asp
         return (
             <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
+                {/* <input id="uploadFileId" ref="uploadFile" type="file"/> */}
                 <input id="uploadFileId" ref="uploadFile" type="file" style={{ ...{ display: "none"} }}/>
                 <Button onClick={this.selectFile} contrastmode={this.props.contrastmode} text={UPLOAD_CHOOSE_FILE}/> 
                 <p>
-                    {this.filename}
+                    {this.state.filename}
                 </p>
             </div>
         );
@@ -102,15 +107,49 @@ class UploadPage extends React.Component
     // Smoother way?
     selectFile()
     {
-        this.filename = "";
+        this.setState({ filename: "" });
         var fileElement = document.getElementById("uploadFileId");
         fileElement.click();
 
+
         fileElement.onchange = () =>
         {
-            this.filename = fileElement.value;
-            console.log(this.filename);
+            if(!fileElement.value) 
+            {
+                setRecipeError(NO_FILE_ERROR);
+                console.log("No file: " + fileElement.value);
+                return;
+            }
+
+            let filename = fileElement.value.split("\\");
+            filename = filename[filename.length - 1];
+            this.setState({ filename: FILE_SELECTED + ": \"" + filename + "\"" });
+            
+            // Setup a file reader
+            const r = new FileReader();
+            r.onload = e =>
+            {
+                const text = e.target.result;
+                this.parseFile(text);
+            };
+            r.onerror = err =>
+            {
+                setRecipeError(FILE_UPLOAD_ERROR);
+                console.log(err);
+            }
+            // Execute file reader
+            r.readAsText(fileElement.files[0]);
         };
+
+    }
+
+    // Redo with call order, upload should validate if file is ok, validateData should parse and cehck if data in file is ok.
+    parseFile(text)
+    {
+        // Split text on exclamation marks. First instance ([0]) in array will always be a false flag.
+        let items = text.split("!");
+        console.log(items);
+        
     }
 
     validateData()
