@@ -1,6 +1,5 @@
 import React from "react";
 import firebase from "firebase/app";
-import env from "./secrets/env";
 import { Provider } from "react-redux";
 import store from "./store";
 import { BrowserRouter, Route } from "react-router-dom";
@@ -27,7 +26,7 @@ class App extends React.Component
     {
         super(props);
 
-        firebase.initializeApp(env || process.env.FirebaseObject);
+        firebase.initializeApp(import("./secrets/env") || process.env.FirebaseObject);
 
         // getApiExample("https://rallycoding.herokuapp.com/api/music_albums");
 
