@@ -2,8 +2,9 @@ import React from "react";
 import firebase from "firebase";
 import store from "../store";
 
-import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC, MAIN_TITLE } from "../resources/language";
-import { getBackgroundColor, getTextColor } from "../resources/colors";
+import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC, MAIN_TITLE } from "./language";
+import { getTextColor } from "./colors";
+import { Toast } from "../components/common/Toast";
 
 // Get
 export const getDatabaseData = async (tableName, reduxSuccessType = "", reduxFailType = "", reduxLoadingType = "", orderByChild = "", equalTo = "", limit = 0) =>
@@ -107,6 +108,12 @@ export const renderError = (error = UNKNOWN_ERROR, bigText = false, contrastmode
         </div>);
 }
 
+export const renderToast = (message, time = 5000, contrastmode = false, alttext = message, onClick = null) =>
+{
+    if(message)
+        return <Toast key="alertToast" message={message} time={time} contrastmode={contrastmode} alttext={alttext} onClick={onClick}/>;
+};
+
 export const getToday = () => 
 {
     // Get today, in YYYY-MM-DD
@@ -177,4 +184,12 @@ export const addLeadingZeros = (n, nOfZeros = 1, leadingLimit = 10) =>
 export const setTitle = (title = "") =>
 {
     document.title = MAIN_TITLE + (title ? " | " + title : "");
+};
+
+export const getRandomString = (length = 8) =>
+{
+    if(length > 32) length = 32;
+    
+    return (Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10) 
+    + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)).substring(0, length);
 };

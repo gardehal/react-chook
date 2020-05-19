@@ -23,9 +23,6 @@ class Header extends React.Component
         this.initStyle();
 
         this.doSearch = this.doSearch.bind(this);
-        this.gotoHome = this.gotoHome.bind(this);
-        this.gotoAllRecipes = this.gotoAllRecipes.bind(this);
-        this.gotoUpload = this.gotoUpload.bind(this);
         this.gotoProfile = this.gotoProfile.bind(this);
         this.gotoSettings = this.gotoSettings.bind(this);
         this.doReload = this.doReload.bind(this);
@@ -155,24 +152,6 @@ class Header extends React.Component
         window.location.assign("/search/?term=" + term);
     }
 
-    // Go to frontpage ("Home" page)
-    gotoHome()
-    {
-        // this.props.history.push("/");
-    }
-
-    // Go to page with all recipes listed
-    gotoAllRecipes()
-    {
-        // this.props.history.push("/");
-    }
-
-    // Go to page for uploading
-    gotoUpload()
-    {
-        // this.props.history.push("/");
-    }
-
     // Go to profile page 
     gotoProfile()
     {
@@ -263,7 +242,7 @@ class Header extends React.Component
             <div className="hide-400" style={{ ...this.linkContainerStyle }}>
                 <Link className="btn-with-shadow" style={{ ...this.linkStyle, ...getTextColor(this.props.contrastmode) }} to="/">{HOME}</Link>
                 <Link className="btn-with-shadow" style={{ ...this.linkStyle, ...getTextColor(this.props.contrastmode) }} to="/list">{ALL_RECIPES}</Link>
-                <Link className="btn-with-shadow" style={{ ...this.linkStyle, ...getTextColor(this.props.contrastmode) }} to="/">{UPLOAD}</Link>
+                <Link className="btn-with-shadow" style={{ ...this.linkStyle, ...getTextColor(this.props.contrastmode) }} to="/upload">{UPLOAD}</Link>
             </div>
         );
     }

@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 
 // Redux imports
 import { getMetadataData } from "../actions/MetadataActions";
-import { renderLoading, renderError, getLongFormatDate, setTitle } from "../actions/Shared";
+import { renderLoading, renderError, getLongFormatDate, setTitle } from "../resources/Shared";
 
 // Variable imports
 import { GET_RANDOM_DINNER, TOTAL_RECIPES, TOTAL_INGREDIENTS, LAST_UPDATED, 

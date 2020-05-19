@@ -1,4 +1,4 @@
-import { getDatabaseData, setDatabaseData, addLeadingZeros } from "./Shared";
+import { getDatabaseData, setDatabaseData, addLeadingZeros } from "../resources/Shared";
 
 import { GET_METADATA_DATA_SUCCESS, GET_METADATA_DATA_FAIL, METADATA_LOADING, SET_METADATA_DATA_SUCCESS, SET_METADATA_DATA_FAIL } from "./types";
 import { DB_META, DB_INGREDIENT, DB_RECIPE } from "../resources/language";

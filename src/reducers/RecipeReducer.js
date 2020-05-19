@@ -1,5 +1,5 @@
 import {
-    RECIPE_LOADING, RECIPE_LOADING_COMPLETE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL
+    RECIPE_LOADING, RECIPE_LOADING_COMPLETE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_ERROR
 } from "../actions/types";
 
 import { DB_FETCH_FAILED } from "../resources/language";
@@ -21,6 +21,8 @@ export default (state = INITIAL_STATE, action) =>
             return { ...state, recipeLoading: true, recipeError: "" };
         case RECIPE_LOADING_COMPLETE:
             return { ...state, recipeLoading: false, recipeError: "" };
+        case RECIPE_ERROR:
+            return { ...state, recipeError: action.payload };
 
         case GET_RECIPE_DATA_SUCCESS:
             return { ...state, recipeLoading: false, recipeError: "", recipeResult: action.payload };

@@ -1,0 +1,18 @@
+Utropstegn (!) må være FØR hver oppskrift.
+Pluss (+) må brukes for å dele opp seksjoner av oppskriften, 1 før ingredienser, 1 før instruksjoner, og 1 før notater, hvis det er noen notater
+Hashtag (#) foran et element betyr at det er valgfritt.
+
+!
+recipe_title (Streng, må være unik)
+recipe_type (Streng: middag, bakverk, frokost, drikke, tilbehør, osv.), #recipe_grade (Streng: enkel, middel, vanskelig), #recipe_rating (Nummer: minimum 0, maximum 10)
+recipe_portions (Heltall)
+recipe_time_preparation (Heltall, minutter)
+recipe_time_total (Heltall, minutter)
+#recipe_cooking_method (Streng: grill, ovn, generelt ting som krever forvarming), #recipe_cooking_method_temprature (Heltall, grader feks. ovnen skal varmes til), #recipe_cooking_method_temprature_unit (Enten "c" for celcius, "f" for fahrenheit)
++
+recipe_ingredients (En liste med ingredienser, formatert slik: 
+    "[ingredient_quantity] (Heltall: antall) [ingredient_unit] (Streng: måleenhet: dl, gram, neve, ss, osv.) [ingredient_name] (Streng: navn på ingrediens, må finnes i databasen), [ingredient_preparation] (Streng: forberedelse av ingrediensene: skrellet, grovhakket, knust, osv.)")
++
+recipe_instructions (Liste med Streng instruksjoner)
+#+
+#recipe_notes (Liste med String tips, serveringsforslag, notater, osv.)

@@ -1,6 +1,6 @@
-import { INGREDIENT_LOADING, INGREDIENT_LOADING_COMPLETE, GET_INGREDIENT_DATA_SUCCESS, GET_INGREDIENT_DATA_FAIL } from "../actions/types";
+import { INGREDIENT_LOADING, INGREDIENT_LOADING_COMPLETE, GET_INGREDIENT_DATA_SUCCESS, GET_INGREDIENT_DATA_FAIL, SET_INGREDIENT_DATA_SUCCESS, SET_INGREDIENT_DATA_FAIL } from "../actions/types";
 
-import { DB_FETCH_FAILED } from "../resources/language";
+import { DB_FETCH_FAILED, DB_SET_FAILED } from "../resources/language";
 
 const INITIAL_STATE = 
 { 
@@ -24,6 +24,11 @@ export default (state = INITIAL_STATE, action) =>
             return { ...state, ingredientLoading: false, ingredientError: "", ingredientResult: action.payload };
         case GET_INGREDIENT_DATA_FAIL:
             return { ...state, ingredientLoading: false, ingredientError: DB_FETCH_FAILED };
+
+        case SET_INGREDIENT_DATA_SUCCESS:
+            return { ...state, ingredientLoading: false, ingredientError: "" };
+        case SET_INGREDIENT_DATA_FAIL:
+            return { ...state, ingredientLoading: false, ingredientError: DB_SET_FAILED };
             
         default:
             return state;
