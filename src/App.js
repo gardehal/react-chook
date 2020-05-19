@@ -26,7 +26,7 @@ class App extends React.Component
     {
         super(props);
 
-        firebase.initializeApp(import("./secrets/env") || process.env.FirebaseObject);
+        firebase.initializeApp(process.env.FirebaseObject || import("./secrets/env") );
 
         // getApiExample("https://rallycoding.herokuapp.com/api/music_albums");
 
