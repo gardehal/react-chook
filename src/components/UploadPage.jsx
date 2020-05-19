@@ -3,16 +3,18 @@ import { connect } from "react-redux";
 
 // Redux imports
 import { getRecipeData, setRecipeError } from "../actions/RecipeActions";
-import { getIngredientData } from "../actions/IngredientActions";
+import { getIngredientData, setIngredientData } from "../actions/IngredientActions";
 import { renderLoading, renderError, setTitle } from "../resources/Shared";
 
 // Variable imports
-import { UPLOAD, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, VALIDATE_UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, GRADE, RATING, PORTIONS, PREP_TIME, TOTAL_TIME, COOKING_METHOD, COOKING_METHOD_TEMPERATURE, COOKING_METHOD_TEMPERATURE_UNIT, INGREDIENTS, INSTRUCTIONS, TIPS_NOTES, FILE_UPLOAD_ERROR, NO_FILE_ERROR, FILE_SELECTED } from "../resources/language";
+import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, GRADE, RATING, PORTIONS, PREP_TIME, TOTAL_TIME, COOKING_METHOD, COOKING_METHOD_TEMPERATURE, COOKING_METHOD_TEMPERATURE_UNIT, INGREDIENTS, INSTRUCTIONS, TIPS_NOTES, FILE_UPLOAD_ERROR, NO_FILE_ERROR, FILE_SELECTED } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
 // Component imports
 import { Button } from "./common/Button";
 import { Panel } from "./common/Panel";
+import { Ingredient } from "../models/Ingredient";
+import { IngredientType } from "../models/IngredientType";
 
 class UploadPage extends React.Component
 {
@@ -21,14 +23,13 @@ class UploadPage extends React.Component
         super(props);
         this.state = this.initState();
 
-        this.validateData = this.validateData.bind(this);
         this.upload = this.upload.bind(this);
         this.selectFile = this.selectFile.bind(this);
     }
 
     initState()
     {
-        return { queue: [], filename: "" };
+        return { queue: [], filename: "", filecontent: "" };
     }
 
     componentWillMount()
@@ -44,6 +45,7 @@ class UploadPage extends React.Component
         return (
             <div>
                 <h3 style={{ ...getTextColor(this.props.contrastmode) }}>{UPLOAD}</h3>
+                <h3 style={{ ...getTextColor(this.props.contrastmode) }}>{WIP}</h3>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{GENERAL_UPLOAD_INFORMATION}</p>
             </div>
         );
@@ -111,7 +113,6 @@ class UploadPage extends React.Component
         var fileElement = document.getElementById("uploadFileId");
         fileElement.click();
 
-
         fileElement.onchange = () =>
         {
             if(!fileElement.value) 
@@ -129,8 +130,8 @@ class UploadPage extends React.Component
             const r = new FileReader();
             r.onload = e =>
             {
-                const text = e.target.result;
-                this.parseFile(text);
+                console.log("File set"); // not resetting
+                this.setState({ queue: ["file"], filecontent: e.target.result });
             };
             r.onerror = err =>
             {
@@ -143,28 +144,75 @@ class UploadPage extends React.Component
 
     }
 
-    // Redo with call order, upload should validate if file is ok, validateData should parse and cehck if data in file is ok.
-    parseFile(text)
+    uploadFromFile(text)
     {
-        // Split text on exclamation marks. First instance ([0]) in array will always be a false flag.
+        // Split text on exclamation marks. First instance ([0]) in items should be empty because an item starts with !, i.e. the data is after.
         let items = text.split("!");
-        console.log(items);
-        
-    }
+        let ingredients = [];
+        let recipes = [];
+        let failedItems = [];
 
-    validateData()
-    {
-        console.log("validateData");
+        for (let i = 1; i < items.length; i++)
+        {
+            let lines = items[i].split("\n");
+            let nLines = lines.length;
+
+            console.log("item, nLines: " + nLines);
+            console.log(items[i]);
+
+            // Ingredient has 4 lines including !
+            if(nLines === 4)
+            {
+                console.log("Ingredient");
+
+                // Line number 3 must be an IngredientType
+                let type = String(lines[2]).toUpperCase().replace("\r", "").replace("\t", "");
+                if(!IngredientType.includes(type))
+                {
+                    failedItems.push("Ingredient " + String(i) + " failed. \"" + type + "\" is not a valid IngredientType.");
+                    continue;
+                }
+                // Line number 4 must be a number
+                if(parseFloat(lines[3]) === NaN)
+                {
+                    failedItems.push("Ingredient " + String(i) + " failed. Price was not a number.");
+                    continue;
+                }
+
+                ingredients.push(new Ingredient(lines[1], type, lines[3]));
+            }
+
+            // Recipe has ?? lines including !
+            else if(nLines === 36)
+                console.log("Ingredient");
+
+            else
+                console.log("Failed");
+        }
+
+        console.log("\nUploading ingredients...");
+        if(ingredients.length > 0)
+            setIngredientData(ingredients);
         
-        // TODO replace with validData boolean
-        if(new Date().getSeconds() % 5 === 0)
-            this.setState({ queue: [1, 2, 3] });
+        console.log("\nUploading recipes...");
+        if(ingredients.length > 0)
+            // setIngreidnetData(ingredients);
+
+        if(failedItems.length > 0)
+        {
+            console.log("\nFailed items: ");
+            failedItems.forEach(item => 
+            {
+                console.log(item);    
+            });
+        }
+
+        this.setState(this.initState());
     }
 
     upload()
     {
-        console.log("upload");
-        this.setState({ queue: [] });
+        this.uploadFromFile(this.state.filecontent);
     }
 
     renderUploadButtons()
@@ -185,8 +233,7 @@ class UploadPage extends React.Component
                 {this.queue ? <p style={{ ...getTextColor(this.props.contrastmode) }}>{UPLOAD_QUEUE + ": " + this.queue}</p> : (null)}
 
                 <div className="rowStyle">
-                    <Button onClick={this.validateData} contrastmode={this.props.contrastmode} text={VALIDATE_UPLOAD_QUEUE}/> 
-                    <Button key={"uploadButton" + ms} onClick={(this.state.queue.length > 1 ? this.upload : (null))} contrastmode={this.props.contrastmode} text={UPLOAD}/> 
+                    <Button key={"uploadButton" + ms} onClick={(this.state.queue.length > 0 ? this.upload : (null))} contrastmode={this.props.contrastmode} text={UPLOAD}/> 
                 </div>
             </div>
         );

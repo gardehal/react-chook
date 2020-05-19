@@ -41,6 +41,7 @@ export const LOG_OUT = "Logg ut";
 
 // Misc.
 export const MAIN_TITLE = "Chook";
+export const WIP = "*Under arbeid*";
 export const LOADING = "Laster inn...";
 export const NORWEGIAN_KRONER = "kr";
 export const MINUTES = "minutter";
