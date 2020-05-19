@@ -40,7 +40,8 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Timer
 - [ ] Roadmap update
 
-- [ ] Internet crawler for recipes (especially for pages where resources are often srouced from) and/or use APIs
+- [ ] Internet crawler or fentch from API for ingredients
+- [ ] Internet crawler or fentch from API for recipes
 
 ## Ongoing TODOs
 - [ ] Find, try, and upload recipes
