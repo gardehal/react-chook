@@ -1,5 +1,6 @@
 import React from "react";
 import firebase from "firebase/app";
+import env from "./secrets/env";
 import { Provider } from "react-redux";
 import store from "./store";
 import { BrowserRouter, Route } from "react-router-dom";
@@ -25,27 +26,6 @@ class App extends React.Component
     constructor(props) 
     {
         super(props);
-
-        const path = "./secrets/env";
-        const fs = require('fs');
-        let env = {};
-        try 
-        {
-            if (fs.existsSync(path))
-                env = import("./secrets/env");
-        } 
-        catch(err) 
-        {
-            env =
-            {
-                apiKey: process.env.fb_apikey,
-                authDomain: process.env.fb_authdom,
-                databaseURL: process.env.fb_dburl,
-                projectId: process.env.fb_pid,
-                storageBucket: process.env.fb_storebuck,
-                messagingSenderId: process.env.fb_msgid
-            }
-        }
 
         firebase.initializeApp(env);
 

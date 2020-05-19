@@ -7,6 +7,12 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 1. $ `npm install`
 2. $ `npm start`
 
+## Usage (Heroku)
+1. Create a new project
+2. Connect to Github repository
+3. Set up environment variables in Heroku
+4. Build and deploy
+
 ## TODO
 - [x] Functioning webpage
 - [x] Frontpage
@@ -33,6 +39,8 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] General optimization
 - [ ] Timer
 - [ ] Roadmap update
+
+- [ ] Internet crawler for recipes (especially for pages where resources are often srouced from) and/or use APIs
 
 ## Ongoing TODOs
 - [ ] Find, try, and upload recipes
