@@ -7,11 +7,25 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 1. $ `npm install`
 2. $ `npm start`
 
-## Usage (Heroku)
-1. Create a new project
-2. Connect to Github repository
-3. Set up environment variables in Heroku
-4. Build and deploy
+## Setup for Heroku
+1. Login to [heroku Dashboard](https://dashboard.heroku.com/apps)
+2. Create new app
+3. New -> Connect app to Github project
+4. Deploy -> Manual deploy -> Deploy Branch (Master)
+5. Deploy -> Automatic deploys -> Enable Automatic Deploys
+6. The app (if test pass and build is successful) should be available on "<app-name>.herokuapp.com"
+    - It can also be opened using the "Open app" button.
+
+## Installation (Windows)
+1. Download and install:
+    - NPM
+    - Node.js
+    - Git CLI/Github Desktop
+    - Code Editor (Optinal)
+2. Clone or fork Github project
+3. Using a command line tool or terminal, navigate to the root folder of the project
+4. Follow [Usage (Windows)](#Usage-(Windows))
+5. The page should now be running on your [localhost:8080](http://localhost:8080)
 
 ## TODO
 - [x] Functioning webpage
@@ -27,13 +41,19 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Page for recipe details
 - [x] Search
 - [x] Alert toast
+- [x] Heroku
+- [ ] Flavicon
 - [ ] Uploading to DB
 - [ ] Editing DB data
+- [ ] DB security
+- [ ] Footer
+
+- [ ] "Launch"
+
 - [ ] Dinner planning features
 - [ ] Settings
-- [ ] Footer
+- [ ] Built in moderation tools
 - [ ] Users
-- [ ] Moderation tools
 - [ ] Deploying to designated server
 - [ ] Better sorting (ex alphabetical order)
 - [ ] General optimization
@@ -50,12 +70,10 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Style
 
 ## Known issues
-
 - Things are not looking good. Not figuratively but literally, style is not my strong suit.
 - White line (padding due to some elements, varies per page) visible on the bottom of the screen.
 
 ## My Thoughts
-
 Having an interest for cooking and programming, a project like this was inevitable. The problem, however, was figuring out what to make, how to make it, when to make it, and where to do it. The conclusion was first an app, then a webpage, then an API, then a helper webpage to upload data, then back to webpage. 
 
 I think I've come to a final conclusion that a webpage is the superior option, and that I will first make a simple one with React, then add API functions as necessary.
@@ -65,7 +83,6 @@ Special thanks to [Pexels](https://www.pexels.com) for the pictures.
 ![Chook logo](./src/resources/icons/chook-icon-1-bg.png)
 ![Frontpage without contrast mode](./docs/frontpage.png)
 ![Frontpage with contrast mode](./docs/frontpage-contrast.png)
-
 
 -------------------------------------------------------------------------------------------------------------------------------
 
