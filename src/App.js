@@ -26,28 +26,18 @@ class App extends React.Component
     {
         super(props);
 
-        const path = "./secrets/env.js";
-        const fs = require('fs');
-        let env = {};
-        try 
-        {
-            if (fs.existsSync(path))
-                env = import("./secrets/env");
-        } 
-        catch(err) 
-        {
-            env =
-            {
-                apiKey: process.env.fb_apikey,
-                authDomain: process.env.fb_authdom,
-                databaseURL: process.env.fb_dburl,
-                projectId: process.env.fb_pid,
-                storageBucket: process.env.fb_storebuck,
-                messagingSenderId: process.env.fb_msgid
-            }
-        }
+        // let env = import("./secrets/env");
+        // let env =
+        // {
+        //     apiKey: process.env.fb_apikey,
+        //     authDomain: process.env.fb_authdom,
+        //     databaseURL: process.env.fb_dburl,
+        //     projectId: process.env.fb_pid,
+        //     storageBucket: process.env.fb_storebuck,
+        //     messagingSenderId: process.env.fb_msgid
+        // }
 
-        firebase.initializeApp(env);
+        firebase.initializeApp(process.env.FirebaseObject);
 
         // getApiExample("https://rallycoding.herokuapp.com/api/music_albums");
 
