@@ -26,7 +26,16 @@ class App extends React.Component
     {
         super(props);
 
-        firebase.initializeApp(process.env.REACT_APP_FB_OBJECT);
+        let env =
+        {
+            apiKey: process.env.REACT_APP_FB_KEY,
+            authDomain: process.env.REACT_APP_FB_DOM,
+            databaseURL: process.env.REACT_APP_FB_URL,
+            projectId: process.env.REACT_APP_FB_PID,
+            storageBucket: process.env.REACT_APP_FB_SBU,
+            messagingSenderId: process.env.REACT_APP_FB_SID
+        }
+        firebase.initializeApp(env);
 
         // getApiExample("https://rallycoding.herokuapp.com/api/music_albums");
 
