@@ -43,31 +43,34 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Alert toast
 - [x] Heroku
 - [ ] Flavicon
-- [ ] Uploading to DB
-- [ ] Editing DB data
+- [ ] Uploading to temp DB
 - [ ] DB security
 - [ ] Footer
 
 - [ ] "Launch"
 
-- [ ] Dinner planning features
+- [ ] Basic API
+- [ ] Transfer data to API DB
+- [ ] Editing DB data
+- [ ] API Dinner planning features
 - [ ] Settings
 - [ ] Built in moderation tools
 - [ ] Users
-- [ ] Deploying to designated server
 - [ ] Better sorting (ex alphabetical order)
 - [ ] General optimization
 - [ ] Timer
 - [ ] Roadmap update
-
-- [ ] Internet crawler or fentch from API for ingredients
-- [ ] Internet crawler or fentch from API for recipes
 
 ## Ongoing TODOs
 - [ ] Find, try, and upload recipes
 - [ ] Testing
 - [ ] Use EM
 - [ ] Style
+
+## MISC TODOs
+- [ ] Internet crawler or fentch from API for ingredients
+- [ ] Internet crawler or fentch from API for recipes
+- [ ] Adaptive style for mobile
 
 ## Known issues
 - Things are not looking good. Not figuratively but literally, style is not my strong suit.
