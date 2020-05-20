@@ -133,7 +133,7 @@ class DevPage extends React.Component
     {
         return (
             <div>
-                <ClickableImage image={require("../resources/pictures/vegetable-market-shelf.jpg")} alttext={METADATA} title={this.renderMetadata()}
+                <ClickableImage image={require("../resources/pictures/vegetable-market-shelf.png")} alttext={METADATA} title={this.renderMetadata()}
                     coverText={true} cursor="cursor" contrastmode={this.props.contrastmode}/>
 
                 <div>

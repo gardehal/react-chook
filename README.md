@@ -42,7 +42,6 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Search
 - [x] Alert toast
 - [x] Heroku
-- [ ] Flavicon
 - [ ] Uploading to temp DB
 - [ ] DB security
 - [ ] Footer
@@ -71,6 +70,7 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Internet crawler or fentch from API for ingredients
 - [ ] Internet crawler or fentch from API for recipes
 - [ ] Adaptive style for mobile
+- [ ] Flavicon (For timer, toasts)
 
 ## Known issues
 - Things are not looking good. Not figuratively but literally, style is not my strong suit.
