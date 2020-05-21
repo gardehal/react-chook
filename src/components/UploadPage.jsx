@@ -249,7 +249,7 @@ class UploadPage extends React.Component
                 {this.queue ? <p style={{ ...getTextColor(this.props.contrastmode) }}>{UPLOAD_QUEUE + ": " + this.queue}</p> : (null)}
 
                 <div className="rowStyle">
-                    <Button key={"validateButton" + ms} onClick={this.parseFreeText} contrastmode={this.props.contrastmode} text={VALIDATE_UPLOAD_DATA}/> 
+                    <Button key={"validateButton" + ms} onClick={this.parseFreetext} contrastmode={this.props.contrastmode} text={VALIDATE_UPLOAD_DATA}/> 
                 </div>
 
                 <div className="rowStyle">
@@ -261,17 +261,16 @@ class UploadPage extends React.Component
     }
 
     renderUploadSummary()
-    {
-        if(this.state.ingredientQueue.length === 0 && this.state.recipeQueue.length === 0)
-            return (
-                <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
-                    <h3 style={{ ...getTextColor(this.props.contrastmode) }}>{"nothing here yes"}</h3>
-                </div>
-            );
-        
+    {        
         return (
             <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
                 <h3 style={{ ...getTextColor(this.props.contrastmode) }}>{WIP}</h3>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{"Failed items"}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{"X items failed to parse"}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{"Ingredients"}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{"X Ingredients in queue"}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{"Recipes"}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{"X Recipes in queue"}</p>
             </div>
         );
     }
@@ -301,7 +300,7 @@ class UploadPage extends React.Component
                 {this.renderUploadButtons()}
 
                 {/* Render a log or summary for uplodaing queues. */}
-                {/* {this.renderUploadSummary()} */}
+                {this.renderUploadSummary()}
             </div>);
     }
 
