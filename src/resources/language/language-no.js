@@ -72,7 +72,7 @@ export const UPLOAD_FILE = "Last opp via fil";
 export const UPLOAD_CHOOSE_FILE = "Velg en fil som skal lastes opp";
 export const OVERVIEW = "Oversikt";
 export const UPLOAD_QUEUE = "Opplastningskø";
-export const VALIDATE_UPLOAD_QUEUE = "Valider opplastnings køen";
+export const VALIDATE_UPLOAD_DATA = "Valider data for opplasting";
 
 export const TITLE = "Tittel";
 export const TYPE = "type";
@@ -95,7 +95,7 @@ export const UPLOAD = "Last opp";
 export const ELEMENTS_TO_UPLOAD = "Elementer som skal lastes opp";
 
 export const FORMAT_GUIDE = "Kopier oppskriftene til filen og formater som forklart i eksempelet.";
-export const UPLOAD_GUIDE = "Klikk \"" + VALIDATE_UPLOAD_QUEUE + "\" for å begynne sjekken av data, deretter klikk \"" + UPLOAD + "\" får å laste opp. For å se mer informasjon, se konsoll-loggen (Høyreklikk > Inspiser > Klikk konsoll i toppen av vinduet som dukket opp).";
+export const UPLOAD_GUIDE = "Klikk \"" + VALIDATE_UPLOAD_DATA + "\" for å begynne sjekken av data, deretter klikk \"" + UPLOAD + "\" får å laste opp. For å se mer informasjon, se konsoll-loggen (Høyreklikk > Inspiser > Klikk konsoll i toppen av vinduet som dukket opp).";
 
 export const FILE_SELECTED = "Valgt fil";
 

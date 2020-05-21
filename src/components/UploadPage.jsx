@@ -7,7 +7,9 @@ import { getIngredientData, setIngredientData } from "../actions/IngredientActio
 import { renderLoading, renderError, setTitle } from "../resources/Shared";
 
 // Variable imports
-import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, GRADE, RATING, PORTIONS, PREP_TIME, TOTAL_TIME, COOKING_METHOD, COOKING_METHOD_TEMPERATURE, COOKING_METHOD_TEMPERATURE_UNIT, INGREDIENTS, INSTRUCTIONS, TIPS_NOTES, FILE_UPLOAD_ERROR, NO_FILE_ERROR, FILE_SELECTED } from "../resources/language";
+import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, 
+    GRADE, RATING, PORTIONS, PREP_TIME, TOTAL_TIME, COOKING_METHOD, COOKING_METHOD_TEMPERATURE, COOKING_METHOD_TEMPERATURE_UNIT, 
+    INGREDIENTS, INSTRUCTIONS, TIPS_NOTES, FILE_UPLOAD_ERROR, NO_FILE_ERROR, FILE_SELECTED, VALIDATE_UPLOAD_DATA } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
 // Component imports
@@ -18,18 +20,27 @@ import { IngredientType } from "../models/IngredientType";
 
 class UploadPage extends React.Component
 {
+    // Remodel: 
+    // focus on upload though file (or text single field)
+    // input data/file
+    // parse and enqueue data
+    // display data
+    // disable upload until parse is finished and successful 
+    // upload queue when user press the button
+
     constructor(props)
     {
         super(props);
         this.state = this.initState();
 
+        this.parseFreetext = this.parseFreetext.bind(this);
         this.upload = this.upload.bind(this);
         this.selectFile = this.selectFile.bind(this);
     }
 
     initState()
     {
-        return { queue: [], filename: "", filecontent: "" };
+        return { ingredientQueue: [], recipeQueue: [], failedParseQueue: [], freetext: "" };
     }
 
     componentWillMount()
@@ -109,7 +120,6 @@ class UploadPage extends React.Component
     // Smoother way?
     selectFile()
     {
-        this.setState({ filename: "" });
         var fileElement = document.getElementById("uploadFileId");
         fileElement.click();
 
@@ -124,14 +134,13 @@ class UploadPage extends React.Component
 
             let filename = fileElement.value.split("\\");
             filename = filename[filename.length - 1];
-            this.setState({ filename: FILE_SELECTED + ": \"" + filename + "\"" });
             
             // Setup a file reader
             const r = new FileReader();
             r.onload = e =>
             {
                 console.log("File set"); // not resetting
-                this.setState({ queue: ["file"], filecontent: e.target.result });
+                this.setState({ freetext: e.target.result });
             };
             r.onerror = err =>
             {
@@ -144,10 +153,11 @@ class UploadPage extends React.Component
 
     }
 
-    uploadFromFile(text)
+    parseFreetext()
     {
+        this.setState(this.initState());
         // Split text on exclamation marks. First instance ([0]) in items should be empty because an item starts with !, i.e. the data is after.
-        let items = text.split("!");
+        let items = this.state.freetext.split("!");
         let ingredients = [];
         let recipes = [];
         let failedItems = [];
@@ -163,8 +173,6 @@ class UploadPage extends React.Component
             // Ingredient has 4 lines including !
             if(nLines === 4)
             {
-                console.log("Ingredient");
-
                 // Line number 3 must be an IngredientType
                 let type = String(lines[2]).toUpperCase().replace("\r", "").replace("\t", "");
                 if(!IngredientType.includes(type))
@@ -184,35 +192,43 @@ class UploadPage extends React.Component
 
             // Recipe has ?? lines including !
             else if(nLines === 36)
-                console.log("Ingredient");
+                console.log("Reciepe");
 
             else
                 console.log("Failed");
         }
 
-        console.log("\nUploading ingredients...");
-        if(ingredients.length > 0)
-            setIngredientData(ingredients);
-        
-        console.log("\nUploading recipes...");
-        if(ingredients.length > 0)
-            // setIngreidnetData(ingredients);
-
-        if(failedItems.length > 0)
-        {
-            console.log("\nFailed items: ");
-            failedItems.forEach(item => 
-            {
-                console.log(item);    
-            });
-        }
-
-        this.setState(this.initState());
+        console.log("\nEnqueueing items...");
+        this.setState({ ingredientQueue: ingredients, recipeQueue: recipes, failedParseQueue: failedItems });
     }
 
     upload()
     {
-        this.uploadFromFile(this.state.filecontent);
+        if(this.state.failedParseQueue.length > 0)
+        {
+            this.state.failedParseQueue.forEach(f => {
+                console.log(f);
+            });
+        }
+
+        if(this.state.ingredientQueue.length === 0 && this.state.recipeQueue.length === 0)
+        {
+            console.log("No ingredients or recipes in queue to upload");
+        }
+        else
+        {
+            if(this.state.ingredientQueue.length > 0)
+            {
+                setIngredientData(this.state.ingredientQueue);
+                this.setState({ ingredientQueue: [] });
+            }
+
+            if(this.state.recipeQueue.length > 0)
+            {
+                // setIngredientData(this.state.recipeQueue);
+                this.setState({ recipeQueue: [] });
+            }
+        }
     }
 
     renderUploadButtons()
@@ -233,8 +249,29 @@ class UploadPage extends React.Component
                 {this.queue ? <p style={{ ...getTextColor(this.props.contrastmode) }}>{UPLOAD_QUEUE + ": " + this.queue}</p> : (null)}
 
                 <div className="rowStyle">
-                    <Button key={"uploadButton" + ms} onClick={(this.state.queue.length > 0 ? this.upload : (null))} contrastmode={this.props.contrastmode} text={UPLOAD}/> 
+                    <Button key={"validateButton" + ms} onClick={this.parseFreeText} contrastmode={this.props.contrastmode} text={VALIDATE_UPLOAD_DATA}/> 
                 </div>
+
+                <div className="rowStyle">
+                    <Button key={"uploadButton" + ms} onClick={(this.state.ingredientQueue.length > 0 || this.state.recipeQueue.length > 0 ? this.upload : (null))} 
+                    contrastmode={this.props.contrastmode} text={UPLOAD}/> 
+                </div>
+            </div>
+        );
+    }
+
+    renderUploadSummary()
+    {
+        if(this.state.ingredientQueue.length === 0 && this.state.recipeQueue.length === 0)
+            return (
+                <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
+                    <h3 style={{ ...getTextColor(this.props.contrastmode) }}>{"nothing here yes"}</h3>
+                </div>
+            );
+        
+        return (
+            <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
+                <h3 style={{ ...getTextColor(this.props.contrastmode) }}>{WIP}</h3>
             </div>
         );
     }
@@ -247,9 +284,9 @@ class UploadPage extends React.Component
                 <hr/>
 
                 {/* Option to upload using a html input form */}
-                <Panel title={UPLOAD_FORM} contrastmode={this.props.contrastmode}>
+                {/* <Panel title={UPLOAD_FORM} contrastmode={this.props.contrastmode}>
                     {this.renderUploadForm()}
-                </Panel>
+                </Panel> */}
 
                 {/* Specific guide to formating the uploads (in case of upload from file) (make collapsable; panel)
                     -> Submit files buttons/ drag+drop area */}
@@ -262,6 +299,9 @@ class UploadPage extends React.Component
                 Specific info about what's about to be uploaded (number of items, name/title of items)
                 Upload buttons (if validation successful) */}
                 {this.renderUploadButtons()}
+
+                {/* Render a log or summary for uplodaing queues. */}
+                {/* {this.renderUploadSummary()} */}
             </div>);
     }
 
