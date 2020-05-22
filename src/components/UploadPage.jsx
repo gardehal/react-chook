@@ -9,7 +9,7 @@ import { renderLoading, renderError, setTitle } from "../resources/Shared";
 // Variable imports
 import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, 
     GRADE, RATING, PORTIONS, PREP_TIME, TOTAL_TIME, COOKING_METHOD, COOKING_METHOD_TEMPERATURE, COOKING_METHOD_TEMPERATURE_UNIT, 
-    INGREDIENTS, INSTRUCTIONS, TIPS_NOTES, FILE_UPLOAD_ERROR, NO_FILE_ERROR, FILE_SELECTED, VALIDATE_UPLOAD_DATA } from "../resources/language";
+    INGREDIENTS, INSTRUCTIONS, TIPS_NOTES, FILE_UPLOAD_ERROR, NO_FILE_ERROR, FILE_SELECTED, VALIDATE_UPLOAD_DATA, NO_VALID_ITEMS_IN_FILE } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
 // Component imports
@@ -40,7 +40,7 @@ class UploadPage extends React.Component
 
     initState()
     {
-        return { ingredientQueue: [], recipeQueue: [], failedParseQueue: [], freetext: "" };
+        return { freetext: "", filename: "", ingredientQueue: [], recipeQueue: [], failedParseQueue: [] };
     }
 
     componentWillMount()
@@ -88,14 +88,15 @@ class UploadPage extends React.Component
                     {COOKING_METHOD_TEMPERATURE_UNIT} <input type="text" name=""/>
                     <br/>
                     {INGREDIENTS}<span key="requiredNotifierIngredients" style={{ ...{ color: RED } }}>*</span>
-                    // Ingredient array, multiple input with option to add more ingredients
+                    {/* // Ingredient array, multiple input with option to add more ingredients */}
                     <br/>
                     {INSTRUCTIONS}<span key="requiredNotifierInstructions" style={{ ...{ color: RED } }}>*</span> <input type="text" name="" required/>
-                    // Consider textarea for large text fields
+                    {/* // Consider textarea for large text fields */}
                     <br/>
                     {TIPS_NOTES} <input type="text" name=""/>
                     <br/>
-                    // Once all required fields are filled, validate with the button under {OVERVIEW}
+                    {/* // Once all required fields are filled, validate with the button under  */}
+                    {OVERVIEW}
                 </form>
             </div>
         );
@@ -117,50 +118,62 @@ class UploadPage extends React.Component
         );
     }
 
-    // Smoother way?
     selectFile()
     {
+        this.setState({ freetext: "", filename: "" });
         var fileElement = document.getElementById("uploadFileId");
         fileElement.click();
 
-        fileElement.onchange = () =>
+        fileElement.addEventListener("change", (event) =>
         {
-            if(!fileElement.value) 
+            event.stopPropagation();
+            event.preventDefault();
+            const fileList = event.target.files;
+            let file = fileList[0];
+
+            if(!file)
             {
                 setRecipeError(NO_FILE_ERROR);
                 console.log("No file: " + fileElement.value);
                 return;
             }
 
-            let filename = fileElement.value.split("\\");
-            filename = filename[filename.length - 1];
+            let filename = file.name;
             
             // Setup a file reader
-            const r = new FileReader();
+            let r = new FileReader();
             r.onload = e =>
             {
-                console.log("File set"); // not resetting
-                this.setState({ freetext: e.target.result });
+                console.log("File set");
+                this.setState({ freetext: e.target.result, filename: filename });
+                fileElement.value = null;
             };
             r.onerror = err =>
             {
                 setRecipeError(FILE_UPLOAD_ERROR);
                 console.log(err);
             }
+
             // Execute file reader
-            r.readAsText(fileElement.files[0]);
-        };
+            r.readAsText(file);
+        });
 
     }
 
     parseFreetext()
     {
-        this.setState(this.initState());
+        this.setState({ ingredientQueue: [], recipeQueue: [], failedParseQueue: [] });
         // Split text on exclamation marks. First instance ([0]) in items should be empty because an item starts with !, i.e. the data is after.
-        let items = this.state.freetext.split("!");
         let ingredients = [];
         let recipes = [];
         let failedItems = [];
+        let items = this.state.freetext.split("!");
+
+        if(items.length <= 1)
+        {
+            this.setState({ failedParseQueue: [NO_VALID_ITEMS_IN_FILE] });
+            return;
+        }
 
         for (let i = 1; i < items.length; i++)
         {
@@ -171,19 +184,19 @@ class UploadPage extends React.Component
             console.log(items[i]);
 
             // Ingredient has 4 lines including !
-            if(nLines === 4)
+            if(nLines === 4 || nLines === 5)
             {
                 // Line number 3 must be an IngredientType
                 let type = String(lines[2]).toUpperCase().replace("\r", "").replace("\t", "");
                 if(!IngredientType.includes(type))
                 {
-                    failedItems.push("Ingredient " + String(i) + " failed. \"" + type + "\" is not a valid IngredientType.");
+                    failedItems.push("Ingredient " + String(i) + " failed. \"" + type + "\" is not a valid IngredientType."); // TODO translate in text-file
                     continue;
                 }
                 // Line number 4 must be a number
-                if(parseFloat(lines[3]) === NaN)
+                if(isNaN(parseFloat(lines[3].toString())))
                 {
-                    failedItems.push("Ingredient " + String(i) + " failed. Price was not a number.");
+                    failedItems.push("Ingredient " + String(i) + " failed. Price is not a number."); // TODO translate in text-file
                     continue;
                 }
 
@@ -199,7 +212,7 @@ class UploadPage extends React.Component
         }
 
         console.log("\nEnqueueing items...");
-        this.setState({ ingredientQueue: ingredients, recipeQueue: recipes, failedParseQueue: failedItems });
+        this.setState({ filename: "", freetext: "", ingredientQueue: ingredients, recipeQueue: recipes, failedParseQueue: failedItems });
     }
 
     upload()
@@ -262,15 +275,22 @@ class UploadPage extends React.Component
 
     renderUploadSummary()
     {        
+        let failedQueue = this.state.failedParseQueue;
+        let failedData =  failedQueue.length > 0 ? failedQueue : null; // null, empty, "...", "nothing here yet", or "no fails"
+        let ingredientQueue = this.state.ingredientQueue;
+        let ingredientData =  ingredientQueue.length > 0 ? JSON.stringify(ingredientQueue, null, 2) : null; // Transform into a more legible JSON array
+        let recipeQueue = this.state.recipeQueue;
+        let recipeData =  recipeQueue.length > 0 ? JSON.stringify(recipeQueue, null, 2) : null;
+
         return (
             <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
                 <h3 style={{ ...getTextColor(this.props.contrastmode) }}>{WIP}</h3>
-                <p style={{ ...getTextColor(this.props.contrastmode) }}>{"Failed items"}</p>
-                <p style={{ ...getTextColor(this.props.contrastmode) }}>{"X items failed to parse"}</p>
-                <p style={{ ...getTextColor(this.props.contrastmode) }}>{"Ingredients"}</p>
-                <p style={{ ...getTextColor(this.props.contrastmode) }}>{"X Ingredients in queue"}</p>
-                <p style={{ ...getTextColor(this.props.contrastmode) }}>{"Recipes"}</p>
-                <p style={{ ...getTextColor(this.props.contrastmode) }}>{"X Recipes in queue"}</p>
+                <h2 style={{ ...getTextColor(this.props.contrastmode) }}>{"Failed items"}</h2>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{failedData}</p>
+                <h2 style={{ ...getTextColor(this.props.contrastmode) }}>{"Ingredients"}</h2>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{ingredientData}</p>
+                <h2 style={{ ...getTextColor(this.props.contrastmode) }}>{"Recipes"}</h2>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{recipeData}</p>
             </div>
         );
     }

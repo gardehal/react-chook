@@ -73,6 +73,7 @@ export const UPLOAD_CHOOSE_FILE = "Velg en fil som skal lastes opp";
 export const OVERVIEW = "Oversikt";
 export const UPLOAD_QUEUE = "Opplastningskø";
 export const VALIDATE_UPLOAD_DATA = "Valider data for opplasting";
+export const NO_VALID_ITEMS_IN_FILE = "Det er ingen gyldige ingredienser eller oppskrifter i filen.";
 
 export const TITLE = "Tittel";
 export const TYPE = "type";
