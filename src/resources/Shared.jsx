@@ -186,7 +186,7 @@ export const setTitle = (title = "") =>
     document.title = MAIN_TITLE + (title ? " | " + title : "");
 };
 
-export const getRandomString = (length = 8) =>
+export const getRandomString = (length = 16) =>
 {
     if(length > 32) length = 32;
     
