@@ -14,7 +14,7 @@ import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLO
     FREETEXT_INFO, FREETEXT_INPUT_INFO, FREETEXT_SYNTAX_START, FREETEXT_SYNTAX_DELIM, FREETEXT_SYNTAX_NAME, FREETEXT_SYNTAX_TYPE, FREETEXT_SYNTAX_PRICE, 
     FREETEXT_SYNTAX_COMMON, FREETEXT_SYNTAX_EXAMPLE_START, SEASALT, SPICE, FREETEXT_SYNTAX_EXAMPLE_PRICE, TRUE, 
     FREETEXT_SYNTAX_INFO_EXCLAMATION, FREETEXT_SYNTAX_INFO_TYPES, FREETEXT_SYNTAX_INFO_PRICE, FREETEXT_SYNTAX_INFO_COMMON, FREETEXT_SYNTAX_INFO_KOLONIAL, 
-    FREETEXT_SYNTAX_INFO_OVERVIEW, ELEMENT } from "../resources/language";
+    FREETEXT_SYNTAX_INFO_OVERVIEW, ELEMENT, SIMILAR_IN_DB } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
 // Component imports
@@ -22,6 +22,19 @@ import { Button } from "./common/Button";
 import { Panel } from "./common/Panel";
 import { Ingredient } from "../models/Ingredient";
 import { IngredientType } from "../models/IngredientType";
+
+// Create a list of measurement units to check for later
+const temperaturesUnits = ["k", "c", "f"];
+const siUnitsWeight = ["mg", "milligram", "g", "gram", "dag", "decagram", "hg", "hekto", "hektogram", "kg", "kilogram"];
+const siUnitsLength = ["cm", "centimeter"];
+const siUnitsVolume = ["ml", "milliliter", "cl", "centiliter", "dl", "deciliter", "l", "liter"];
+const impUnitsWeight = ["gr", "grain", "oz", "ounce", "ib", "pound", "st", "stone", "qt", "qr", "kvart"];
+const impUnitsLength = ["\"", "inch", "inches", "tommer", "\'", "fot", "feet"];
+const impUnitsVolume = ["oz", "ounce", "pt", "pint", "qt", "kvart", "gal", "gallon"];
+const toolUnits = ["ts", "teskje", "ss", "spiseskje", "c", "kopp"];
+const miscUnits = ["fedd", "klype", "neve", "never", "litt", "dråpe", "dram", "blad", "blader", "terning", "porsjon", "porsjoner", "skiver", "stilk", "stilker", "kuler"];
+const wholeUnits = ["hel", "hele", "pakke", "enhet", "mye", "masse", "bunt", "bunter", "flaske", "boks", "bokser"];
+const allUnits = toolUnits.concat(miscUnits, wholeUnits, siUnitsWeight, siUnitsLength, siUnitsVolume, impUnitsWeight, impUnitsLength, impUnitsVolume);
 
 class UploadPage extends React.Component
 {
@@ -266,9 +279,19 @@ class UploadPage extends React.Component
 
             if(this.state.ingredientQueue.length > 0)
             {
-                // TODO check db for ingredients with same hash or similar(same?) name
-                setIngredientData(this.state.ingredientQueue);
-                this.setState({ ingredientQueue: [] });
+                let toUpload = [];
+                let failedUploads = [];
+                this.state.ingredientQueue.forEach(i => 
+                {
+                    // Same/similar name? hash?
+                    if(getIngredientData("name", i.name) != null)
+                        failedUploads.push(INGREDIENT + " " + i.name + ": " + SIMILAR_IN_DB);
+                    else
+                        toUpload.push(i);
+                });
+                
+                setIngredientData(toUpload);
+                this.setState({ failedParseQueue: failedUploads, ingredientQueue: [] });
             }
 
             if(this.state.recipeQueue.length > 0)
@@ -307,27 +330,26 @@ class UploadPage extends React.Component
 
     renderUploadSummary()
     {
-        let textAreaStyle = { resize: "vertical" };
-        let cols = "60";
+        let textAreaStyle = { resize: "vertical", width: "calc(100% - 0.9em)", paddingLeft: "0.5em" };
         let rows = "8";
 
         let failedQueue = this.state.failedParseQueue;
-        let x = [];
-        failedQueue.forEach(f => 
+        let failedList = [];
+        failedQueue.forEach(e => 
         {
-            x.push(<li>{f}</li>);
+            failedList.push(<li>{e}</li>);
         });
-        let failedData = failedQueue.length === 0 ? null : <ul>{x}</ul>; // null, empty, "...", "nothing here yet", or "no fails"
+        let failedData = failedQueue.length === 0 ? null : <ul>{failedList}</ul>; // null, empty, "...", "nothing here yet", or "no fails"
 
         let ingredientQueue = this.state.ingredientQueue;
         let ingredientData = ingredientQueue.length === 0 ? null :
-            <textarea style={textAreaStyle} cols={cols} rows={rows} disabled readonly>
+            <textarea style={textAreaStyle} rows={rows} disabled readonly>
                 {JSON.stringify(ingredientQueue, null, 2).toString()}
             </textarea>;
 
         let recipeQueue = this.state.recipeQueue;
         let recipeData = recipeQueue.length === 0 ? null :
-            <textarea style={textAreaStyle} cols={cols} rows={rows} disabled readonly>
+            <textarea style={textAreaStyle} rows={rows} disabled readonly>
                 {JSON.stringify(recipeQueue, null, 2).toString()}
             </textarea>;
 
