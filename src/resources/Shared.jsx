@@ -114,17 +114,24 @@ export const renderToast = (message, time = 5000, contrastmode = false, alttext 
         return <Toast key="alertToast" message={message} time={time} contrastmode={contrastmode} alttext={alttext} onClick={onClick}/>;
 };
 
-export const getToday = () => 
+export const getNow = (includeTime = false) => 
 {
     // Get today, in YYYY-MM-DD
     var date = new Date();
+    let now = "";
 
-    let today = date.getFullYear() + "-";
-    // Since JS" dates does not use 0X for single number dates, add them
-    today += (date.getMonth() + 1 < 10 ? "0" : "") + (date.getMonth() + 1 + "-");
-    today += (date.getDate() + 1 < 10 ? "0" : "") + date.getDate();
+    now += "Z" + date.getUTCFullYear();
+    now += "-" + addLeadingZeros(date.getUTCMonth());
+    now += "-" + addLeadingZeros(date.getUTCDate());
 
-    return today;
+    if(includeTime)
+    {
+        now += "T" + addLeadingZeros(date.getUTCHours());
+        now += "-" + addLeadingZeros(date.getUTCMinutes());
+        now += "-" + addLeadingZeros(date.getUTCSeconds());
+    }
+
+    return now;
 };
 
 export const incrementMinutes = (timeString, minutes = 15, decrement = false) => 
@@ -171,6 +178,7 @@ export const getLongFormatDate = (date, includeDay = true, includeYear = true ) 
     return full;
 };
 
+// Adds nOfZeros zeros in front of n, to the max digit-size of leadingLimit
 export const addLeadingZeros = (n, nOfZeros = 1, leadingLimit = 10) =>
 {
     let res = n;

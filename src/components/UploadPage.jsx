@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 // Redux imports
 import { getRecipeData, setRecipeError } from "../actions/RecipeActions";
 import { getIngredientData, setIngredientData } from "../actions/IngredientActions";
-import { renderLoading, renderError, setTitle } from "../resources/Shared";
+import { renderLoading, renderError, setTitle, getRandomString } from "../resources/Shared";
 
 // Variable imports
 import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, 
@@ -21,9 +21,9 @@ import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "
 import { Button } from "./common/Button";
 import { Panel } from "./common/Panel";
 import { Ingredient } from "../models/Ingredient";
-import { IngredientType } from "../models/IngredientType";
+import { IngredientType } from "../models/enums/IngredientType";
 
-// Create a list of measurement units to check for later
+// Create a list of measurement units to check for later // TODO move to enums
 const temperaturesUnits = ["k", "c", "f"];
 const siUnitsWeight = ["mg", "milligram", "g", "gram", "dag", "decagram", "hg", "hekto", "hektogram", "kg", "kilogram"];
 const siUnitsLength = ["cm", "centimeter"];
@@ -50,7 +50,7 @@ class UploadPage extends React.Component
 
     initState()
     {
-        return { freetext: "", filename: "", ingredientQueue: [], recipeQueue: [], failedParseQueue: [] };
+        return { freetext: "", filename: "", ingredientQueue: [], recipeQueue: [], errorsQueue: [] };
     }
 
     componentWillMount()
@@ -133,7 +133,7 @@ class UploadPage extends React.Component
         return (
             <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}> 
             <textarea cols='60' rows='8'></textarea>
-                <Button onClick={this.selectFile} contrastmode={this.props.contrastmode} text={UPLOAD_CHOOSE_FILE}/> */}
+                <Button onClick={this.selectFile} contrastmode={this.props.contrastmode} text={UPLOAD_CHOOSE_FILE}/>
             </div>
         );
     }
@@ -182,7 +182,7 @@ class UploadPage extends React.Component
 
     parseFreetext()
     {
-        this.setState({ ingredientQueue: [], recipeQueue: [], failedParseQueue: [] });
+        this.setState({ ingredientQueue: [], recipeQueue: [], errorsQueue: [] });
         // Split text on exclamation marks. First instance ([0]) in items should be empty because an item starts with !, i.e. the data is after.
         let ingredients = [];
         let recipes = [];
@@ -191,7 +191,7 @@ class UploadPage extends React.Component
 
         if(items.length <= 1)
         {
-            this.setState({ failedParseQueue: [NO_VALID_ITEMS_IN_FILE] });
+            this.setState({ errorsQueue: [NO_VALID_ITEMS_IN_FILE] });
             return;
         }
 
@@ -203,11 +203,10 @@ class UploadPage extends React.Component
             console.log(i + ": nLines: " + nLines);
             console.log(items[i]);
 
-            // Ingredient has 3 mandatory lines, one optional. 
+            // Ingredient has 3 mandatory lines, 1 optional
             // Accepted number of lines for ingredient: 3, 4
             if(nLines === 3 || nLines === 4)
             {
-                // Line number 2 must be an IngredientType
                 let name = lines[0].replace("\t", "").toString();
                 let type = String(lines[1]).toUpperCase().replace("\t", "").toString();
                 let price = lines[2];
@@ -221,11 +220,14 @@ class UploadPage extends React.Component
                 }
 
                 // type must be parsable to IngredientType
-                if(!IngredientType.includes(type))
+                if(IngredientType[type] === undefined)
                 {
                     failedItems.push(INGREDIENT + " " + i + " (" + name + "): " + NOT_AN_INGREDIENTTYPE + ": \"" + type + "\"");
                     continue;
                 }
+                // Int index of IngredientType? 
+                else
+                    type = IngredientType[type];
 
                 // price must be a number, 0 or more
                 if(isNaN(parseFloat(price)))
@@ -245,26 +247,31 @@ class UploadPage extends React.Component
                 if(lines[3] != null && (lines[3] === "1" ||  lines[3] === "true"))
                     common = true;
 
-                ingredients.push(new Ingredient(name, type, price, common));
+                ingredients.push(new Ingredient(getRandomString(), name, type, price, common));
             }
 
-            // Recipe has ?? lines including !
-            else if(nLines === 36)
+            // Recipe has 10 mandatory lines, potentially infinite
+            // Accepted number of lines for ingredient: 10+
+            else if(nLines > 9)
+            {
                 console.log("Reciepe");
+
+            }
 
             else
                 failedItems.push(ELEMENT + " " + i + " (" + "?" + "): " + FAILED);
         }
 
         console.log("\nEnqueueing items...");
-        this.setState({ filename: "", freetext: "", ingredientQueue: ingredients, recipeQueue: recipes, failedParseQueue: failedItems });
+        this.setState({ filename: "", freetext: "", ingredientQueue: ingredients, recipeQueue: recipes, errorsQueue: failedItems });
     }
 
+    // TODO Upload entity should use ID given, not auto set
     upload()
     {
-        if(this.state.failedParseQueue.length > 0)
+        if(this.state.errorsQueue.length > 0)
         {
-            this.state.failedParseQueue.forEach(f => {
+            this.state.errorsQueue.forEach(f => {
                 console.log(f);
             });
         }
@@ -275,7 +282,7 @@ class UploadPage extends React.Component
         }
         else
         {
-            this.setState({ failedParseQueue: [] });
+            this.setState({ errorsQueue: [] });
 
             if(this.state.ingredientQueue.length > 0)
             {
@@ -284,19 +291,20 @@ class UploadPage extends React.Component
                 this.state.ingredientQueue.forEach(i => 
                 {
                     // Same/similar name? hash?
-                    if(getIngredientData("name", i.name) != null)
-                        failedUploads.push(INGREDIENT + " " + i.name + ": " + SIMILAR_IN_DB);
+                    if(getIngredientData("name", i.name).length > 0)
+                        failedUploads.push(INGREDIENT + " \"" + i.name + "\": " + SIMILAR_IN_DB);
                     else
                         toUpload.push(i);
                 });
                 
                 setIngredientData(toUpload);
-                this.setState({ failedParseQueue: failedUploads, ingredientQueue: [] });
+                this.setState({ errorsQueue: failedUploads, ingredientQueue: [] });
             }
 
             if(this.state.recipeQueue.length > 0)
             {
                 // setIngredientData(this.state.recipeQueue);
+                console.log("TODO: upload recipes");
                 this.setState({ recipeQueue: [] });
             }
         }
@@ -333,7 +341,7 @@ class UploadPage extends React.Component
         let textAreaStyle = { resize: "vertical", width: "calc(100% - 0.9em)", paddingLeft: "0.5em" };
         let rows = "8";
 
-        let failedQueue = this.state.failedParseQueue;
+        let failedQueue = this.state.errorsQueue;
         let failedList = [];
         failedQueue.forEach(e => 
         {
