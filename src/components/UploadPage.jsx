@@ -22,6 +22,7 @@ import { Button } from "./common/Button";
 import { Panel } from "./common/Panel";
 import { Ingredient } from "../models/Ingredient";
 import { IngredientType } from "../models/enums/IngredientType";
+import { Recipe } from "../models/Recipe";
 
 // Create a list of measurement units to check for later // TODO move to enums
 const temperaturesUnits = ["k", "c", "f"];
@@ -254,8 +255,45 @@ class UploadPage extends React.Component
             // Accepted number of lines for ingredient: 10+
             else if(nLines > 9)
             {
-                console.log("Reciepe");
+                let title = lines[0].replace("\t", "").toString();
+                let type = String(lines[1]).toUpperCase().replace("\t", "").toString();
+                let portions = lines[2];
+                let difficulty = String(lines[3]).toUpperCase().replace("\t", "").toString();
+                let rating = lines[2];
+                let timePrep = lines[2];
+                let timeTotal = lines[2];
+                let cookingMethod = String(lines[1]).toUpperCase().replace("\t", "").toString();
+                let cookingMethodTemp = lines[2];
+                let cookingMethodTempUnit = String(lines[1]).toUpperCase().replace("\t", "").toString();
+                let recipeIngredient = [];
+                let instructions = [];
+                let notes = [];
 
+                if(lines[4].replace(" ", "") != "+" || lines[4].replace(" ", "") != "+")
+                {
+                    failedItems.push(INGREDIENT + " " + i + " (" + name + "): " + NOT_A_NUMBER + ": " + PRICE);
+                    continue;
+                }
+
+                // x? numbner of ingredients
+                // y? number of instructions
+                // z? number of notes 
+                //eof
+
+                recipes.push(new Recipe(getRandomString(), 
+                title, 
+                type, 
+                difficulty,
+                rating, 
+                portions, 
+                timePrep, 
+                timeTotal, 
+                cookingMethod, 
+                cookingMethodTemp, 
+                cookingMethodTempUnit, 
+                recipeIngredient, 
+                instructions, 
+                notes));
             }
 
             else
@@ -338,7 +376,7 @@ class UploadPage extends React.Component
 
     renderUploadSummary()
     {
-        let textAreaStyle = { resize: "vertical", width: "calc(100% - 0.9em)", paddingLeft: "0.5em" };
+        let textAreaStyle = { resize: "vertical", width: "calc(100% - 0.8em)", paddingLeft: "0.5em" };
         let rows = "8";
 
         let failedQueue = this.state.errorsQueue;

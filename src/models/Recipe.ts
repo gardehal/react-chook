@@ -10,10 +10,9 @@ export class Recipe
 {
     id: String;
     date: String;
-    main_protein: Protein;
+    title: String;
     cost: Number;
     total_cost: Number;
-    title: String;
     type: RecipeType;
     // characteristics: Characteristics; // ? Soup, gulasj, solid?, salad, ...
     // Vegan: Boolean; // Can get from Protein
@@ -25,15 +24,13 @@ export class Recipe
     cooking_method: CookingMethod;
     cooking_method_temprature: Number;
     cooking_method_temprature_unit: TempratureUnit;
-    ingredients:Array<RecipeIngredient>;
+    main_protein: Protein;
+    recipe_ingredients:Array<RecipeIngredient>;
     instructions:Array<String>;
     notes:Array<String>;
 
     constructor(id: String,
-      main_protein: Protein,
-      cost: Number,
-      total_cost: Number,
-      title: String, 
+      title: String,
       type: RecipeType, 
       difficulty: Difficulty, 
       rating: Number,
@@ -43,17 +40,17 @@ export class Recipe
       cooking_method: CookingMethod,
       cooking_method_temprature: Number,
       cooking_method_temprature_unit: TempratureUnit,
-      ingredients:Array<RecipeIngredient> = [],
+      main_protein: Protein,
+      recipe_ingredients:Array<RecipeIngredient> = [],
       instructions:Array<String> = [],
       notes:Array<String> = []
       ) 
     {
       this.id = id;
       this.date = getNow(true);
-      this.main_protein = main_protein;
-      this.cost = cost;
-      this.total_cost = total_cost;
       this.title = title;
+      this.cost = this.calculateCost();
+      this.total_cost = this.calculateTotalCost();
       this.type = type;
       this.difficulty = difficulty;
       this.rating = rating;
@@ -63,8 +60,27 @@ export class Recipe
       this.cooking_method = cooking_method;
       this.cooking_method_temprature = cooking_method_temprature;
       this.cooking_method_temprature_unit = cooking_method_temprature_unit;
-      this.ingredients = ingredients;
+      this.main_protein = main_protein;
+      this.recipe_ingredients = recipe_ingredients;
       this.instructions = instructions;
       this.notes = notes;
     }
+
+    // TODO
+    private calculateCost(): Number
+    {
+      if(this.recipe_ingredients.length == 0)
+        return 0;
+      else
+        return 0;
+    }
+
+    private calculateTotalCost(): Number
+    {
+      if(this.recipe_ingredients.length == 0)
+        return 0;
+      else
+        return 0;
+    }
+
   }
