@@ -105,6 +105,11 @@ export const FREETEXT_SYNTAX_INFO_COMMON = "- Vanlighet er valgfritt, men må sk
 export const FREETEXT_SYNTAX_INFO_KOLONIAL = "- Nettsiden kolonial.no har mange ingredienser om det skulle være nødvendig å sjekke pris. Det vil også gjøres set søk i databasen, og lignende data vil ikke bli lastet opp.";
 export const FREETEXT_SYNTAX_INFO_OVERVIEW = "- Alle feilmeldinger kommer opp under \"" + FAILED_ITEMS + "\", mens ingredienser og oppskrifter som er godkjente vises som JSON i \"" + OVERVIEW + "\".";
 export const SIMILAR_IN_DB = "Lignende funnet i database";
+export const MISSING_LINES = "Linjer mangler; for kort.";
+export const SECTION_MISSING = "Seksjon mangler.";
+export const MAX_INGREDIENTS_IN_RECIPE = "Maksimum antall ingredienser i oppskriften.";
+export const MAX_INSTRUCTIONS_IN_RECIPE = "Maksimum antall instruksjoner i oppskriften.";
+export const MAX_NOTES_IN_RECIPE = "Maksimum antall notater i oppskriften.";
 
 export const TITLE = "Tittel";
 export const TYPE = "type";
