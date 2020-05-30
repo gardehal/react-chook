@@ -14,7 +14,8 @@ import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLO
     FREETEXT_INFO, FREETEXT_INPUT_INFO, FREETEXT_SYNTAX_START, FREETEXT_SYNTAX_DELIM, FREETEXT_SYNTAX_NAME, FREETEXT_SYNTAX_TYPE, FREETEXT_SYNTAX_PRICE, 
     FREETEXT_SYNTAX_COMMON, FREETEXT_SYNTAX_EXAMPLE_START, SEASALT, SPICE, FREETEXT_SYNTAX_EXAMPLE_PRICE, TRUE, 
     FREETEXT_SYNTAX_INFO_EXCLAMATION, FREETEXT_SYNTAX_INFO_TYPES, FREETEXT_SYNTAX_INFO_PRICE, FREETEXT_SYNTAX_INFO_COMMON, FREETEXT_SYNTAX_INFO_KOLONIAL, 
-    FREETEXT_SYNTAX_INFO_OVERVIEW, ELEMENT, SIMILAR_IN_DB } from "../resources/language";
+    FREETEXT_SYNTAX_INFO_OVERVIEW, ELEMENT, SIMILAR_IN_DB, SECTION_MISSING, MAX_INGREDIENTS_IN_RECIPE, MAX_INSTRUCTIONS_IN_RECIPE, MAX_NOTES_IN_RECIPE,
+ } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
 // Component imports
@@ -23,19 +24,7 @@ import { Panel } from "./common/Panel";
 import { Ingredient } from "../models/Ingredient";
 import { IngredientType } from "../models/enums/IngredientType";
 import { Recipe } from "../models/Recipe";
-
-// Create a list of measurement units to check for later // TODO move to enums
-const temperaturesUnits = ["k", "c", "f"];
-const siUnitsWeight = ["mg", "milligram", "g", "gram", "dag", "decagram", "hg", "hekto", "hektogram", "kg", "kilogram"];
-const siUnitsLength = ["cm", "centimeter"];
-const siUnitsVolume = ["ml", "milliliter", "cl", "centiliter", "dl", "deciliter", "l", "liter"];
-const impUnitsWeight = ["gr", "grain", "oz", "ounce", "ib", "pound", "st", "stone", "qt", "qr", "kvart"];
-const impUnitsLength = ["\"", "inch", "inches", "tommer", "\'", "fot", "feet"];
-const impUnitsVolume = ["oz", "ounce", "pt", "pint", "qt", "kvart", "gal", "gallon"];
-const toolUnits = ["ts", "teskje", "ss", "spiseskje", "c", "kopp"];
-const miscUnits = ["fedd", "klype", "neve", "never", "litt", "dråpe", "dram", "blad", "blader", "terning", "porsjon", "porsjoner", "skiver", "stilk", "stilker", "kuler"];
-const wholeUnits = ["hel", "hele", "pakke", "enhet", "mye", "masse", "bunt", "bunter", "flaske", "boks", "bokser"];
-const allUnits = toolUnits.concat(miscUnits, wholeUnits, siUnitsWeight, siUnitsLength, siUnitsVolume, impUnitsWeight, impUnitsLength, impUnitsVolume);
+import { RecipeIngredient } from "../models/RecipeIngredient";
 
 class UploadPage extends React.Component
 {
@@ -196,7 +185,7 @@ class UploadPage extends React.Component
             return;
         }
 
-        for (let i = 1; i < items.length; i++)
+        forItemsLoop: for (let i = 1; i < items.length; i++)
         {
             let lines = items[i].split(/\r?\n/).filter(e => e);
             let nLines = lines.length;
@@ -255,30 +244,87 @@ class UploadPage extends React.Component
             // Accepted number of lines for ingredient: 10+
             else if(nLines > 9)
             {
+                let sectionDelim = "+";
+                let metaLinesMax = 5;
+                let maxArrayItems = 64;
+
+                // Metadata
                 let title = lines[0].replace("\t", "").toString();
-                let type = String(lines[1]).toUpperCase().replace("\t", "").toString();
                 let portions = lines[2];
-                let difficulty = String(lines[3]).toUpperCase().replace("\t", "").toString();
-                let rating = lines[2];
                 let timePrep = lines[2];
                 let timeTotal = lines[2];
+                
+                // type, difficulty, rating line
+                let type = String(lines[1]).toUpperCase().replace("\t", "").toString();
+                let difficulty = String(lines[3]).toUpperCase().replace("\t", "").toString();
+                let rating = lines[2];
+                
+                // method++ line
                 let cookingMethod = String(lines[1]).toUpperCase().replace("\t", "").toString();
                 let cookingMethodTemp = lines[2];
                 let cookingMethodTempUnit = String(lines[1]).toUpperCase().replace("\t", "").toString();
+
+                // Arrays
                 let recipeIngredient = [];
                 let instructions = [];
                 let notes = [];
 
-                if(lines[4].replace(" ", "") != "+" || lines[4].replace(" ", "") != "+")
-                {
-                    failedItems.push(INGREDIENT + " " + i + " (" + name + "): " + NOT_A_NUMBER + ": " + PRICE);
-                    continue;
-                }
+                // Lines 4 to 5 should have a + that ends metadata section and starts ingredient section
+                let j = (metaLinesMax - 1);
+                while (lines[j] != sectionDelim)
+                    if(j > metaLinesMax)
+                    {
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + SECTION_MISSING);
+                        continue forItemsLoop;
+                    }
 
-                // x? numbner of ingredients
-                // y? number of instructions
-                // z? number of notes 
-                //eof
+                // Gather ingredients for recipe
+                let l = j;
+                while(lines[l] != sectionDelim)
+                {
+                    let a = lines[l].split(" ");
+                    let quantity = a[0];
+                    let quantityUnit = a[1];
+                    let recipeIngredient = a[2];
+                    let preparation = a[3];
+
+                    // check parse number, enums, find ingredient in DB
+                    // note, qUnit and prep is optional
+
+                    ingredients.push(new RecipeIngredient(quantity, recipeIngredient, quantityUnit, preparation));
+
+                    if(l > maxArrayItems)
+                    {
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + MAX_INGREDIENTS_IN_RECIPE);
+                        break;
+                    }
+                }
+                
+                // Gather instructions
+                let m = l;
+                while(lines[m] != sectionDelim)
+                {
+                    instructions.push(lines[m]);
+
+                    if(m > maxArrayItems)
+                    {
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + MAX_INSTRUCTIONS_IN_RECIPE);
+                        break;
+                    }
+                }
+                
+                // Gather notes
+                let n = m;
+                while(n <= nLines)
+                {
+                    notes.push(lines[n]);
+
+                    if(n > maxArrayItems)
+                    {
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + MAX_NOTES_IN_RECIPE);
+                        break;
+                    }
+                }
 
                 recipes.push(new Recipe(getRandomString(), 
                 title, 
@@ -297,7 +343,7 @@ class UploadPage extends React.Component
             }
 
             else
-                failedItems.push(ELEMENT + " " + i + " (" + "?" + "): " + FAILED);
+                failedItems.push(ELEMENT + " " + i + " (" + "?" + "): " + FAILED); // unknocn entity
         }
 
         console.log("\nEnqueueing items...");
