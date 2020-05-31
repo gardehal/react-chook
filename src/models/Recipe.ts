@@ -14,8 +14,7 @@ export class Recipe
     cost: Number;
     total_cost: Number;
     type: RecipeType;
-    // characteristics: Characteristics; // ? Soup, gulasj, solid?, salad, ...
-    // Vegan: Boolean; // Can get from Protein
+    // cuisine: Cuisine; // ? cuisine/oregin (mexican, european, asian)
     difficulty: Difficulty; 
     rating: Number;
     portions: Number;
@@ -41,16 +40,13 @@ export class Recipe
       cooking_method_temprature: Number,
       cooking_method_temprature_unit: TempratureUnit,
       main_protein: Protein,
-      recipe_ingredients:Array<RecipeIngredient> = [],
-      instructions:Array<String> = [],
-      notes:Array<String> = []
+      recipe_ingredients: Array<RecipeIngredient> = [],
+      instructions: Array<String> = [],
+      notes: Array<String> = []
       ) 
     {
       this.id = id;
-      this.date = getNow(true);
       this.title = title;
-      this.cost = this.calculateCost();
-      this.total_cost = this.calculateTotalCost();
       this.type = type;
       this.difficulty = difficulty;
       this.rating = rating;
@@ -64,12 +60,16 @@ export class Recipe
       this.recipe_ingredients = recipe_ingredients;
       this.instructions = instructions;
       this.notes = notes;
+
+      this.date = getNow(true);
+      this.cost = this.calculateCost();
+      this.total_cost = this.calculateTotalCost();
     }
 
     // TODO
     private calculateCost(): Number
     {
-      if(this.recipe_ingredients.length == 0)
+      if(this.recipe_ingredients.length === 0)
         return 0;
       else
         return 0;
@@ -77,7 +77,7 @@ export class Recipe
 
     private calculateTotalCost(): Number
     {
-      if(this.recipe_ingredients.length == 0)
+      if(this.recipe_ingredients.length === 0)
         return 0;
       else
         return 0;

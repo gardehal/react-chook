@@ -1,5 +1,6 @@
 export enum IngredientType
 {
+    OTHER,
     MEAT,
     FISH,
     FOWL,
@@ -20,5 +21,4 @@ export enum IngredientType
     SEED,
     NUT,
     DRINK,
-    OTHER
 };

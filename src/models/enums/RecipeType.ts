@@ -1,5 +1,6 @@
 export enum RecipeType
 {
+    OTHER,
     MAIN_DISH,
     SIDE_DISH,
     BREAKFAST,
@@ -9,5 +10,4 @@ export enum RecipeType
     SALAD,
     DRINK,
     SPICE,
-    OTHER
 };

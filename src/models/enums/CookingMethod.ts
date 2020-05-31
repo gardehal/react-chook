@@ -1,5 +1,6 @@
 export enum CookingMethod
 {
+    OTHER,
     BAKE,
     ROAST,
     FRY,
@@ -7,5 +8,5 @@ export enum CookingMethod
     BOIL,
     SOUSVIDE,
     GRILL,
-    OTHER,
+    STEAM,
 };

@@ -1,6 +1,7 @@
 export enum Preparation
 {
     NONE,
+    OTHER,
     WHOLE,
     CHOPPED,
     MINCED,

@@ -1,5 +1,6 @@
 export enum QuantityUnit
 {
+    OTHER,
     // General units
     // Kitchen "units"
     TS,

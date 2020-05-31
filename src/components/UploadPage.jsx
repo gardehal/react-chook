@@ -9,13 +9,13 @@ import { renderLoading, renderError, setTitle, getRandomString } from "../resour
 // Variable imports
 import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, 
     GRADE, RATING, PORTIONS, PREP_TIME, TOTAL_TIME, COOKING_METHOD, COOKING_METHOD_TEMPERATURE, COOKING_METHOD_TEMPERATURE_UNIT, 
-    INGREDIENTS, INSTRUCTIONS, TIPS_NOTES, FILE_UPLOAD_ERROR, NO_FILE_ERROR, FILE_SELECTED, VALIDATE_UPLOAD_DATA, NO_VALID_ITEMS_IN_FILE,
-    INGREDIENT, FAILED, PRICE, NOT_VALID_NAME, NOT_A_NUMBER, NUMBER_BELOW_ZERO, NOT_AN_INGREDIENTTYPE, FAILED_ITEMS, RECIPES, MORE_INFORMATION, 
+    INGREDIENTS, INSTRUCTIONS, TIPS_NOTES, FILE_UPLOAD_ERROR, NO_FILE_ERROR, VALIDATE_UPLOAD_DATA, NO_VALID_ITEMS_IN_FILE,
+    INGREDIENT, RECIPE, FAILED, PRICE, NOT_VALID_NAME, NOT_A_NUMBER, NUMBER_BELOW_ZERO, NOT_AN_INGREDIENTTYPE, INVALID_TYPE, FAILED_ITEMS, RECIPES, MORE_INFORMATION, 
     FREETEXT_INFO, FREETEXT_INPUT_INFO, FREETEXT_SYNTAX_START, FREETEXT_SYNTAX_DELIM, FREETEXT_SYNTAX_NAME, FREETEXT_SYNTAX_TYPE, FREETEXT_SYNTAX_PRICE, 
     FREETEXT_SYNTAX_COMMON, FREETEXT_SYNTAX_EXAMPLE_START, SEASALT, SPICE, FREETEXT_SYNTAX_EXAMPLE_PRICE, TRUE, 
     FREETEXT_SYNTAX_INFO_EXCLAMATION, FREETEXT_SYNTAX_INFO_TYPES, FREETEXT_SYNTAX_INFO_PRICE, FREETEXT_SYNTAX_INFO_COMMON, FREETEXT_SYNTAX_INFO_KOLONIAL, 
-    FREETEXT_SYNTAX_INFO_OVERVIEW, ELEMENT, SIMILAR_IN_DB, SECTION_MISSING, MAX_INGREDIENTS_IN_RECIPE, MAX_INSTRUCTIONS_IN_RECIPE, MAX_NOTES_IN_RECIPE,
- } from "../resources/language";
+    FREETEXT_SYNTAX_INFO_OVERVIEW, ELEMENT, SIMILAR_IN_DB, SECTION_MISSING, MAX_INGREDIENTS_IN_RECIPE, MAX_INSTRUCTIONS_IN_RECIPE, MAX_NOTES_IN_RECIPE, ERROR,
+    INGREDIENT_NOT_FOUND_FILE, INGREDIENT_NOT_FOUND_DB, OUT_OF_BOUNDS } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
 // Component imports
@@ -25,6 +25,13 @@ import { Ingredient } from "../models/Ingredient";
 import { IngredientType } from "../models/enums/IngredientType";
 import { Recipe } from "../models/Recipe";
 import { RecipeIngredient } from "../models/RecipeIngredient";
+import { RecipeType } from "../models/enums/RecipeType";
+import { Difficulty } from "../models/enums/Difficulty";
+import { CookingMethod } from "../models/enums/CookingMethod";
+import { TempratureUnit } from "../models/enums/TempratureUnit";
+import { QuantityUnit } from "../models/enums/QuantityUnit";
+import { Preparation } from "../models/enums/Preparation";
+import { Protein } from "../models/enums/Protein";
 
 class UploadPage extends React.Component
 {
@@ -170,6 +177,17 @@ class UploadPage extends React.Component
 
     }
 
+    // TODO move parse ingredients and recipe to functions
+    parseIngredient()
+    {
+
+    }
+
+    parseRecipe()
+    {
+
+    }
+
     parseFreetext()
     {
         this.setState({ ingredientQueue: [], recipeQueue: [], errorsQueue: [] });
@@ -245,88 +263,266 @@ class UploadPage extends React.Component
             else if(nLines > 9)
             {
                 let sectionDelim = "+";
-                let metaLinesMax = 5;
+                let metaLinesMax = 6;
                 let maxArrayItems = 64;
 
                 // Metadata
                 let title = lines[0].replace("\t", "").toString();
-                let portions = lines[2];
-                let timePrep = lines[2];
-                let timeTotal = lines[2];
+                let portions = lines[1];
+                // let cuisine = lines[1];
                 
-                // type, difficulty, rating line
-                let type = String(lines[1]).toUpperCase().replace("\t", "").toString();
-                let difficulty = String(lines[3]).toUpperCase().replace("\t", "").toString();
-                let rating = lines[2];
+                // time
+                let timeLine = lines[2].toString().split(" ");
+                let timePrep = timeLine[0];
+                let timeTotal = timeLine[1];
+                
+                // type, difficulty, rating line. type is required, diff and rate is optional
+                let typeDiffRate = lines[3].toString().split(" ");
+                let type = typeDiffRate[0].toUpperCase().replace("\t", "");
+                let difficulty = typeDiffRate.length > 1 ? typeDiffRate[1].toUpperCase().replace("\t", "") : null;
+                let rating = typeDiffRate.length > 2 ? typeDiffRate[2] : null;
                 
                 // method++ line
-                let cookingMethod = String(lines[1]).toUpperCase().replace("\t", "").toString();
-                let cookingMethodTemp = lines[2];
-                let cookingMethodTempUnit = String(lines[1]).toUpperCase().replace("\t", "").toString();
+                let methodLine = lines[4].toString().split(" ");
+                let cookingMethod = methodLine[0].toUpperCase().replace("\t", "");
+                let cookingMethodTemp = methodLine.length > 2 ? methodLine[1] : null;
+                let cookingMethodTempUnit = methodLine.length > 1 ? methodLine[2].toUpperCase().replace("\t", "") : null;
+                let protein = lines[5].toString().toUpperCase().replace("\t", "");
 
                 // Arrays
-                let recipeIngredient = [];
+                let recipeIngredients = [];
                 let instructions = [];
                 let notes = [];
 
-                // Lines 4 to 5 should have a + that ends metadata section and starts ingredient section
-                let j = (metaLinesMax - 1);
-                while (lines[j] != sectionDelim)
+                // Control metadata
+                console.log("Gathering metadata...");
+                // Should be numbers: portions, timePrep, timeTotal, rating, cookingMethodTemp
+                // Should be enumns: type, difficulty, cookingMethod, cookingMethodTempUnit, protein
+                {
+                    console.log("Checking numbers...");
+                    if(isNaN(parseFloat(portions)))
+                    {
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + NOT_A_NUMBER + ": " + PORTIONS);
+                        continue;
+                    }
+                    else if(parseFloat(portions) < 0 || parseFloat(portions) > 32)
+                    {
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + OUT_OF_BOUNDS + ": " + PORTIONS);
+                        continue;
+                    }
+                    else
+                        portions = parseFloat(portions);
+
+                    if(isNaN(Number(timePrep)))
+                    {
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + NOT_A_NUMBER + ": " + PREP_TIME);
+                        continue;
+                    }
+                    else if(Number(timePrep) < 0 || Number(timePrep) > 9999)
+                    {
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + OUT_OF_BOUNDS + ": " + PREP_TIME);
+                        continue;
+                    }
+                    else
+                        timePrep = Number(timePrep);
+
+                    if(isNaN(Number(timeTotal)))
+                    {
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + NOT_A_NUMBER + ": " + TOTAL_TIME);
+                        continue;
+                    }
+                    else if(Number(timeTotal) < 0 || Number(timeTotal) < timePrep)
+                    {
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + OUT_OF_BOUNDS + ": " + TOTAL_TIME);
+                        continue;
+                    }
+                    else
+                        timeTotal = Number(timeTotal);
+
+                    if(isNaN(parseFloat(rating)))
+                    {
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + NOT_A_NUMBER + ": " + RATING);
+                        continue;
+                    }
+                    else if(parseFloat(rating) < 0 || parseFloat(rating) > 10)
+                    {
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + OUT_OF_BOUNDS + ": " + RATING);
+                        continue;
+                    }
+                    else
+                        rating = parseFloat(rating);
+
+                    if(isNaN(Number(cookingMethodTemp)))
+                    {
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + NOT_A_NUMBER + ": " + COOKING_METHOD_TEMPERATURE);
+                        continue;
+                    }
+                    else if(Number(cookingMethodTemp) < 0 || Number(cookingMethodTemp) > 500)
+                    {
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + OUT_OF_BOUNDS + ": " + COOKING_METHOD_TEMPERATURE);
+                        continue;
+                    }
+                    else
+                        cookingMethodTemp = Number(cookingMethodTemp);
+                } // Recipe metadata parse numbers (the extra parentheses are so this section can be collapsed and make code more readable)
+                   
+                {
+                    console.log("Checking enums...");
+                    if(RecipeType[type] === undefined)
+                    {
+                        console.log("Error parsing: type");
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + INVALID_TYPE + ": \"" + type + "\"");
+                        continue;
+                    }
+                    else
+                        type = RecipeType[type];
+
+                    if(difficulty != null && Difficulty[difficulty] === undefined)
+                    {
+                        console.log("Error parsing: difficulty");
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + INVALID_TYPE + ": \"" + difficulty + "\"");
+                        continue;
+                    }
+                    else
+                        difficulty = Difficulty[difficulty];
+
+                    if(cookingMethod != null && CookingMethod[cookingMethod] === undefined)
+                    {
+                        console.log("Error parsing: cookingMethod");
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + INVALID_TYPE + ": \"" + cookingMethod + "\"");
+                        continue;
+                    }
+                    else
+                        cookingMethod = CookingMethod[cookingMethod];
+
+                    if(cookingMethodTempUnit != null && TempratureUnit[cookingMethodTempUnit] === undefined)
+                    {
+                        console.log("Error parsing: cookingMethodTempUnit");
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + INVALID_TYPE + ": \"" + cookingMethodTempUnit + "\"");
+                        continue;
+                    }
+                    else
+                        cookingMethodTempUnit = TempratureUnit[cookingMethodTempUnit];
+
+                    if(protein != null && Protein[protein] === undefined)
+                    {
+                        console.log("Error parsing: protein");
+                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + INVALID_TYPE + ": \"" + protein + "\"");
+                        continue;
+                    }
+                    else
+                        protein = Protein[protein];
+                } // Recipe metadata parse enums (the extra parentheses are so this section can be collapsed and make code more readable)
+                
+                console.log("Preparing ingredients...");
+                // Line after metadata should have a + that ends metadata section and starts ingredient section
+                let j = (metaLinesMax - 3);
+                while (lines[j].trim() !== sectionDelim)
+                {
                     if(j > metaLinesMax)
                     {
                         failedItems.push(RECIPE + " " + i + " (" + title + "): " + SECTION_MISSING);
                         continue forItemsLoop;
                     }
+                    j++;
+                }
 
                 // Gather ingredients for recipe
+                // TODO sub-recipes, find ingredients in db
+                console.log("Gathering ingredients...");
                 let l = j;
-                while(lines[l] != sectionDelim)
+                while(lines[l].trim() !== sectionDelim)
                 {
-                    let a = lines[l].split(" ");
-                    let quantity = a[0];
-                    let quantityUnit = a[1];
-                    let recipeIngredient = a[2];
-                    let preparation = a[3];
-
-                    // check parse number, enums, find ingredient in DB
-                    // note, qUnit and prep is optional
-
-                    ingredients.push(new RecipeIngredient(quantity, recipeIngredient, quantityUnit, preparation));
-
                     if(l > maxArrayItems)
                     {
                         failedItems.push(RECIPE + " " + i + " (" + title + "): " + MAX_INGREDIENTS_IN_RECIPE);
                         break;
                     }
+
+                    let ingredientLine = lines[l].toString().split(" ");
+                    let quantity = 1;
+                    let quantityUnit = QuantityUnit["NONE"];
+                    let recipeIngredient = null;
+                    let preparation = Preparation["NONE"];
+
+                    {
+                        let recipeIngredientIndex = 0;
+                        let hasPreparation = false;
+
+                        // Quantity will always be the first entry
+                        if(!isNaN(parseFloat(ingredientLine[0])) && parseFloat(ingredientLine[0]) > 0)
+                        {
+                            quantity = Number(ingredientLine[0]);
+                            recipeIngredientIndex++;
+                        }
+
+                        // Quantity unit is always second if not null
+                        if(recipeIngredientIndex === 1 && QuantityUnit[ingredientLine[1]] !== undefined)
+                        {
+                            quantityUnit = QuantityUnit[quantityUnit];
+                            recipeIngredientIndex++;
+                        }
+
+                        // Preparation will always be the last entry
+                        if(Preparation[ingredientLine[ingredientLine.length - 1]] !== undefined)
+                        {
+                            quantityUnit = Preparation[quantityUnit];
+                            hasPreparation = true;
+                        }
+                        
+                        let ingredientTitle = lines.slice(recipeIngredientIndex, (ingredientLine.length - (hasPreparation ? 1 : 0)))
+
+                        if(ingredientTitle === null)
+                        {
+                            failedItems.push(RECIPE + " " + i + " (" + title + "): " + INGREDIENT_NOT_FOUND_FILE);
+                            continue forItemsLoop;
+                        }
+
+                        let recipeIngredient = getIngredientData("title", ingredientTitle)
+
+                        if(recipeIngredient === null)
+                        {
+                            failedItems.push(RECIPE + " " + i + " (" + title + "): " + INGREDIENT_NOT_FOUND_DB);
+                            continue forItemsLoop;
+                        }
+                    } // Recipe recipe ingredients numbers and enums (the extra parentheses are so this section can be collapsed and make code more readable)
+
+                    recipeIngredients.push(new RecipeIngredient(quantity, recipeIngredient, quantityUnit, preparation));
+                    l++;
                 }
                 
+                //TODO Errors getting values, all goes to notes
                 // Gather instructions
+                console.log("Gathering instructions...");
                 let m = l;
-                while(lines[m] != sectionDelim)
+                while(lines[m].trim() !== sectionDelim && m < nLines)
                 {
-                    instructions.push(lines[m]);
+                    instructions.push(lines[m].toString());
 
                     if(m > maxArrayItems)
                     {
                         failedItems.push(RECIPE + " " + i + " (" + title + "): " + MAX_INSTRUCTIONS_IN_RECIPE);
                         break;
                     }
+                    m++;
                 }
                 
                 // Gather notes
+                console.log("Gathering notes...");
                 let n = m;
-                while(n <= nLines)
+                while(n < nLines)
                 {
-                    notes.push(lines[n]);
+                    notes.push(lines[n].toString());
 
                     if(n > maxArrayItems)
                     {
                         failedItems.push(RECIPE + " " + i + " (" + title + "): " + MAX_NOTES_IN_RECIPE);
                         break;
                     }
+                    n++;
                 }
 
-                recipes.push(new Recipe(getRandomString(), 
+                let recipeObject = new Recipe(getRandomString(), 
                 title, 
                 type, 
                 difficulty,
@@ -337,13 +533,17 @@ class UploadPage extends React.Component
                 cookingMethod, 
                 cookingMethodTemp, 
                 cookingMethodTempUnit, 
-                recipeIngredient, 
+                protein,
+                recipeIngredients, 
                 instructions, 
-                notes));
+                notes);
+
+                console.log(recipeObject);
+                recipes.push(recipeObject);
             }
 
             else
-                failedItems.push(ELEMENT + " " + i + " (" + "?" + "): " + FAILED); // unknocn entity
+                failedItems.push(ELEMENT + " " + i + " (" + "?" + "): " + FAILED); // Unknown entity
         }
 
         console.log("\nEnqueueing items...");

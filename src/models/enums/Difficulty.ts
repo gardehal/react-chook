@@ -1,5 +1,6 @@
 export enum Difficulty
 {
+    OTHER,
     VERY_EASY,
     EASY,
     MEDIUM,
