@@ -1,18 +1,45 @@
 Utropstegn (!) må være FØR hver oppskrift.
 Pluss (+) må brukes for å dele opp seksjoner av oppskriften, 1 før ingredienser, 1 før instruksjoner, og 1 før notater, hvis det er noen notater
 Hashtag (#) foran et element betyr at det er valgfritt.
+Alle "Enum" er på engelsk.
 
+--- start --------------------------------------------------------------------------------------------------------------------------------------
 !
-recipe_title (Streng, må være unik)
-recipe_type (Streng: middag, bakverk, frokost, drikke, tilbehør, osv.), #recipe_grade (Streng: enkel, middel, vanskelig), #recipe_rating (Nummer: minimum 0, maximum 10)
-recipe_portions (Heltall)
-recipe_time_preparation (Heltall, minutter)
-recipe_time_total (Heltall, minutter)
-#recipe_cooking_method (Streng: grill, ovn, generelt ting som krever forvarming), #recipe_cooking_method_temprature (Heltall, grader feks. ovnen skal varmes til), #recipe_cooking_method_temprature_unit (Enten "c" for celcius, "f" for fahrenheit)
+<tittel>
+<prosjoner>
+<foberedelse-tid> <total-tid>
+<oppskrifts-type> #<vanskelighetsgrad> #<poeng>
+#<varme-metode> #<tempratur-verdi> #<tempratur-enhet>
+#<protein>
 +
-recipe_ingredients (En liste med ingredienser, formatert slik: 
-    "[ingredient_quantity] (Heltall: antall) [ingredient_unit] (Streng: måleenhet: dl, gram, neve, ss, osv.) [ingredient_name] (Streng: navn på ingrediens, må finnes i databasen), [ingredient_preparation] (Streng: forberedelse av ingrediensene: skrellet, grovhakket, knust, osv.)")
+<ingredienser "<kvantitet> <kvantitet-enhet> <ingrediens-navn> <forberedelse>">
 +
-recipe_instructions (Liste med Streng instruksjoner)
+<instrubjsoner>
 #+
-#recipe_notes (Liste med String tips, serveringsforslag, notater, osv.)
+#<notater>
+--- slutt --------------------------------------------------------------------------------------------------------------------------------------
+
+tittel - Streng: må være unik
+oppskrifts-type - Enum: middag, bakverk..
+
+#vanskelighetsgrad - Enum: (veldig) enkel, middel, (veldig) vanskelig
+#poeng - Desimaltall, minimum 0, maximum 10
+prosjoner - Desimaltall
+
+foberedelse-tid - Heltall, i minutter
+total-tid - Heltall, i minutter
+
+#<varme-metode> - Enum: panne, grill, ovn, generelt ting som krever forvarming
+#<tempratur-verdi> - Heltall, grader feks. ovnen skal varmes til
+#<tempratur-enhet> - Enum: C eller F
+#<protein> - Enum: Hovedproteinet i måltidet: kjøtt, kylling osv.
+
+<ingredienser> - En liste med oppsrifts ingredienser, formatert slik: "<kvantitet> <kvantitet-enhet> <ingrediens-navn> <forberedelse>"
+<kvantitet> - Heltall: antall
+<kvantitet-enhet> - Enum: måleenhet: dl, g, neve, ss, osv.
+<ingrediens-navn> - Streng: navn på ingrediens, må finnes i databasen
+<forberedelse> - Enum: forberedelse av ingrediensene: skrellet, grovhakket, knust, osv.
+
+<instrubjsoner> - Liste med Streng instruksjoner
+
+#<notater> - Liste med String tips, serveringsforslag, notater, osv.

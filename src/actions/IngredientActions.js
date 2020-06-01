@@ -15,7 +15,5 @@ export const setIngredientData = async (payload) =>
 {
     store.dispatch({ type: INGREDIENT_LOADING});
 
-    let path = "ingredients";
-
-    setDatabaseData(DB_INGREDIENT, payload, SET_INGREDIENT_DATA_SUCCESS, SET_INGREDIENT_DATA_FAIL, INGREDIENT_LOADING, path);
+    setDatabaseData(DB_INGREDIENT, payload, SET_INGREDIENT_DATA_SUCCESS, SET_INGREDIENT_DATA_FAIL, INGREDIENT_LOADING);
 }

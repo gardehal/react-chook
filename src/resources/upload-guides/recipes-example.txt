@@ -1,17 +1,16 @@
-
 !
 Dim Sum
-forrett, enkel, 7
 4
-15
-90
-dampkoker, 200, c
+15 90
+SIDE_DISH EASY 7
+steam 200 c
+swine
 +
-400 gram svinekjøttdeig
-1 neve fersk koriander, finhakket
-2 rød chili, finhakket
-3 fedd hvitløk, finhakket
-3 ss ingefær, finhakket
+400 g svinekjøttdeig
+1 fist fersk koriander finhakket
+2 rød chili finhakket
+3 clove hvitløk finhakket
+3 tbs ingefær finhakket
 Dim Sum ark
 +
 Bland alle ingrediensene bortsett fra pasta flakene og la det stå en time.

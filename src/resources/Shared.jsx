@@ -50,6 +50,7 @@ export const setDatabaseData = async (tableName, uploadObject, reduxSuccessType 
     store.dispatch({ type: reduxLoadingType });
 
     firebase.database().ref("/" + tableName + "/" + path)
+        // .set(JSON.parse(JSON.stringify(uploadObject)))
         .set(uploadObject)
         .then(() =>
         {

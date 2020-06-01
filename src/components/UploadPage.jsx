@@ -188,6 +188,49 @@ class UploadPage extends React.Component
 
     }
 
+    parseNumber(messageArray, n, valueName, parentType, index, itemName, min, max)
+    {
+        if(isNaN(Number(n)))
+        {
+            messageArray.push(parentType + " " + index + " (" + itemName + "): " + NOT_A_NUMBER + ": " + valueName);
+            return null;
+        }
+        else if(Number(n) < min || Number(n) > max)
+        {
+            messageArray.push(parentType + " " + index + " (" + itemName + "): " + OUT_OF_BOUNDS + ": " + valueName);
+            return null;
+        }
+        
+        return Number(n);
+    }
+
+    parseNumberFloat(messageArray, n, valueName, parentType, index, itemName, min, max)
+    {
+        if(isNaN(parseFloat(n)))
+        {
+            messageArray.push(parentType + " " + index + " (" + itemName + "): " + NOT_A_NUMBER + ": " + valueName);
+            return null;
+        }
+        else if(parseFloat(n) < min || parseFloat(n) > max)
+        {
+            messageArray.push(parentType + " " + index + " (" + itemName + "): " + OUT_OF_BOUNDS + ": " + valueName);
+            return null;
+        }
+        
+        return parseFloat(n);
+    }
+
+    parseEnum(messageArray, value, enumCollection, parentType, index, itemName)
+    {
+        if(enumCollection[value] === undefined)
+        {
+            messageArray.push(parentType + " " + index + " (" + itemName + "): " + INVALID_TYPE + ": \"" + value + "\"");
+            return null;
+        }
+        
+        return enumCollection[value];
+    }
+
     parseFreetext()
     {
         this.setState({ ingredientQueue: [], recipeQueue: [], errorsQueue: [] });
@@ -228,28 +271,15 @@ class UploadPage extends React.Component
                 }
 
                 // type must be parsable to IngredientType
-                if(IngredientType[type] === undefined)
-                {
-                    failedItems.push(INGREDIENT + " " + i + " (" + name + "): " + NOT_AN_INGREDIENTTYPE + ": \"" + type + "\"");
+                type = this.parseEnum(failedItems, type, IngredientType, INGREDIENT, i, name);
+                if(type === null)
                     continue;
-                }
-                // Int index of IngredientType? 
-                else
-                    type = IngredientType[type];
 
                 // price must be a number, 0 or more
-                if(isNaN(parseFloat(price)))
-                {
-                    failedItems.push(INGREDIENT + " " + i + " (" + name + "): " + NOT_A_NUMBER + ": " + PRICE);
+                price = this.parseNumberFloat(failedItems, price, PRICE, INGREDIENT, i, name, 0, 9999);
+                console.log("price: " + price);
+                if(price === null)
                     continue;
-                }
-                else if(parseFloat(price) < 0)
-                {
-                    failedItems.push(INGREDIENT + " " + i + " (" + name + "): " + NUMBER_BELOW_ZERO + ": " + PRICE);
-                    continue;
-                }
-                else
-                    price = parseFloat(price);
 
                 // common must be "1" or "true" (faux-parse boolean)
                 if(lines[3] != null && (lines[3] === "1" ||  lines[3] === "true"))
@@ -296,74 +326,38 @@ class UploadPage extends React.Component
 
                 // Control metadata
                 console.log("Gathering metadata...");
+
+                // title cannot be empty or a just a number
+                if((title === null || title.length < 1) && isNaN(parseFloat(title)))
+                {
+                    failedItems.push(RECIPE + " " + i + " (" + title + "): " + NOT_VALID_NAME + ": \"" + title + "\"");
+                    continue;
+                }
+
                 // Should be numbers: portions, timePrep, timeTotal, rating, cookingMethodTemp
                 // Should be enumns: type, difficulty, cookingMethod, cookingMethodTempUnit, protein
                 {
                     console.log("Checking numbers...");
-                    if(isNaN(parseFloat(portions)))
-                    {
-                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + NOT_A_NUMBER + ": " + PORTIONS);
-                        continue;
-                    }
-                    else if(parseFloat(portions) < 0 || parseFloat(portions) > 32)
-                    {
-                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + OUT_OF_BOUNDS + ": " + PORTIONS);
-                        continue;
-                    }
-                    else
-                        portions = parseFloat(portions);
 
-                    if(isNaN(Number(timePrep)))
-                    {
-                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + NOT_A_NUMBER + ": " + PREP_TIME);
+                    portions = this.parseNumberFloat(failedItems, portions, RECIPE, i, PORTIONS, title, 0, 32);
+                    if(portions === null)
                         continue;
-                    }
-                    else if(Number(timePrep) < 0 || Number(timePrep) > 9999)
-                    {
-                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + OUT_OF_BOUNDS + ": " + PREP_TIME);
-                        continue;
-                    }
-                    else
-                        timePrep = Number(timePrep);
 
-                    if(isNaN(Number(timeTotal)))
-                    {
-                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + NOT_A_NUMBER + ": " + TOTAL_TIME);
+                    timePrep = this.parseNumber(failedItems, timePrep, RECIPE, i, PREP_TIME, title, 0, 9999);
+                    if(timePrep === null)
                         continue;
-                    }
-                    else if(Number(timeTotal) < 0 || Number(timeTotal) < timePrep)
-                    {
-                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + OUT_OF_BOUNDS + ": " + TOTAL_TIME);
-                        continue;
-                    }
-                    else
-                        timeTotal = Number(timeTotal);
 
-                    if(isNaN(parseFloat(rating)))
-                    {
-                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + NOT_A_NUMBER + ": " + RATING);
+                    timeTotal = this.parseNumber(failedItems, timeTotal, RECIPE, i, TOTAL_TIME, title, timePrep, 9999);
+                    if(timeTotal === null)
                         continue;
-                    }
-                    else if(parseFloat(rating) < 0 || parseFloat(rating) > 10)
-                    {
-                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + OUT_OF_BOUNDS + ": " + RATING);
+                        
+                    rating = this.parseNumberFloat(failedItems, rating, RECIPE, i, RATING, title, 0, 10);
+                    if(rating === null)
                         continue;
-                    }
-                    else
-                        rating = parseFloat(rating);
-
-                    if(isNaN(Number(cookingMethodTemp)))
-                    {
-                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + NOT_A_NUMBER + ": " + COOKING_METHOD_TEMPERATURE);
+                        
+                    cookingMethodTemp = this.parseNumber(failedItems, cookingMethodTemp, RECIPE, i, COOKING_METHOD_TEMPERATURE, title, 0, 500);
+                    if(cookingMethodTemp === null)
                         continue;
-                    }
-                    else if(Number(cookingMethodTemp) < 0 || Number(cookingMethodTemp) > 500)
-                    {
-                        failedItems.push(RECIPE + " " + i + " (" + title + "): " + OUT_OF_BOUNDS + ": " + COOKING_METHOD_TEMPERATURE);
-                        continue;
-                    }
-                    else
-                        cookingMethodTemp = Number(cookingMethodTemp);
                 } // Recipe metadata parse numbers (the extra parentheses are so this section can be collapsed and make code more readable)
                    
                 {
@@ -427,8 +421,8 @@ class UploadPage extends React.Component
                     j++;
                 }
 
-                // Gather ingredients for recipe
                 // TODO sub-recipes, find ingredients in db
+                // Gather ingredients for recipe
                 console.log("Gathering ingredients...");
                 let l = j;
                 while(lines[l].trim() !== sectionDelim)
@@ -441,9 +435,9 @@ class UploadPage extends React.Component
 
                     let ingredientLine = lines[l].toString().split(" ");
                     let quantity = 1;
-                    let quantityUnit = QuantityUnit["NONE"];
+                    let quantityUnit = null;
                     let recipeIngredient = null;
-                    let preparation = Preparation["NONE"];
+                    let preparation = null;
 
                     {
                         let recipeIngredientIndex = 0;
@@ -551,7 +545,7 @@ class UploadPage extends React.Component
     }
 
     // TODO Upload entity should use ID given, not auto set
-    upload()
+    async upload()
     {
         if(this.state.errorsQueue.length > 0)
         {
@@ -575,8 +569,13 @@ class UploadPage extends React.Component
                 this.state.ingredientQueue.forEach(i => 
                 {
                     // Same/similar name? hash?
-                    if(getIngredientData("name", i.name).length > 0)
-                        failedUploads.push(INGREDIENT + " \"" + i.name + "\": " + SIMILAR_IN_DB);
+                    console.log("\nUploading ingredient: " + i.name);
+                    console.log(getIngredientData("name", i.name).result.name != undefined);
+                    
+                    if(getIngredientData("name", i.name)..name != undefined)
+                        failedUploads.push(INGREDIENT + " \"" + i.name + "\": " + SIMILAR_IN_DB + ": " + i.name);
+                    else if(getIngredientData("id", i.id).length > 0)
+                        failedUploads.push(INGREDIENT + " \"" + i.name + "\": " + SIMILAR_IN_DB + ", ID: " + i.id);
                     else
                         toUpload.push(i);
                 });

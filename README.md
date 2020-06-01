@@ -4,8 +4,8 @@ A React website for recipes and general dinner planning. "Chook" (tʃʊk) is a c
 Considering the double O's, the name has a chance of becoming a famous internet company, according to Gwyneth Paltrow; "successful internet companies have double O's in their name".
 
 ## Usage (Windows)
-1. $ `npm install`
-2. $ `npm start`
+1. $ `npm run build`
+2. $ `npm run start`
 
 ## Setup for Heroku
 1. Login to [heroku Dashboard](https://dashboard.heroku.com/apps)
@@ -24,8 +24,9 @@ Considering the double O's, the name has a chance of becoming a famous internet 
     - Code Editor (Optinal)
 2. Clone or fork Github project
 3. Using a command line tool or terminal, navigate to the root folder of the project
-4. Follow [Usage (Windows)](#Usage-(Windows))
-5. The page should now be running on your [localhost:8080](http://localhost:8080)
+4. $ `npm install`
+5. Follow [Usage (Windows)](#Usage-(Windows))
+6. The page should now be running on your [localhost:8080](http://localhost:8080)
 
 ## TODO
 - [x] Functioning webpage
