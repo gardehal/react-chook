@@ -555,33 +555,58 @@ class UploadPage extends React.Component
         }
 
         if(this.state.ingredientQueue.length === 0 && this.state.recipeQueue.length === 0)
-        {
             console.log("No ingredients or recipes in queue to upload");
-        }
         else
         {
             this.setState({ errorsQueue: [] });
 
             if(this.state.ingredientQueue.length > 0)
             {
-                let toUpload = [];
                 let failedUploads = [];
+                
+                // For each, look for ingredient with the same name, 
+                // then check if the ID already exists
+                // If name or ID are not found, upload.
+                // TODO: Consider hash excluding name?,  name could look for 90% match? for similar
+                // TODO There has to be a simpler/more elegant way..
                 this.state.ingredientQueue.forEach(i => 
                 {
                     // Same/similar name? hash?
                     console.log("\nUploading ingredient: " + i.name);
-                    console.log(getIngredientData("name", i.name).result.name != undefined);
-                    
-                    if(getIngredientData("name", i.name)..name != undefined)
-                        failedUploads.push(INGREDIENT + " \"" + i.name + "\": " + SIMILAR_IN_DB + ": " + i.name);
-                    else if(getIngredientData("id", i.id).length > 0)
-                        failedUploads.push(INGREDIENT + " \"" + i.name + "\": " + SIMILAR_IN_DB + ", ID: " + i.id);
-                    else
-                        toUpload.push(i);
+
+                    getIngredientData("name", i.name)
+                        .then(byNameData =>
+                            {
+                                console.log("Getting Ingredient by name...");
+                                console.log(byNameData);
+
+                                if(byNameData.length !== 0)
+                                {
+                                    failedUploads.push(INGREDIENT + " \"" + i.name + "\": " + SIMILAR_IN_DB + ": " + byNameData[0].name);
+                                    this.setState({ errorsQueue: failedUploads });
+                                }
+                                else
+                                {
+                                    getIngredientData("id", i.id)
+                                        .then(byIdData =>
+                                            {
+                                                console.log("Getting Ingredient by ID...");
+                                                console.log(byIdData);
+
+                                                if(byIdData.length !== 0)
+                                                {
+                                                    failedUploads.push(INGREDIENT + " \"" + i.id + "\": " + SIMILAR_IN_DB + ", ID: " + byIdData[0].id);
+                                                    this.setState({ errorsQueue: failedUploads });
+                                                }
+                                                else
+                                                    setIngredientData(i);
+                                            });
+                                }
+                            });
                 });
-                
-                setIngredientData(toUpload);
-                this.setState({ errorsQueue: failedUploads, ingredientQueue: [] });
+                    
+                console.log("Ingredients sent, will upload async.");
+                this.setState({ ingredientQueue: [] });
             }
 
             if(this.state.recipeQueue.length > 0)
