@@ -20,11 +20,13 @@ export default (state = INITIAL_STATE, action) =>
         case INGREDIENT_LOADING_COMPLETE:
             return { ...state, ingredientLoading: false, ingredientError: "" };
 
+        // Get
         case GET_INGREDIENT_DATA_SUCCESS:
             return { ...state, ingredientLoading: false, ingredientError: "", ingredientResult: action.payload };
         case GET_INGREDIENT_DATA_FAIL:
             return { ...state, ingredientLoading: false, ingredientError: DB_FETCH_FAILED };
 
+        // Set
         case SET_INGREDIENT_DATA_SUCCESS:
             return { ...state, ingredientLoading: false, ingredientError: "" };
         case SET_INGREDIENT_DATA_FAIL:

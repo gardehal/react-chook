@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 
 // Redux imports
-import { getRecipeData, setRecipeError } from "../actions/RecipeActions";
+import { getRecipeData, setRecipeError, setRecipeData } from "../actions/RecipeActions";
 import { getIngredientData, setIngredientData } from "../actions/IngredientActions";
 import { renderLoading, renderError, setTitle, getRandomString } from "../resources/Shared";
 
@@ -586,20 +586,19 @@ class UploadPage extends React.Component
                                 console.log("Getting Ingredient by name...");
                                 console.log(byNameData);
 
-                                if(byNameData.length !== 0)
+                                if(byNameData !== undefined && byNameData.length !== 0)
                                 {
                                     failedUploads.push(INGREDIENT + " \"" + i.name + "\": " + SIMILAR_IN_DB + ": " + byNameData[0].name);
                                     this.setState({ errorsQueue: failedUploads });
                                 }
                                 else
-                                {
                                     getIngredientData("id", i.id)
                                         .then(byIdData =>
                                             {
                                                 console.log("Getting Ingredient by ID...");
                                                 console.log(byIdData);
 
-                                                if(byIdData.length !== 0)
+                                                if(byIdData !== undefined && byIdData.length !== 0)
                                                 {
                                                     failedUploads.push(INGREDIENT + " \"" + i.id + "\": " + SIMILAR_IN_DB + ", ID: " + byIdData[0].id);
                                                     this.setState({ errorsQueue: failedUploads });
@@ -607,7 +606,6 @@ class UploadPage extends React.Component
                                                 else
                                                     setIngredientData(i);
                                             });
-                                }
                             });
                 });
                     
@@ -617,8 +615,43 @@ class UploadPage extends React.Component
 
             if(this.state.recipeQueue.length > 0)
             {
-                // setIngredientData(this.state.recipeQueue);
-                console.log("TODO: upload recipes");
+                let failedUploads = [];
+                
+                this.state.recipeQueue.forEach(r => 
+                {
+                    // Same/similar name? hash?
+                    console.log("\nUploading recipes: " + r.title);
+
+                    getRecipeData("title", r.title)
+                        .then(byNameData =>
+                            {
+                                console.log("Getting Recipe by title...");
+                                console.log(byNameData);
+
+                                if(byNameData !== undefined && byNameData.length !== 0)
+                                {
+                                    failedUploads.push(RECIPE + " \"" + r.title + "\": " + SIMILAR_IN_DB + ": " + byNameData[0].title);
+                                    this.setState({ errorsQueue: failedUploads });
+                                }
+                                else
+                                    getRecipeData("id", r.id)
+                                        .then(byIdData =>
+                                            {
+                                                console.log("Getting Recipe by ID...");
+                                                console.log(byIdData);
+
+                                                if(byIdData !== undefined && byIdData.length !== 0)
+                                                {
+                                                    failedUploads.push(RECIPE + " \"" + r.id + "\": " + SIMILAR_IN_DB + ", ID: " + byIdData[0].id);
+                                                    this.setState({ errorsQueue: failedUploads });
+                                                }
+                                                else
+                                                    setRecipeData(r);
+                                            });
+                            });
+                });
+
+                console.log("Ingredients sent, will upload async.");
                 this.setState({ recipeQueue: [] });
             }
         }
