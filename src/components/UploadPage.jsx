@@ -342,10 +342,9 @@ class UploadPage extends React.Component
             j++;
         }
 
-        // TODO sub-recipes, find ingredients in db
         // Gather ingredients for recipe
         console.log("Gathering ingredients...");
-        let l = j;
+        let l = j + 1;
         while(lines[l].trim() !== sectionDelim)
         {
             if(l > maxArrayItems)
@@ -355,14 +354,13 @@ class UploadPage extends React.Component
             }
 
             let ingredientLine = lines[l].toString().split(" ");
-            let quantity = 1;
-            let quantityUnit = null;
-            let recipeIngredient = null;
-            let preparation = null;
+            let quantity = 0;
+            let quantityUnit = "null1";
+            let recipeIngredient = "null2";
+            let preparation = "null3";
 
             {
                 let recipeIngredientIndex = 0;
-                let hasPreparation = false;
 
                 // Quantity will always be the first entry
                 if(!isNaN(parseFloat(ingredientLine[0])) && parseFloat(ingredientLine[0]) > 0)
@@ -372,28 +370,28 @@ class UploadPage extends React.Component
                 }
 
                 // Quantity unit is always second if not null
-                if(recipeIngredientIndex === 1 && QuantityUnit[ingredientLine[1]] !== undefined)
+                if(recipeIngredientIndex === 1)
                 {
-                    quantityUnit = QuantityUnit[quantityUnit];
-                    recipeIngredientIndex++;
+                    quantityUnit = QuantityUnit[ingredientLine[1]] === undefined ? null : QuantityUnit[ingredientLine[1]];
+                    if(quantityUnit !== undefined)
+                        recipeIngredientIndex++;
                 }
 
                 // Preparation will always be the last entry
-                if(Preparation[ingredientLine[ingredientLine.length - 1]] !== undefined)
-                {
-                    quantityUnit = Preparation[quantityUnit];
-                    hasPreparation = true;
-                }
+                preparation = Preparation[ingredientLine[ingredientLine.length - 1]] === undefined ? null : Preparation[ingredientLine[ingredientLine.length - 1]] ;
+                let hasPreparation = preparation === null ? false : true;
                 
-                let ingredientTitle = lines.slice(recipeIngredientIndex, (ingredientLine.length - (hasPreparation ? 1 : 0)))
+                let ingredientName = lines.slice(recipeIngredientIndex, (ingredientLine.length - (hasPreparation ? 1 : 0)))[0];
 
-                if(ingredientTitle === null)
+                if(ingredientName === null)
                 {
                     failedItems.push(RECIPE + " " + i + " (" + title + "): " + INGREDIENT_NOT_FOUND_FILE);
                     return null;
                 }
+                // else if(ingredientName[0] === "-")
+                // TODO sub-recipes, find ingredients in db
 
-                let recipeIngredient = getIngredientData("title", ingredientTitle)
+                let recipeIngredient = getIngredientData("name", ingredientName);
 
                 if(recipeIngredient === null)
                 {
@@ -406,10 +404,9 @@ class UploadPage extends React.Component
             l++;
         }
         
-        //TODO Errors getting values, all goes to notes
         // Gather instructions
         console.log("Gathering instructions...");
-        let m = l;
+        let m = l + 1;
         while(lines[m].trim() !== sectionDelim && m < nLines)
         {
             instructions.push(lines[m].toString());
@@ -424,7 +421,7 @@ class UploadPage extends React.Component
         
         // Gather notes
         console.log("Gathering notes...");
-        let n = m;
+        let n = m + 1;
         while(n < nLines)
         {
             notes.push(lines[n].toString());
@@ -550,7 +547,6 @@ class UploadPage extends React.Component
         this.setState({ filename: "", freetext: "", ingredientQueue: ingredients, recipeQueue: recipes, errorsQueue: failedItems });
     }
 
-    // TODO Upload entity should use ID given, not auto set
     async upload()
     {
         if(this.state.errorsQueue.length > 0)
