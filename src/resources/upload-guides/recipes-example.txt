@@ -7,10 +7,10 @@ steam 200 c
 swine
 +
 400 g svinekjøttdeig
-1 fist fersk koriander finhakket
-2 rød chili finhakket
-3 clove hvitløk finhakket
-3 tbs ingefær finhakket
+1 fist fersk koriander MINCED
+2 rød chili MINCED
+3 clove hvitløk MINCED
+3 tbs ingefær MINCED
 Dim Sum ark
 +
 Bland alle ingrediensene bortsett fra pasta flakene og la det stå en time.

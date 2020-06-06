@@ -12,7 +12,7 @@ import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLO
     INGREDIENTS, INSTRUCTIONS, TIPS_NOTES, FILE_UPLOAD_ERROR, NO_FILE_ERROR, VALIDATE_UPLOAD_DATA, NO_VALID_ITEMS_IN_FILE,
     INGREDIENT, RECIPE, FAILED, PRICE, NOT_VALID_NAME, NOT_A_NUMBER, NUMBER_BELOW_ZERO, NOT_AN_INGREDIENTTYPE, INVALID_TYPE, FAILED_ITEMS, RECIPES, MORE_INFORMATION, 
     FREETEXT_INFO, FREETEXT_INPUT_INFO, FREETEXT_SYNTAX_START, FREETEXT_SYNTAX_DELIM, FREETEXT_SYNTAX_NAME, FREETEXT_SYNTAX_TYPE, FREETEXT_SYNTAX_PRICE, 
-    FREETEXT_SYNTAX_COMMON, FREETEXT_SYNTAX_EXAMPLE_START, SEASALT, SPICE, FREETEXT_SYNTAX_EXAMPLE_PRICE, TRUE, 
+    FREETEXT_SYNTAX_COMMON, FREETEXT_SYNTAX_EXAMPLE_START, SEASALT, SPICE, FREETEXT_SYNTAX_EXAMPLE_PRICE, TRUE, FREETEXT, FREETEXT_MISSING,
     FREETEXT_SYNTAX_INFO_EXCLAMATION, FREETEXT_SYNTAX_INFO_TYPES, FREETEXT_SYNTAX_INFO_PRICE, FREETEXT_SYNTAX_INFO_COMMON, FREETEXT_SYNTAX_INFO_KOLONIAL, 
     FREETEXT_SYNTAX_INFO_OVERVIEW, ELEMENT, SIMILAR_IN_DB, SECTION_MISSING, MAX_INGREDIENTS_IN_RECIPE, MAX_INSTRUCTIONS_IN_RECIPE, MAX_NOTES_IN_RECIPE, ERROR,
     INGREDIENT_NOT_FOUND_FILE, INGREDIENT_NOT_FOUND_DB, OUT_OF_BOUNDS } from "../resources/language";
@@ -127,10 +127,11 @@ class UploadPage extends React.Component
     
     renderUploadFreetextArea()
     {
+        let textAreaStyle = { resize: "vertical", width: "calc(100% - 0.8em)", paddingLeft: "0.5em" };
         return (
             <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}> 
-            <textarea cols='60' rows='8'></textarea>
-                <Button onClick={this.selectFile} contrastmode={this.props.contrastmode} text={UPLOAD_CHOOSE_FILE}/>
+                <textarea style={textAreaStyle} onChange={e => {this.setState({ freetext: e.target.value })}} 
+                    id="freetextAreaId" ref="freetextArea" cols='60' rows='8'></textarea>
             </div>
         );
     }
@@ -180,7 +181,7 @@ class UploadPage extends React.Component
     parseIngredient(lines, i, failedItems)
     {
         // let nLines = lines.length;
-        let name = lines[0].replace("\t", "").toString();
+        let name = lines[0].replace("\t", "").toString().toLowerCase();
         let type = String(lines[1]).toUpperCase().replace("\t", "").toString();
         let price = lines[2];
         let common = false;
@@ -210,7 +211,7 @@ class UploadPage extends React.Component
         return new Ingredient(getRandomString(), name, type, price, common);
     }
 
-    parseRecipe(lines, i, failedItems)
+    async parseRecipe(lines, i, failedItems)
     {
         let nLines = lines.length;
         let sectionDelim = "+";
@@ -353,53 +354,51 @@ class UploadPage extends React.Component
                 break;
             }
 
+            let recipeIngredientIndex = 0;
             let ingredientLine = lines[l].toString().split(" ");
             let quantity = 0;
-            let quantityUnit = "null1";
-            let recipeIngredient = "null2";
-            let preparation = "null3";
+            let quantityUnit = null;
+            let recipeIngredient = null;
+            let preparation = null;
 
+            // Quantity will always be the first entry
+            if(!isNaN(Number(ingredientLine[0])) && Number(ingredientLine[0]) > 0)
             {
-                let recipeIngredientIndex = 0;
+                quantity = Number(ingredientLine[0]);
+                recipeIngredientIndex++;
+            }
 
-                // Quantity will always be the first entry
-                if(!isNaN(parseFloat(ingredientLine[0])) && parseFloat(ingredientLine[0]) > 0)
-                {
-                    quantity = Number(ingredientLine[0]);
+            // Quantity unit is always second if not null
+            if(recipeIngredientIndex === 1)
+            {
+                let parsedQUnit = QuantityUnit[ingredientLine[1].toUpperCase().trim()]
+                quantityUnit = parsedQUnit === undefined ? null : parsedQUnit;
+                if(quantityUnit)
                     recipeIngredientIndex++;
-                }
+            }
 
-                // Quantity unit is always second if not null
-                if(recipeIngredientIndex === 1)
-                {
-                    quantityUnit = QuantityUnit[ingredientLine[1]] === undefined ? null : QuantityUnit[ingredientLine[1]];
-                    if(quantityUnit !== undefined)
-                        recipeIngredientIndex++;
-                }
+            // Preparation will always be the last entry
+            let parsedPrep = Preparation[ingredientLine[ingredientLine.length - 1].toUpperCase().trim()];
+            preparation = parsedPrep === undefined ? null : parsedPrep;
+            let hasPreparation = preparation === null ? false : true;
+            
+            let ingredientName = ingredientLine.slice(recipeIngredientIndex, (ingredientLine.length - (hasPreparation ? 1 : 0))).join(" ").toLowerCase();
 
-                // Preparation will always be the last entry
-                preparation = Preparation[ingredientLine[ingredientLine.length - 1]] === undefined ? null : Preparation[ingredientLine[ingredientLine.length - 1]] ;
-                let hasPreparation = preparation === null ? false : true;
-                
-                let ingredientName = lines.slice(recipeIngredientIndex, (ingredientLine.length - (hasPreparation ? 1 : 0)))[0];
+            if(!ingredientName)
+            {
+                failedItems.push(RECIPE + " " + i + " (" + title + "): " + INGREDIENT_NOT_FOUND_FILE);
+                return null;
+            }
+            // else if(ingredientName[0] === "-")
+            // TODO sub-recipes, find ingredients in db
 
-                if(ingredientName === null)
-                {
-                    failedItems.push(RECIPE + " " + i + " (" + title + "): " + INGREDIENT_NOT_FOUND_FILE);
-                    return null;
-                }
-                // else if(ingredientName[0] === "-")
-                // TODO sub-recipes, find ingredients in db
-
-                let recipeIngredient = getIngredientData("name", ingredientName);
-
-                if(recipeIngredient === null)
-                {
-                    failedItems.push(RECIPE + " " + i + " (" + title + "): " + INGREDIENT_NOT_FOUND_DB);
-                    return null;
-                }
-            } // Recipe recipe ingredients numbers and enums (the extra parentheses are so this section can be collapsed and make code more readable)
-
+            recipeIngredient = await getIngredientData("name", ingredientName);
+            if(recipeIngredient === null || recipeIngredient.length === 0)
+            {
+                failedItems.push(RECIPE + " " + i + " (" + ingredientName + "): " + INGREDIENT_NOT_FOUND_DB);
+                return null;
+            }
+            
             recipeIngredients.push(new RecipeIngredient(quantity, recipeIngredient, quantityUnit, preparation));
             l++;
         }
@@ -485,7 +484,7 @@ class UploadPage extends React.Component
 
     parseEnum(messageArray, value, enumCollection, parentType, index, itemName)
     {
-        if(enumCollection[value] === undefined)
+        if(!isNaN(value) || enumCollection[value] === undefined)
         {
             messageArray.push(parentType + " " + index + " (" + itemName + "): " + INVALID_TYPE + ": \"" + value + "\"");
             return null;
@@ -494,14 +493,21 @@ class UploadPage extends React.Component
         return enumCollection[value];
     }
 
-    parseFreetext()
+    async parseFreetext()
     {
+        let freetext = this.state.freetext;
+        if(freetext === "")
+        {
+            this.setState({ errorsQueue: [ FREETEXT_MISSING ] });
+            return;
+        }
+
         this.setState({ ingredientQueue: [], recipeQueue: [], errorsQueue: [] });
         // Split text on exclamation marks. First instance ([0]) in items should be empty because an item starts with !, i.e. the data is after.
         let ingredients = [];
         let recipes = [];
         let failedItems = [];
-        let items = this.state.freetext.split("!");
+        let items = freetext.split("!");
 
         if(items.length <= 1)
         {
@@ -532,7 +538,7 @@ class UploadPage extends React.Component
             // Accepted number of lines for ingredient: 10+
             else if(nLines > 9)
             {
-                let parsedRecipe = this.parseRecipe(lines, i, failedItems);
+                let parsedRecipe = await this.parseRecipe(lines, i, failedItems);
                 if(parsedRecipe === null)
                     continue;
                 
@@ -759,9 +765,9 @@ class UploadPage extends React.Component
                 <hr/>
                 {/* Upload ingredients though freetext
                     -> Submit files buttons/ drag+drop area */}
-                <Panel title={UPLOAD_FILE} contrastmode={this.props.contrastmode}>
+                <Panel title={FREETEXT} contrastmode={this.props.contrastmode}>  {/* Should be freetext not file */}
+                    {this.renderUploadFreetextArea()}
                     {this.renderUploadFile()}
-                    {/* {this.renderUploadFreetextArea()} */}
                 </Panel>
 
                 <hr/>

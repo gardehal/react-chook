@@ -8,6 +8,7 @@ export enum IngredientType
     SAUCE,
     CONDIMENT,
     BAKEDGOOD,
+    PASTRY,
     VINEGAR,
     FRUIT,
     HERB,

@@ -7,7 +7,7 @@ export enum Preparation
     MINCED,
     QUBED,
     QUARTERED, 
-    HALFED,
+    HALVED,
     SLICED,
     DRIED,
     PITTED,
