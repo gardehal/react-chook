@@ -25,6 +25,7 @@ export class Recipe
     cooking_method_temprature_unit: TempratureUnit;
     main_protein: Protein;
     recipe_ingredients:Array<RecipeIngredient>;
+    sub_recipes:Array<Recipe>;
     instructions:Array<String>;
     notes:Array<String>;
 
@@ -41,6 +42,7 @@ export class Recipe
       cooking_method_temprature_unit: TempratureUnit = TempratureUnit.NONE,
       main_protein: Protein,
       recipe_ingredients: Array<RecipeIngredient> = [],
+      sub_recipes:Array<Recipe> = [], 
       instructions: Array<String> = [],
       notes: Array<String> = []
       ) 
@@ -58,6 +60,7 @@ export class Recipe
       this.cooking_method_temprature_unit = cooking_method_temprature_unit;
       this.main_protein = main_protein;
       this.recipe_ingredients = recipe_ingredients;
+      this.sub_recipes = sub_recipes;
       this.instructions = instructions;
       this.notes = notes;
 

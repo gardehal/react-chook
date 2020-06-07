@@ -3,6 +3,8 @@ import React from "react";
 // Variable imports
 import { getLightBackgroundColor, getTextColor } from "../../resources/colors";
 import { DB_RECIPE, NORWEGIAN_KRONER, MINUTES } from "../../resources/language";
+import { RecipeType } from "../../models/enums/RecipeType";
+import { Difficulty } from "../../models/enums/Difficulty";
 
 export class RecipeCard extends React.Component
 {
@@ -75,28 +77,28 @@ export class RecipeCard extends React.Component
                 </div>
             );
 
-        let recipeId = recipe.recipe_id;
-        let recipeTitle = recipe.recipe_title;
-        let recipeType = recipe.recipe_type;
-        let recipeGrade = recipe.recipe_grade;
-        // let recipeRating = recipe.recipe_rating;
-        let recipePrice = recipe.recipe_price;
-        let recipeTTotal = recipe.recipe_time_total;
+        let id = recipe.id;
+        let title = recipe.title;
+        let type = recipe.type;
+        let difficulty = recipe.difficulty;
+        // let recipeRating = recipe.rating;
+        let cost = recipe.cost;
+        let timeTotal = recipe.time_total;
 
         return (
             <div className="btn-with-shadow" style={{ ...this.containerStyle, ...getLightBackgroundColor(this.props.contrastmode) }} 
-                onClick={this.gotoDetails.bind(this, recipeId)}>
+                onClick={this.gotoDetails.bind(this, id)}>
                 <div style={{ ...this.titleContainerStyle }}>
-                    <p style={{ ...this.titleStyle, ...getTextColor(this.props.contrastmode) }}>{recipeTitle}</p>
+                    <p style={{ ...this.titleStyle, ...getTextColor(this.props.contrastmode) }}>{title}</p>
                 </div>
 
                 <div style={{ ...this.containerStyle, ...this.infoContainerStyle }}>
-                    <p>{recipeGrade + " " + recipeType + ", " + recipeTTotal + " " + MINUTES + ", " + recipePrice + NORWEGIAN_KRONER}</p>
-                    {/* <p style={{ ...this.infoStyle }}>{recipeType}</p>
-                    <p style={{ ...this.infoStyle }}>{recipeGrade}</p>
+                    <p>{Difficulty[difficulty] + " " + RecipeType[type] + ", " + timeTotal + " " + MINUTES + ", " + cost + " " + NORWEGIAN_KRONER}</p>
+                    {/* <p style={{ ...this.infoStyle }}>{type}</p>
+                    <p style={{ ...this.infoStyle }}>{difficulty}</p>
                     <p style={{ ...this.infoStyle }}>{recipeRating}</p>
-                    <p style={{ ...this.infoStyle }}>{recipePrice}</p>
-                    <p style={{ ...this.infoStyle }}>{recipeTTotal}</p> */}
+                    <p style={{ ...this.infoStyle }}>{cost}</p>
+                    <p style={{ ...this.infoStyle }}>{timeTotal}</p> */}
                 </div>
             </div>
         );

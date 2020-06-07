@@ -15,7 +15,7 @@ import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLO
     FREETEXT_SYNTAX_COMMON, FREETEXT_SYNTAX_EXAMPLE_START, SEASALT, SPICE, FREETEXT_SYNTAX_EXAMPLE_PRICE, TRUE, FREETEXT, FREETEXT_MISSING,
     FREETEXT_SYNTAX_INFO_EXCLAMATION, FREETEXT_SYNTAX_INFO_TYPES, FREETEXT_SYNTAX_INFO_PRICE, FREETEXT_SYNTAX_INFO_COMMON, FREETEXT_SYNTAX_INFO_KOLONIAL, 
     FREETEXT_SYNTAX_INFO_OVERVIEW, ELEMENT, SIMILAR_IN_DB, SECTION_MISSING, MAX_INGREDIENTS_IN_RECIPE, MAX_INSTRUCTIONS_IN_RECIPE, MAX_NOTES_IN_RECIPE, ERROR,
-    INGREDIENT_NOT_FOUND_FILE, INGREDIENT_NOT_FOUND_DB, OUT_OF_BOUNDS } from "../resources/language";
+    INGREDIENT_NOT_FOUND_FILE, INGREDIENT_NOT_FOUND_DB, RECIPE_NOT_FOUND_DB, OUT_OF_BOUNDS } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
 // Component imports
@@ -242,6 +242,7 @@ class UploadPage extends React.Component
         let protein = lines[5].toString().toUpperCase().replace("\t", "");
 
         // Arrays
+        let subRecipes = [];
         let recipeIngredients = [];
         let instructions = [];
         let notes = [];
@@ -353,10 +354,28 @@ class UploadPage extends React.Component
                 failedItems.push(RECIPE + " " + i + " (" + title + "): " + MAX_INGREDIENTS_IN_RECIPE);
                 break;
             }
+            
+            // If the first character in the line is a "-", it's marked as a subrecipe. Find recipe in DB or fail.
+            if(lines[l][0] === "-")
+            {
+                let subRecipeName = lines[l].substring(1).trim();
+                let subRecipe = await getRecipeData("title", subRecipeName, 1);
+                console.log("------------ subrecp");
+                console.log(subRecipe);
+                if(subRecipe === null)
+                {
+                    failedItems.push(RECIPE + " " + i + " (" + subRecipeName + "): " + RECIPE_NOT_FOUND_DB);
+                    return null;
+                }
+
+                // subRecipes.push(subRecipe); // TODO should be a subreciperecipe with id, title, cost, totalCost
+                l++;
+                continue;
+            }
 
             let recipeIngredientIndex = 0;
             let ingredientLine = lines[l].toString().split(" ");
-            let quantity = 0;
+            let quantity = null;
             let quantityUnit = null;
             let recipeIngredient = null;
             let preparation = null;
@@ -389,17 +408,15 @@ class UploadPage extends React.Component
                 failedItems.push(RECIPE + " " + i + " (" + title + "): " + INGREDIENT_NOT_FOUND_FILE);
                 return null;
             }
-            // else if(ingredientName[0] === "-")
-            // TODO sub-recipes, find ingredients in db
 
             recipeIngredient = await getIngredientData("name", ingredientName);
-            if(recipeIngredient === null || recipeIngredient.length === 0)
+            if(recipeIngredient.length !== 1)
             {
                 failedItems.push(RECIPE + " " + i + " (" + ingredientName + "): " + INGREDIENT_NOT_FOUND_DB);
                 return null;
             }
             
-            recipeIngredients.push(new RecipeIngredient(quantity, recipeIngredient, quantityUnit, preparation));
+            recipeIngredients.push(new RecipeIngredient(quantity, recipeIngredient[0], quantityUnit, preparation));
             l++;
         }
         
@@ -446,6 +463,7 @@ class UploadPage extends React.Component
         cookingMethodTempUnit, 
         protein,
         recipeIngredients, 
+        null,
         instructions, 
         notes);
     }

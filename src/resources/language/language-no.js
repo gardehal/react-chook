@@ -115,6 +115,7 @@ export const MAX_NOTES_IN_RECIPE = "Maksimum antall notater i oppskriften.";
 export const INVALID_TYPE = "Ikke en gyldig type.";
 export const INGREDIENT_NOT_FOUND_FILE = "Ingredient ikke funnet i fil.";
 export const INGREDIENT_NOT_FOUND_DB = "Ingredient ikke funnet i database.";
+export const RECIPE_NOT_FOUND_DB = "Oppskrift ikke funnet i database.";
 export const OUT_OF_BOUNDS = "Utenfor gyldig rekkevidde.";
 
 export const TITLE = "Tittel";

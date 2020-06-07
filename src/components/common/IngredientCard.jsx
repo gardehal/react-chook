@@ -13,9 +13,9 @@ export class IngredientCard extends React.Component
     render()
     {
         let ingredient = this.props.ingredient;
-        let iName = ingredient.ingredient_name;
-        let iType = ingredient.ingredient_type;
-        let iPrice = ingredient.ingredient_price;
+        let iName = ingredient.name;
+        let iType = ingredient.type;
+        let iPrice = ingredient.price;
 
         return (
             <div className="rowStyle" style={getLightBackgroundColor(this.props.contrastmode)}>
