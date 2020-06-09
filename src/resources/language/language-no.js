@@ -162,3 +162,27 @@ export const DB_SET_FAILED = "Feil: Kunne ikke laste opp data til databasen.";
 export const TEST_ERROR = "Feil: Dette er en test feil.";
 export const FILE_UPLOAD_ERROR = "Feil: Det skjedde en feil ved opplasting av en fil.";
 export const NO_FILE_ERROR = "Feil: Finner ikke fil.";
+
+// Enums
+export const ENUM_OTHER = "Annet";
+export const ENUM_MEAT = "Kjøtt";
+export const ENUM_FISH = "Fisk";
+export const ENUM_FOWL = "Fugl/Fjerkre";
+export const ENUM_VEGETABLE = "Grønnsak";
+export const ENUM_SAUCE = "Saus";
+export const ENUM_CONDIMENT = "Tilbehør";
+export const ENUM_BAKEDGOODS = "Bakeverk";
+export const ENUM_PASTRY = "Bakverk";
+export const ENUM_VINEGAR = "Eddik";
+export const ENUM_FRUIT = "Frukt";
+export const ENUM_HERB = "Urt";
+export const ENUM_SPICE = "Krydder";
+export const ENUM_PASTA = "Pasta";
+export const ENUM_DAIRY = "Meieri";
+export const ENUM_EGG = "Egg";
+export const ENUM_HONEY = "Honning";
+export const ENUM_OIL = "Olje";
+export const ENUM_CANDY = "Godteri/Søtsak";
+export const ENUM_SEED = "Frø";
+export const ENUM_NUT = "Nøtt";
+export const ENUM_DRINK = "Drikke";

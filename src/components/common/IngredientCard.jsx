@@ -3,6 +3,7 @@ import React from "react";
 // Variable imports
 import { getLightBackgroundColor, getTextColor } from "../../resources/colors";
 import { NORWEGIAN_KRONER } from "../../resources/language";
+import { IngredientType, IngredientTypeDisplay } from "../../models/enums/IngredientType";
 
 export class IngredientCard extends React.Component
 {
@@ -13,13 +14,13 @@ export class IngredientCard extends React.Component
     render()
     {
         let ingredient = this.props.ingredient;
-        let iName = ingredient.name;
-        let iType = ingredient.type;
-        let iPrice = ingredient.price;
+        let name = ingredient.name;
+        let type = IngredientTypeDisplay[ingredient.type].toString();
+        let price = ingredient.price;
 
         return (
             <div className="rowStyle" style={getLightBackgroundColor(this.props.contrastmode)}>
-                <p style={getTextColor(this.props.contrastmode)}>{iName}, {iType}: {iPrice + " " + NORWEGIAN_KRONER}</p>
+                <p style={getTextColor(this.props.contrastmode)}>{name}, {type}: {price + " " + NORWEGIAN_KRONER}</p>
             </div>
         );
     }
