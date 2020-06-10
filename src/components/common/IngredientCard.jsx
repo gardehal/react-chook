@@ -3,7 +3,7 @@ import React from "react";
 // Variable imports
 import { getLightBackgroundColor, getTextColor } from "../../resources/colors";
 import { NORWEGIAN_KRONER } from "../../resources/language";
-import { IngredientType, IngredientTypeDisplay } from "../../models/enums/IngredientType";
+import { IngredientTypeDisplay } from "../../models/enums/IngredientType";
 
 export class IngredientCard extends React.Component
 {

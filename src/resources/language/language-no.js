@@ -165,6 +165,7 @@ export const NO_FILE_ERROR = "Feil: Finner ikke fil.";
 
 // Enums
 export const ENUM_OTHER = "Annet";
+export const ENUM_NONE = "Ingen";
 export const ENUM_MEAT = "Kjøtt";
 export const ENUM_FISH = "Fisk";
 export const ENUM_FOWL = "Fugl/Fjerkre";
@@ -186,3 +187,16 @@ export const ENUM_CANDY = "Godteri/Søtsak";
 export const ENUM_SEED = "Frø";
 export const ENUM_NUT = "Nøtt";
 export const ENUM_DRINK = "Drikke";
+export const ENUM_BAKE = "Bake";
+export const ENUM_ROAST = "Riste";
+export const ENUM_FRY = "Steke";
+export const ENUM_DEEPFRY = "Fritere";
+export const ENUM_BOIL = "Koke";
+export const ENUM_SOUSVIDE = "Sous Vide";
+export const ENUM_GRILL = "Grill";
+export const ENUM_STEAM = "Dampe";
+export const ENUM_VERY_EASY = "Veldig Enkel";
+export const ENUM_EASY = "Enkel";
+export const ENUM_MEDIUM = "Medium";
+export const ENUM_HARD = "Vanskelig";
+export const ENUM_VERY_HARD = "Veldig Vanskelig";
