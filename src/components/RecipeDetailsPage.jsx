@@ -12,12 +12,12 @@ import { DB_RECIPE, DB_FETCH_FAILED, NORWEGIAN_KRONER, MINUTES, PREPARATION, TOT
 
 // Component imports
 import { RecipeCard } from "./common/RecipeCard";
-import { Preparation } from "../models/enums/Preparation";
-import { QuantityUnit } from "../models/enums/QuantityUnit";
-import { CookingMethod } from "../models/enums/CookingMethod";
-import { TempratureUnit } from "../models/enums/TempratureUnit";
-import { RecipeType } from "../models/enums/RecipeType";
-import { Difficulty } from "../models/enums/Difficulty";
+import { PreparationDisplay } from "../models/enums/Preparation";
+import { QuantityUnitDisplay } from "../models/enums/QuantityUnit";
+import { CookingMethodDisplay } from "../models/enums/CookingMethod";
+import { TempratureUnitDisplay } from "../models/enums/TempratureUnit";
+import { RecipeTypeDisplay } from "../models/enums/RecipeType";
+import { DifficultyDisplay } from "../models/enums/Difficulty";
 
 class RecipeDetailsPage extends React.Component
 {
@@ -67,8 +67,8 @@ class RecipeDetailsPage extends React.Component
         let title = recipe.title;
         let cost = recipe.cost;
         let totalCost = recipe.total_cost;
-        let type = recipe.type;
-        let difficulty = recipe.difficulty;
+        let type = RecipeTypeDisplay[recipe.type];
+        let difficulty = DifficultyDisplay[recipe.difficulty];
         let rating = recipe.rating;
         let portions = recipe.portions;
         let time_preparation = recipe.time_preparation;
@@ -85,21 +85,24 @@ class RecipeDetailsPage extends React.Component
         setTitle(title);
 
         // Extract data that can be undefined to local vars and display based on undefined or not
-        let method = CookingMethod[cooking_method] ?? "";
+        let method = CookingMethodDisplay[cooking_method] ?? "";
         let methodTemp = cooking_method_temperature ?? "";
-        let methodTempUnit = TempratureUnit[cooking_method_temperature_unit] ?? "";
+        let methodTempUnit = TempratureUnitDisplay[cooking_method_temperature_unit] ?? "";
 
         // Make a JSX array of all the ingredients and render this array later
         let ingredientsJsx = [];
         for(let i = 0; i < ingredients.length; i++)
+        {
+            let quantity = ingredients[i].quantity ? ingredients[i].quantity.toString() + " " : "";
+            let quantityUnit = ingredients[i].quantity_unit ? QuantityUnitDisplay[ingredients[i].quantity_unit] + " " : "";
+            let name = ingredients[i].ingredient.name;
+            let prep = ingredients[i].preparation ? ", " + PreparationDisplay[ingredients[i].preparation] : "";
+
             ingredientsJsx.push(
                 <p key={"ingredient" + i} style={{ ...getTextColor(this.props.contrastmode) }}>
-                    { " - "
-                        + (ingredients[i].quantity ? ingredients[i].quantity.toString() + " " : "")
-                        + (ingredients[i].quantity_unit ? QuantityUnit[ingredients[i].quantity_unit] + " " : "")
-                        + ingredients[i].ingredient.name 
-                        + (ingredients[i].preparation ? " " + Preparation[ingredients[i].preparation] : "") }
+                    { " - " + quantity + quantityUnit + name + prep }
                 </p>);
+        }
                 
         // Make a JSX array of all the sub recipes (if any) and render this array later
         let subRecipeJsx = [];
@@ -130,7 +133,7 @@ class RecipeDetailsPage extends React.Component
                 <h3 style={{ ...this.titleStyle, ...getTextColor(this.props.contrastmode) }}>{title}</h3>
 
                 <div style={{ ...this.infoContainerStyle }}>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{Difficulty[difficulty] + " " + RecipeType[type] + ", " + rating + "/10"}</p>
+                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{difficulty + " " + type + ", " + rating + "/10"}</p>
                     
                     <p style={{ ...getTextColor(this.props.contrastmode) }}>{portions + " " + PORTIONS
                         + ", " + time_preparation + " " + MINUTES + " " + PREPARATION

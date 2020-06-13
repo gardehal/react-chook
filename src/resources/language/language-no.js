@@ -248,6 +248,7 @@ export const ENUM_ALOT = "Mye";
 export const ENUM_MG = "Milligram";
 export const ENUM_G = "Gram";
 export const ENUM_DAG = "Dekagram";
+export const ENUM_HG = "Hektogram";
 export const ENUM_KG = "Kilogram";
 export const ENUM_MM = "Millimeter";
 export const ENUM_CM = "Centimeter";

@@ -3,8 +3,8 @@ import React from "react";
 // Variable imports
 import { getLightBackgroundColor, getTextColor } from "../../resources/colors";
 import { DB_RECIPE, NORWEGIAN_KRONER, MINUTES } from "../../resources/language";
-import { RecipeType } from "../../models/enums/RecipeType";
-import { Difficulty } from "../../models/enums/Difficulty";
+import { RecipeTypeDisplay } from "../../models/enums/RecipeType";
+import { DifficultyDisplay } from "../../models/enums/Difficulty";
 
 export class RecipeCard extends React.Component
 {
@@ -79,9 +79,8 @@ export class RecipeCard extends React.Component
 
         let id = recipe.id;
         let title = recipe.title;
-        let type = recipe.type;
-        let difficulty = recipe.difficulty;
-        // let recipeRating = recipe.rating;
+        let type = RecipeTypeDisplay[recipe.type];
+        let difficulty = DifficultyDisplay[recipe.difficulty];
         let cost = recipe.cost;
         let timeTotal = recipe.time_total;
 
@@ -93,7 +92,7 @@ export class RecipeCard extends React.Component
                 </div>
 
                 <div style={{ ...this.containerStyle, ...this.infoContainerStyle }}>
-                    <p>{Difficulty[difficulty] + " " + RecipeType[type] + ", " + timeTotal + " " + MINUTES + ", " + cost + " " + NORWEGIAN_KRONER}</p>
+                    <p>{difficulty + " " + type + ", " + timeTotal + " " + MINUTES + ", " + cost + " " + NORWEGIAN_KRONER}</p>
                     {/* <p style={{ ...this.infoStyle }}>{type}</p>
                     <p style={{ ...this.infoStyle }}>{difficulty}</p>
                     <p style={{ ...this.infoStyle }}>{recipeRating}</p>

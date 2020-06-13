@@ -15,7 +15,7 @@ export class IngredientCard extends React.Component
     {
         let ingredient = this.props.ingredient;
         let name = ingredient.name;
-        let type = IngredientTypeDisplay[ingredient.type].toString();
+        let type = IngredientTypeDisplay[ingredient.type];
         let price = ingredient.price;
 
         return (
