@@ -201,3 +201,13 @@ export const getRandomString = (length = 16) =>
     return (Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10) 
     + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)).substring(0, length);
 };
+
+export const toCamelCase = (s, delim = " ") =>
+{
+    var a = s.split(delim);
+    var res = "";
+    for (var item of a)
+        res += delim.toString() + item.slice(0, 1).toUpperCase() + item.slice(1, item.length).toLowerCase();
+    
+    return res;
+};

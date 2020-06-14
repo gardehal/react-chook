@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 // Redux imports
 import { getRecipeData, setRecipeError, setRecipeData } from "../actions/RecipeActions";
 import { getIngredientData, setIngredientData } from "../actions/IngredientActions";
-import { renderLoading, renderError, setTitle, getRandomString } from "../resources/Shared";
+import { renderLoading, renderError, setTitle, getRandomString, toCamelCase } from "../resources/Shared";
 
 // Variable imports
 import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, 
@@ -200,7 +200,6 @@ class UploadPage extends React.Component
 
         // price must be a number, 0 or more
         price = this.parseNumberFloat(failedItems, price, PRICE, INGREDIENT, i, name, 0, 9999);
-        console.log("price: " + price);
         if(price === null)
             return null;
 
@@ -354,30 +353,11 @@ class UploadPage extends React.Component
                 failedItems.push(RECIPE + " " + i + " (" + title + "): " + MAX_INGREDIENTS_IN_RECIPE);
                 break;
             }
-            
-            // If the first character in the line is a "-", it's marked as a subrecipe. Find recipe in DB or fail.
-            if(lines[l][0] === "-")
-            {
-                let subRecipeName = lines[l].substring(1).trim();
-                let subRecipe = await getRecipeData("title", subRecipeName, 1);
-                console.log("------------ subrecp");
-                console.log(subRecipe);
-                if(subRecipe === null)
-                {
-                    failedItems.push(RECIPE + " " + i + " (" + subRecipeName + "): " + RECIPE_NOT_FOUND_DB);
-                    return null;
-                }
-
-                // subRecipes.push(subRecipe); // TODO should be a subreciperecipe with id, title, cost, totalCost
-                l++;
-                continue;
-            }
 
             let recipeIngredientIndex = 0;
             let ingredientLine = lines[l].toString().split(" ");
             let quantity = null;
             let quantityUnit = null;
-            let recipeIngredient = null;
             let preparation = null;
 
             // Quantity will always be the first entry
@@ -409,14 +389,30 @@ class UploadPage extends React.Component
                 return null;
             }
 
-            recipeIngredient = await getIngredientData("name", ingredientName);
-            if(recipeIngredient.length !== 1)
+            // If the first character in the line is a "-", it's marked as a subrecipe. Find recipe in DB or fail.
+            if(ingredientName[0] === "-")
             {
-                failedItems.push(RECIPE + " " + i + " (" + ingredientName + "): " + INGREDIENT_NOT_FOUND_DB);
-                return null;
+                let subRecipeName = toCamelCase(ingredientName.substring(1, ingredientName.length)).trim();
+                let dbSubRecipes = await getRecipeData("title", subRecipeName);
+                if(dbSubRecipes.length !== 1)
+                {
+                    failedItems.push(RECIPE + " " + i + " (" + subRecipeName + "): " + RECIPE_NOT_FOUND_DB);
+                    return null;
+                }
+
+                subRecipes.push(new RecipeIngredient(dbSubRecipes[0].id, quantity, dbSubRecipes[0].title, quantityUnit, preparation, true));
             }
-            
-            recipeIngredients.push(new RecipeIngredient(quantity, recipeIngredient[0], quantityUnit, preparation));
+            else
+            {
+                let recipeIngredient = await getIngredientData("name", ingredientName);
+                if(recipeIngredient.length !== 1)
+                {
+                    failedItems.push(RECIPE + " " + i + " (" + ingredientName + "): " + INGREDIENT_NOT_FOUND_DB);
+                    return null;
+                }
+                
+                recipeIngredients.push(new RecipeIngredient(recipeIngredient[0].id, quantity, recipeIngredient[0].name, quantityUnit, preparation));
+            }
             l++;
         }
         
@@ -451,7 +447,7 @@ class UploadPage extends React.Component
         }
 
         return new Recipe(getRandomString(), 
-        title, 
+        toCamelCase(title), 
         type, 
         difficulty,
         rating, 
@@ -463,7 +459,7 @@ class UploadPage extends React.Component
         cookingMethodTempUnit, 
         protein,
         recipeIngredients, 
-        null,
+        subRecipes,
         instructions, 
         notes);
     }
@@ -590,46 +586,35 @@ class UploadPage extends React.Component
             {
                 let failedUploads = [];
                 
-                // For each, look for ingredient with the same name, 
-                // then check if the ID already exists
-                // If name or ID are not found, upload.
-                // TODO: Consider hash excluding name?,  name could look for 90% match? for similar
-                // TODO There has to be a simpler/more elegant way..
-                this.state.ingredientQueue.forEach(i => 
+                // For each, look for ingredient with the same name, and ID.
+                // If no duplicates, upload async.
+                // TODO: Consider hash excluding name?,  name could look for 90% match? for similar, include hash? same hash for price and type only, with x% match on name?
+                var iQueue = this.state.ingredientQueue;
+                for (var j = 0; j < iQueue.length; j++) 
                 {
-                    // Same/similar name? hash?
+                    const i = iQueue[j];
                     console.log("\nUploading ingredient: " + i.name);
 
-                    getIngredientData("name", i.name)
-                        .then(byNameData =>
-                            {
-                                console.log("Getting Ingredient by name...");
-                                console.log(byNameData);
+                    let byNameData = await getIngredientData("name", i.name);
+                    if(byNameData !== undefined && byNameData.length !== 0)
+                    {
+                        failedUploads.push(INGREDIENT + " \"" + i.name + "\": " + SIMILAR_IN_DB + ": " + byNameData[0].name);
+                        this.setState({ errorsQueue: failedUploads });
+                        continue;
+                    }
 
-                                if(byNameData !== undefined && byNameData.length !== 0)
-                                {
-                                    failedUploads.push(INGREDIENT + " \"" + i.name + "\": " + SIMILAR_IN_DB + ": " + byNameData[0].name);
-                                    this.setState({ errorsQueue: failedUploads });
-                                }
-                                else
-                                    getIngredientData("id", i.id)
-                                        .then(byIdData =>
-                                            {
-                                                console.log("Getting Ingredient by ID...");
-                                                console.log(byIdData);
-
-                                                if(byIdData !== undefined && byIdData.length !== 0)
-                                                {
-                                                    failedUploads.push(INGREDIENT + " \"" + i.id + "\": " + SIMILAR_IN_DB + ", ID: " + byIdData[0].id);
-                                                    this.setState({ errorsQueue: failedUploads });
-                                                }
-                                                else
-                                                    setIngredientData(i);
-                                            });
-                            });
-                });
+                    let byIdData = await getIngredientData("id", i.id);
+                    if(byIdData !== undefined && byIdData.length !== 0)
+                    {
+                        failedUploads.push(INGREDIENT + " \"" + i.id + "\": " + SIMILAR_IN_DB + ", ID: " + byIdData[0].id);
+                        this.setState({ errorsQueue: failedUploads });
+                        continue;
+                    }
                     
-                console.log("Ingredients sent, will upload async.");
+                    console.log("Ingredients ok, will upload async.");
+                    setIngredientData(i);
+                }
+                    
                 this.setState({ ingredientQueue: [] });
             }
 
@@ -637,41 +622,32 @@ class UploadPage extends React.Component
             {
                 let failedUploads = [];
                 
-                this.state.recipeQueue.forEach(r => 
+                var rQueue = this.state.recipeQueue;
+                for (var j = 0; j < rQueue.length; j++) 
                 {
-                    // Same/similar name? hash?
+                    const r = rQueue[j];
                     console.log("\nUploading recipes: " + r.title);
 
-                    getRecipeData("title", r.title)
-                        .then(byNameData =>
-                            {
-                                console.log("Getting Recipe by title...");
-                                console.log(byNameData);
+                    let byNameData = await getRecipeData("title", r.title);
+                    if(byNameData !== undefined && byNameData.length !== 0)
+                    {
+                        failedUploads.push(RECIPE + " \"" + r.title + "\": " + SIMILAR_IN_DB + ": " + byNameData[0].title);
+                        this.setState({ errorsQueue: failedUploads });
+                        continue;
+                    }
 
-                                if(byNameData !== undefined && byNameData.length !== 0)
-                                {
-                                    failedUploads.push(RECIPE + " \"" + r.title + "\": " + SIMILAR_IN_DB + ": " + byNameData[0].title);
-                                    this.setState({ errorsQueue: failedUploads });
-                                }
-                                else
-                                    getRecipeData("id", r.id)
-                                        .then(byIdData =>
-                                            {
-                                                console.log("Getting Recipe by ID...");
-                                                console.log(byIdData);
+                    let byIdData = await getRecipeData("id", r.id);
+                    if(byIdData !== undefined && byIdData.length !== 0)
+                    {
+                        failedUploads.push(RECIPE + " \"" + r.id + "\": " + SIMILAR_IN_DB + ", ID: " + byIdData[0].id);
+                        this.setState({ errorsQueue: failedUploads });
+                        continue;
+                    }
+                    
+                    console.log("Recipe ok, will upload async.");
+                    setRecipeData(r);
+                }
 
-                                                if(byIdData !== undefined && byIdData.length !== 0)
-                                                {
-                                                    failedUploads.push(RECIPE + " \"" + r.id + "\": " + SIMILAR_IN_DB + ", ID: " + byIdData[0].id);
-                                                    this.setState({ errorsQueue: failedUploads });
-                                                }
-                                                else
-                                                    setRecipeData(r);
-                                            });
-                            });
-                });
-
-                console.log("Ingredients sent, will upload async.");
                 this.setState({ recipeQueue: [] });
             }
         }

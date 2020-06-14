@@ -137,16 +137,26 @@ class DevPage extends React.Component
                     coverText={true} cursor="cursor" contrastmode={this.props.contrastmode}/>
 
                 <div>
+                    {renderToast(this.props.toastMessage, 5000, this.props.contrastmode)}
+
+                    {/* Call functions */}
                     <div className="rowStyle">
                         <Button onClick={this.updateMetaData} contrastmode={this.props.contrastmode} text={UPDATE_METADATA}/>   
                         <Button onClick={() => toggleContrastmode(this.props.contrastmode)} contrastmode={this.props.contrastmode} text={CONTRASTMODE}/>         
                     </div> 
 
+                    {/* Call scripts from app */}
+                    {/* <div className="rowStyle">
+                        <Button onClick={this.testToast} contrastmode={this.props.contrastmode} text={"Test Toast"}/> 
+                    </div> */}
+
+                    {/* Usefull resources */}
                     <div className="rowStyle">
-                        <Button onClick={() => window.location.href="https://console.firebase.google.com/u/0/"} contrastmode={this.props.contrastmode} text={"Firebase"}/> 
-                        <Button onClick={() => window.location.href="https://kolonial.no"} contrastmode={this.props.contrastmode} text={"Kolonial"}/>      
+                        <Button onClick={() => window.open("https://console.firebase.google.com/u/0/")} contrastmode={this.props.contrastmode} text={"Firebase"}/> 
+                        <Button onClick={() => window.open("https://kolonial.no")} contrastmode={this.props.contrastmode} text={"Kolonial"}/>      
                     </div> 
 
+                    {/* Testing functionality */}
                     <div className="rowStyle">
                         <Button onClick={this.testLoading} contrastmode={this.props.contrastmode} text={"Test Loading"}/> 
                         <Button onClick={this.testSmallLoading} contrastmode={this.props.contrastmode} text={"Test Small Loading"}/> 
@@ -162,7 +172,6 @@ class DevPage extends React.Component
                     <div className="rowStyle">
                         <Button onClick={this.testToast} contrastmode={this.props.contrastmode} text={"Test Toast"}/> 
                     </div>
-                    {renderToast(this.props.toastMessage, 5000, this.props.contrastmode)}
                 </div>
             </div>);
     }

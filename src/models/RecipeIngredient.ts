@@ -4,16 +4,20 @@ import { Preparation } from "./enums/Preparation";
 
 export class RecipeIngredient 
 {
+    id: String;
     quantity: Number;
-    ingredient: Ingredient;
+    name: String;
     quantity_unit?: QuantityUnit;
     preparation?: Preparation;
+    isRecipe: Boolean;
 
-    constructor(quantity: Number, ingredient: Ingredient, quantityUnit?: QuantityUnit, preparation?: Preparation) 
+    constructor(id: String, quantity: Number, name: String, quantityUnit?: QuantityUnit, preparation?: Preparation, isRecipe: Boolean = false) 
     {
+      this.id = id;
       this.quantity = quantity;
-      this.ingredient = ingredient;
+      this.name = name;
       this.quantity_unit = quantityUnit;
       this.preparation = preparation;
+      this.isRecipe = isRecipe;
     }
   }
