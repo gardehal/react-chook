@@ -80,6 +80,11 @@ body
     cursor: pointer;
 }
 
+.underline
+{
+    text-decoration: underline;
+}
+
 .fill
 {
     height: 100%;

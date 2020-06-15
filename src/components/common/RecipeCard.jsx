@@ -67,16 +67,6 @@ export class RecipeCard extends React.Component
     {
         let recipe = this.props.recipe;
 
-        if(this.props.subRecipe)
-            return (
-                <div className="btn-with-shadow" style={{ ...this.containerStyle, ...getLightBackgroundColor(this.props.contrastmode) }} 
-                    onClick={this.gotoDetails.bind(this, recipe.sub_recipe_id)}>
-                    <div style={{ ...this.titleContainerStyle }}>
-                        <p style={{ ...this.titleStyle, ...getTextColor(this.props.contrastmode) }}>{recipe.sub_recipe_title}</p>
-                    </div>
-                </div>
-            );
-
         let id = recipe.id;
         let title = recipe.title;
         let type = RecipeTypeDisplay[recipe.type];
@@ -93,11 +83,6 @@ export class RecipeCard extends React.Component
 
                 <div style={{ ...this.containerStyle, ...this.infoContainerStyle }}>
                     <p>{difficulty + " " + type + ", " + timeTotal + " " + MINUTES + ", " + cost + " " + NORWEGIAN_KRONER}</p>
-                    {/* <p style={{ ...this.infoStyle }}>{type}</p>
-                    <p style={{ ...this.infoStyle }}>{difficulty}</p>
-                    <p style={{ ...this.infoStyle }}>{recipeRating}</p>
-                    <p style={{ ...this.infoStyle }}>{cost}</p>
-                    <p style={{ ...this.infoStyle }}>{timeTotal}</p> */}
                 </div>
             </div>
         );

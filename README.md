@@ -43,7 +43,8 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Search
 - [x] Alert toast
 - [x] Heroku
-- [ ] Uploading to temp DB
+- [x] Uploading to temp DB
+- [ ] API call to Kolonial, create new if no ingredient found in DB
 - [ ] DB security
 - [ ] Footer
 

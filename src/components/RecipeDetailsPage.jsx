@@ -11,13 +11,13 @@ import { getBackgroundColor, getLightBackgroundColor, getTextColor } from "../re
 import { DB_RECIPE, DB_FETCH_FAILED, NORWEGIAN_KRONER, MINUTES, PREPARATION, TOTAL, PORTIONS } from "../resources/language";
 
 // Component imports
-import { RecipeCard } from "./common/RecipeCard";
 import { PreparationDisplay } from "../models/enums/Preparation";
 import { QuantityUnitDisplay } from "../models/enums/QuantityUnit";
 import { CookingMethodDisplay } from "../models/enums/CookingMethod";
 import { TempratureUnitDisplay } from "../models/enums/TempratureUnit";
 import { RecipeTypeDisplay } from "../models/enums/RecipeType";
 import { DifficultyDisplay } from "../models/enums/Difficulty";
+import { RecipeIngredientCard } from "./common/RecipeIngredientCard";
 
 class RecipeDetailsPage extends React.Component
 {
@@ -88,28 +88,19 @@ class RecipeDetailsPage extends React.Component
         let method = CookingMethodDisplay[cooking_method] ?? "";
         let methodTemp = cooking_method_temperature ?? "";
         let methodTempUnit = TempratureUnitDisplay[cooking_method_temperature_unit] ?? "";
-
-        // Make a JSX array of all the ingredients and render this array later
-        let ingredientsJsx = [];
-        for(let i = 0; i < ingredients.length; i++)
-        {
-            let quantity = ingredients[i].quantity ? ingredients[i].quantity.toString() + " " : "";
-            let quantityUnit = ingredients[i].quantity_unit ? QuantityUnitDisplay[ingredients[i].quantity_unit] + " " : "";
-            let name = ingredients[i].ingredient.name;
-            let prep = ingredients[i].preparation ? ", " + PreparationDisplay[ingredients[i].preparation] : "";
-
-            ingredientsJsx.push(
-                <p key={"ingredient" + i} style={{ ...getTextColor(this.props.contrastmode) }}>
-                    { " - " + quantity + quantityUnit + name + prep }
-                </p>);
-        }
                 
         // Make a JSX array of all the sub recipes (if any) and render this array later
         let subRecipeJsx = [];
         if(sub_recipes)
             for(let i = 0; i < sub_recipes.length; i++)
-                subRecipeJsx.push(<RecipeCard key={"subRecipe" + i} recipe={sub_recipes[i]} history={this.props}
-                    subRecipe={true} contrastmode={this.props.contrastmode}/>);
+                subRecipeJsx.push(<RecipeIngredientCard key={"subRecipe" + i} recipeIngredient={sub_recipes[i]} history={this.props} doLink
+                    contrastmode={this.props.contrastmode}/>);
+
+        // Make a JSX array of all the ingredients and render this array later
+        let ingredientsJsx = [];
+        for(let i = 0; i < ingredients.length; i++)
+            ingredientsJsx.push(<RecipeIngredientCard key={"ingredient" + i} recipeIngredient={ingredients[i]} history={this.props}
+                contrastmode={this.props.contrastmode}/>);
 
         // Make a JSX array of all the instructions and render this array later
         let instructionsJsx = [];
@@ -146,6 +137,7 @@ class RecipeDetailsPage extends React.Component
                 <hr/>
 
                 {subRecipeJsx}
+
                 {ingredientsJsx}
                 <hr/>
 
