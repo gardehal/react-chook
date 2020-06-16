@@ -8,6 +8,10 @@ export const DB_META = "metadata";
 export const DB_INGREDIENT = "ingredient";
 export const DB_RECIPE = "recipe";
 
+// Dev stuff
+export const FUNCTIONALITY_TEST_PANEL = "Testpanel for funksjonalitet";
+export const SCRIPT_PANEL = "Skriptpanel";
+
 // Days, Months
 export const MON = 'Mandag';
 export const TUE = 'Tirsdag';

@@ -44,8 +44,8 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Alert toast
 - [x] Heroku
 - [x] Uploading to temp DB
-- [ ] API call to Kolonial, create new if no ingredient found in DB
-- [ ] DB security
+- [ ] API call to Kolonial, create new if no ingredient found in DB     - Waiting for Kolonial API request response (i.e. waiting for "no")
+- [ ] DB security                                                       - Must enable Firebase login
 - [ ] Footer
 
 - [ ] "Launch"

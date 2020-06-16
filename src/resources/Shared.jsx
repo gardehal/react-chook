@@ -211,3 +211,50 @@ export const toCamelCase = (s, delim = " ") =>
     
     return res;
 };
+
+export const uppercaseFirst = (s) =>
+{
+    return s.toLowerCase()[0].toUpperCase();
+};
+
+// As Kolonial has responded with a bot response that boild down to "you're probably not getting API access" just use Selenium to do basically the same thing.
+// Function should use Kolonial to search for ingredientName, get data for the first item such as name, price, mapping to IngredientType
+// and return an Ingredient.
+export const getKolonialItemWithSelenium = (ingredientName) =>
+{
+    // Input capabilities
+    var capabilities = {
+        'browserName' : 'Chrome',
+        'browser_version' : '84.0 beta',
+        'os' : 'Windows',
+        'os_version' : '10',
+        'resolution' : '1024x768',
+        'browserstack.user' : 'USERNAME',
+        'browserstack.key' : 'ACCESS_KEY',
+        'name' : 'Bstack-[Node] Sample Test'
+    };
+
+    var webdriver = require('selenium-webdriver');
+    var driver = new webdriver.Builder() 
+        .usingServer('http://hub-cloud.browserstack.com/wd/hub')
+        .withCapabilities(capabilities)
+        .build();
+
+    // driver.get('https://www.kolonial.no')
+    //     .then(function()
+    //     {
+    //         console.log(driver.getTitle());
+    //         driver.quit();
+    //         // driver.findElement(webdriver.By.name('q')).sendKeys('BrowserStack\n')
+    //         //     .then(function()
+    //         //     {
+    //         //         driver.getTitle()
+    //         //             .then(function(title)
+    //         //             {
+    //         //                 console.log(title);
+    //         //                 driver.quit();
+    //         //             });
+    //         //     });
+    //     });
+
+};
