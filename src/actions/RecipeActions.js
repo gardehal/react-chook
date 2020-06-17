@@ -19,5 +19,5 @@ export const setRecipeData = async (payload) =>
 {
     store.dispatch({ type: RECIPE_LOADING});
 
-    setDatabaseData(DB_RECIPE, payload, SET_RECIPE_DATA_SUCCESS, SET_RECIPE_DATA_FAIL, RECIPE_LOADING, payload.id);
+    setDatabaseData(DB_RECIPE, payload, SET_RECIPE_DATA_SUCCESS, SET_RECIPE_DATA_FAIL, null, RECIPE_LOADING, payload.id);
 }

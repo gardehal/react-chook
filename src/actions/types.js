@@ -6,6 +6,8 @@ export const SETTINGS_SET_FONTSIZE = "settings_set_fontsize";
 export const SHOW_ALERT_TOAST = "show_alert_toast";
 export const HIDE_ALERT_TOAST = "hide_alert_toast";
 
+// Shared
+
 // Metadata
 export const METADATA_LOADING = "metadata_loading";
 export const METADATA_LOADING_COMPLETE = "metadata_loading_complete";
@@ -18,6 +20,8 @@ export const GET_METADATA_DATA_FAIL = "get_metadata_data_fail";
 
 export const SET_METADATA_DATA_SUCCESS = "set_metadata_data_success";
 export const SET_METADATA_DATA_FAIL = "set_metadata_data_fail";
+
+export const METADATA_PERMISSION_DENIED = "metadata_permission_denied";
 
 // Recipe
 export const RECIPE_LOADING = "recipe_loading";

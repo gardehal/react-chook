@@ -3,6 +3,7 @@ import firebase from "firebase";
 import store from "../store";
 
 import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC, MAIN_TITLE } from "./language";
+import { DB_PERMISSION_DENIED } from "./../actions/types";
 import { getTextColor } from "./colors";
 import { Toast } from "../components/common/Toast";
 
@@ -44,8 +45,8 @@ export const getDatabaseData = async (tableName, reduxSuccessType = "", reduxFai
     return data;
 }
 
-// Set
-export const setDatabaseData = async (tableName, uploadObject, reduxSuccessType = "", reduxFailType = "", reduxLoadingType = "",  path = "") =>
+// Set DB
+export const setDatabaseData = async (tableName, uploadObject, reduxSuccessType, reduxFailType, reduxFailPermissionType = null, reduxLoadingType = null,  path = "") =>
 {
     store.dispatch({ type: reduxLoadingType });
 
@@ -59,9 +60,31 @@ export const setDatabaseData = async (tableName, uploadObject, reduxSuccessType 
         .catch((err) =>
         {
             console.error(err);
-            store.dispatch({ type: reduxFailType });
+
+            if(err.code === "PERMISSION_DENIED")
+                store.dispatch({ type: reduxFailPermissionType ?? UNKNOWN_ERROR });
+            else
+                store.dispatch({ type: reduxFailType ?? UNKNOWN_ERROR });
         });
 }
+
+// Login
+export const loginFirebase = async(username, password, reduxLoadingType, reduxSuccessType, reduxFailType) =>
+{
+    store.dispatch({ type: reduxLoadingType });
+
+    firebase.auth.signInWithEmailAndPassword(username, password)
+        .then(() =>
+        {
+            console.log("User " + username + " logged in succesfully.");
+            store.dispatch({ type: reduxSuccessType });
+        })
+        .catch((err) =>
+        {
+            console.error(err);
+            store.dispatch({ type: reduxFailType });
+        });
+};
 
 export const getRandomInt = (max) =>
 {

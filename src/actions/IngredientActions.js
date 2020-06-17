@@ -15,5 +15,5 @@ export const setIngredientData = async (payload) =>
 {
     store.dispatch({ type: INGREDIENT_LOADING});
 
-    setDatabaseData(DB_INGREDIENT, payload, SET_INGREDIENT_DATA_SUCCESS, SET_INGREDIENT_DATA_FAIL, INGREDIENT_LOADING, payload.id);
+    setDatabaseData(DB_INGREDIENT, payload, SET_INGREDIENT_DATA_SUCCESS, SET_INGREDIENT_DATA_FAIL, null, INGREDIENT_LOADING, payload.id);
 }

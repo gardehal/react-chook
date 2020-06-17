@@ -166,6 +166,7 @@ export const DB_SET_FAILED = "Feil: Kunne ikke laste opp data til databasen.";
 export const TEST_ERROR = "Feil: Dette er en test feil.";
 export const FILE_UPLOAD_ERROR = "Feil: Det skjedde en feil ved opplasting av en fil.";
 export const NO_FILE_ERROR = "Feil: Finner ikke fil.";
+export const ERROR_PERMISSION_DENIED = "Feil: Tilgang avslått.";
 
 // Enums
 export const ENUM_OTHER = "Annet";

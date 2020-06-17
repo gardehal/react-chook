@@ -1,6 +1,6 @@
 import { getDatabaseData, setDatabaseData, addLeadingZeros } from "../resources/Shared";
 
-import { GET_METADATA_DATA_SUCCESS, GET_METADATA_DATA_FAIL, METADATA_LOADING, SET_METADATA_DATA_SUCCESS, SET_METADATA_DATA_FAIL } from "./types";
+import { GET_METADATA_DATA_SUCCESS, GET_METADATA_DATA_FAIL, METADATA_LOADING, SET_METADATA_DATA_SUCCESS, SET_METADATA_DATA_FAIL, METADATA_PERMISSION_DENIED } from "./types";
 import { DB_META, DB_INGREDIENT, DB_RECIPE } from "../resources/language";
 import store from "../store";
 
@@ -34,5 +34,5 @@ export const setMetadataData = async () =>
 
     let path = "content";
 
-    setDatabaseData(DB_META, uploadObject, SET_METADATA_DATA_SUCCESS, SET_METADATA_DATA_FAIL, METADATA_LOADING, path);
+    setDatabaseData(DB_META, uploadObject, SET_METADATA_DATA_SUCCESS, SET_METADATA_DATA_FAIL, METADATA_PERMISSION_DENIED, METADATA_LOADING, path);
 }

@@ -5,7 +5,7 @@ import store from "../store";
 // Redux imports
 import { METADATA_LOADING, METADATA_LOADING_COMPLETE, METADATA_TEST_ERROR, METADATA_ERROR_RESOLVED } from "../actions/types";
 import { getMetadataData, setMetadataData } from "../actions/MetadataActions";
-import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast, getKolonialItemWithSelenium } from "../resources/Shared";
+import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast, getKolonialItemWithSelenium, loginFirebase } from "../resources/Shared";
 import { toggleContrastmode, callToast } from "../actions/SettingsActions";
 
 // Variable imports
@@ -97,7 +97,7 @@ class DevPage extends React.Component
             return renderLoading(false, this.props.contrastmode);
 
         if(this.props.metadataError)
-            return renderError(this.state.error, false, this.props.contrastmode);
+            return renderError(this.props.metadataError, false, this.props.contrastmode);
 
         if(this.props.metadataResult[0])
         {   
@@ -133,7 +133,25 @@ class DevPage extends React.Component
 
     renderLogin()
     {
-        console.log("TODO");
+        // TODO get information from inputs, create action and reducer for login/auth
+        return (
+            <div>
+                <div>
+                    Username: <input/>
+                </div>
+                <div>
+                    Password: <input/>
+                </div>
+                <div>
+                    <Button onClick={loginFirebase("", "", null, null, null)} text="Login"/> 
+                </div>
+            </div>
+        );
+    }
+
+    doLogin()
+    {
+
     }
 
     renderScriptsPanel()
@@ -170,7 +188,8 @@ class DevPage extends React.Component
                     </div> 
                     
                     {/* Login for doing dev things */}
-                    <div className="rowStyle">
+                    {/* <div className="rowStyle"> */}
+                    <div>
                         {this.renderLogin()}   
                     </div> 
 
