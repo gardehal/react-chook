@@ -6,7 +6,15 @@ export const SETTINGS_SET_FONTSIZE = "settings_set_fontsize";
 export const SHOW_ALERT_TOAST = "show_alert_toast";
 export const HIDE_ALERT_TOAST = "hide_alert_toast";
 
-// Shared
+// User
+export const USER_LOADING = "user_loading";
+export const USER_LOADING_COMPLETE = "user_loading_complete";
+export const USER_ERROR = "user_error";
+
+export const USER_LOGIN_SUCCESS = "user_login_success";
+export const USER_LOGIN_FAIL = "user_login_fail";
+
+export const USER_PERMISSION_DENIED = "user_permission_denied";
 
 // Metadata
 export const METADATA_LOADING = "metadata_loading";

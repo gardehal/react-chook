@@ -167,6 +167,7 @@ export const TEST_ERROR = "Feil: Dette er en test feil.";
 export const FILE_UPLOAD_ERROR = "Feil: Det skjedde en feil ved opplasting av en fil.";
 export const NO_FILE_ERROR = "Feil: Finner ikke fil.";
 export const ERROR_PERMISSION_DENIED = "Feil: Tilgang avslått.";
+export const ERROR_INVALID_USERNAME_PASSWORD = "Ugyldig brukernavn eller passord.";
 
 // Enums
 export const ENUM_OTHER = "Annet";

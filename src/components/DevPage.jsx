@@ -5,7 +5,8 @@ import store from "../store";
 // Redux imports
 import { METADATA_LOADING, METADATA_LOADING_COMPLETE, METADATA_TEST_ERROR, METADATA_ERROR_RESOLVED } from "../actions/types";
 import { getMetadataData, setMetadataData } from "../actions/MetadataActions";
-import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast, getKolonialItemWithSelenium, loginFirebase } from "../resources/Shared";
+import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast, getKolonialItemWithSelenium } from "../resources/Shared";
+import { login, logout } from "../actions/UserActions";
 import { toggleContrastmode, callToast } from "../actions/SettingsActions";
 
 // Variable imports
@@ -133,25 +134,32 @@ class DevPage extends React.Component
 
     renderLogin()
     {
-        // TODO get information from inputs, create action and reducer for login/auth
+        let uInput = "";
+        let pInput = "";
+        
         return (
             <div>
                 <div>
-                    Username: <input/>
+                    Username: 
+                    <input type="email" onChange={e => uInput = e.target.value} />
                 </div>
                 <div>
-                    Password: <input/>
+                    Password: 
+                    <input type="password" onChange={e => pInput = e.target.value} />
                 </div>
-                <div>
-                    <Button onClick={loginFirebase("", "", null, null, null)} text="Login"/> 
+                <div className="rowStyle">
+                    {/* TODO replace with spinner for loading, error message above button for error, disable logout if no auth, setup check write permissions/general permissions */}
+                    <Button onClick={() => login(uInput, pInput, "firebase")} text="Login" 
+                        contrastmode={this.props.contrastmode} />
+
+                    <Button onClick={() => logout("firebase")} text="Logout" 
+                        contrastmode={this.props.contrastmode} />
+
+                    <Button onClick={() => logout("firebase")} text="Can Edit" 
+                        contrastmode={this.props.contrastmode} />
                 </div>
             </div>
         );
-    }
-
-    doLogin()
-    {
-
     }
 
     renderScriptsPanel()
