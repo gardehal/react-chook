@@ -74,6 +74,9 @@ export const RELOAD = "Last inn på nytt";
 export const FAILED = "Feilet";
 export const MORE_INFORMATION = "Mer informasjon";
 export const ELEMENT = "Element";
+export const CAN_EDIT_DB = "Kan redigere databasen";
+export const NOT_LOGGED_IN = "Du er ikke logget inn.";
+export const LOGGED_IN_AS = "Logget inn som:";
 
 // Upload
 export const GENERAL_UPLOAD_INFORMATION = "På denne siden kan du laste opp ingredienser og oppskrifter til databasen. Alle ingredienser og oppskrifter har noen krav som må oppfylles før de godkjennes. Det finnes mer informasjon i panelene under.";
@@ -167,7 +170,9 @@ export const TEST_ERROR = "Feil: Dette er en test feil.";
 export const FILE_UPLOAD_ERROR = "Feil: Det skjedde en feil ved opplasting av en fil.";
 export const NO_FILE_ERROR = "Feil: Finner ikke fil.";
 export const ERROR_PERMISSION_DENIED = "Feil: Tilgang avslått.";
-export const ERROR_INVALID_USERNAME_PASSWORD = "Ugyldig brukernavn eller passord.";
+export const ERROR_INVALID_USERNAME_PASSWORD = "Feil: Ugyldig brukernavn eller passord.";
+export const ERROR_INVALID_EMAIL = "Feil: Malformatert E-post";
+export const ERROR_TOO_MANY_REQUESTS = "Feil: For mange forespørsler.";
 
 // Enums
 export const ENUM_OTHER = "Annet";

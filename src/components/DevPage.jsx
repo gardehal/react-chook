@@ -6,19 +6,20 @@ import store from "../store";
 import { METADATA_LOADING, METADATA_LOADING_COMPLETE, METADATA_TEST_ERROR, METADATA_ERROR_RESOLVED } from "../actions/types";
 import { getMetadataData, setMetadataData } from "../actions/MetadataActions";
 import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast, getKolonialItemWithSelenium } from "../resources/Shared";
-import { login, logout } from "../actions/UserActions";
+import { login, logout, userCanEditFirebase } from "../actions/UserActions";
 import { toggleContrastmode, callToast } from "../actions/SettingsActions";
 
 // Variable imports
 import { TEST_ERROR, DB_META, TOTAL_RECIPES, TOTAL_INGREDIENTS, 
     LAST_UPDATED, UPDATE_METADATA, METADATA, CONTRASTMODE, DEV,
-    FUNCTIONALITY_TEST_PANEL, SCRIPT_PANEL } from "../resources/language";
+    FUNCTIONALITY_TEST_PANEL, SCRIPT_PANEL, LOG_IN, LOG_OUT, CAN_EDIT_DB, NOT_LOGGED_IN, LOGGED_IN_AS } from "../resources/language";
 import { getBackgroundColor, getTextColor } from "../resources/colors";
 
 // Component imports
 import { ClickableImage } from "./common/ClickableImage";
 import { Button } from "./common/Button";
 import { Panel } from "./common/Panel";
+import { Spinner } from "./common/Spinner";
 
 class DevPage extends React.Component
 {
@@ -136,9 +137,35 @@ class DevPage extends React.Component
     {
         let uInput = "";
         let pInput = "";
-        
+    
+        let userError = null;
+        if(this.props.userError)
+            userError = this.props.userError; // + scary red text and some h3-h4s
+
+        let loggedInAs = NOT_LOGGED_IN;
+        if(this.props.loggedIn)
+            loggedInAs = LOGGED_IN_AS + " " + (this.props.displayName ?? this.props.email);
+
+        let loginButton = null;
+        if(this.props.userLoading)
+            loginButton = <Spinner />;
+        else
+            loginButton = <Button onClick={() => login(uInput, pInput, "firebase")} text={LOG_IN}
+                contrastmode={this.props.contrastmode} />;
+
+        let logoutButton = null;
+        if(this.props.loggedIn)
+            logoutButton = <Button onClick={() => logout("firebase")} text={LOG_OUT}
+                contrastmode={this.props.contrastmode} />;
+        else
+            logoutButton = <Button onClick={null} text={LOG_OUT}
+                contrastmode={this.props.contrastmode} />;
+
         return (
             <div>
+                <div>
+                    {loggedInAs}
+                </div>
                 <div>
                     Username: 
                     <input type="email" onChange={e => uInput = e.target.value} />
@@ -147,16 +174,19 @@ class DevPage extends React.Component
                     Password: 
                     <input type="password" onChange={e => pInput = e.target.value} />
                 </div>
+                <div>
+                    {userError}
+                </div>
                 <div className="rowStyle">
-                    {/* TODO replace with spinner for loading, error message above button for error, disable logout if no auth, setup check write permissions/general permissions */}
-                    <Button onClick={() => login(uInput, pInput, "firebase")} text="Login" 
-                        contrastmode={this.props.contrastmode} />
+                    {loginButton}
+                    {logoutButton}
 
-                    <Button onClick={() => logout("firebase")} text="Logout" 
-                        contrastmode={this.props.contrastmode} />
-
-                    <Button onClick={() => logout("firebase")} text="Can Edit" 
-                        contrastmode={this.props.contrastmode} />
+                    <div>
+                        <Button onClick={() => userCanEditFirebase()} text={CAN_EDIT_DB}
+                            contrastmode={this.props.contrastmode} />
+                    </div>
+                    <div>
+                    </div>
                 </div>
             </div>
         );
@@ -248,7 +278,10 @@ const mapStateToProps = state =>
 {
     const { contrastmode, toastMessage } = state.settings;
     const { metadataError, metadataLoading, metadataResult } = state.meta;
-    return { contrastmode, toastMessage, metadataError, metadataLoading, metadataResult };
+    const { userError, userLoading, displayName, email, uid, loggedIn, } = state.user;
+    return { contrastmode, toastMessage, 
+        metadataError, metadataLoading, metadataResult,
+        userError, userLoading, displayName, email, uid, loggedIn, };
 };
   
 export default connect(

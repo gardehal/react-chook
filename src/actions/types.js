@@ -13,6 +13,12 @@ export const USER_ERROR = "user_error";
 
 export const USER_LOGIN_SUCCESS = "user_login_success";
 export const USER_LOGIN_FAIL = "user_login_fail";
+export const USER_LOGIN_FAIL_EMAIL = "user_login_fail_email";
+export const USER_LOGIN_FAIL_PASSWORD = "user_login_fail_password";
+export const USER_LOGIN_FAIL_REQUESTS = "user_login_fail_request";
+
+export const USER_LOGOUT_SUCCESS = "user_logout_success";
+export const USER_LOGOUT_FAIL = "user_logout_fail";
 
 export const USER_PERMISSION_DENIED = "user_permission_denied";
 

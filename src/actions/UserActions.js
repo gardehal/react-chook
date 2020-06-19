@@ -1,6 +1,8 @@
 
 import * as firebase from "firebase";
 import store from "../store";
+import { USER_LOADING, USER_LOGIN_SUCCESS, USER_LOGIN_FAIL, USER_LOGIN_FAIL_EMAIL, USER_LOGIN_FAIL_REQUESTS, USER_LOGOUT_SUCCESS, USER_LOGOUT_FAIL } from "./types";
+import { confirmUserPermissions } from "../resources/Shared";
 
 require('firebase/auth');
 
@@ -12,7 +14,9 @@ export const login = async(username, password, provider) =>
         provider = 1;
 
     if(provider === "firebase" || provider === 1)
-        loginFirebase(username, password, null, null, null); // TODO types
+        await loginFirebase(username, password);
+
+    // window.location.reload();
 };
 
 export const logout = async(provider) =>
@@ -22,48 +26,52 @@ export const logout = async(provider) =>
         provider = 1;
 
     if(provider === "firebase" || provider === 1)
-        logoutFirebase(null, null, null); // TODO types
+        await logoutFirebase();
+
+    // window.location.reload();
 };
 
 //Firebase
-const loginFirebase = async(username, password, reduxLoadingType, reduxSuccessType, reduxFailType) =>
+const loginFirebase = async(username, password) =>
 {
-    store.dispatch({ type: reduxLoadingType });
+    store.dispatch({ type: USER_LOADING });
 
-    firebase.auth().signInWithEmailAndPassword(username, password)
-        .then(() =>
+    await firebase.auth().signInWithEmailAndPassword(username, password)
+        .then((u) =>
         {
             console.log("User " + username + " logged in succesfully.");
-            store.dispatch({ type: reduxSuccessType });
+            store.dispatch({ type: USER_LOGIN_SUCCESS, payload: u.user });
         })
         .catch((err) =>
         {
             console.error(err);
-            store.dispatch({ type: reduxFailType });
+            if(err.code === "auth/invalid-email")
+                store.dispatch({ type: USER_LOGIN_FAIL_EMAIL });
+            else if(err.code === "auth/wrong-password")
+                store.dispatch({ type: USER_LOGIN_FAIL });
+            else if(err.code === "auth/too-many-requests")
+                store.dispatch({ type: USER_LOGIN_FAIL_REQUESTS });
         });
 };
 
-const logoutFirebase = (reduxLoadingType, reduxSuccessType, reduxFailType) =>
+const logoutFirebase = async() =>
 {
-    store.dispatch({ type: reduxLoadingType });
+    store.dispatch({ type: USER_LOADING });
     
-    firebase.auth().signOut()
+    await firebase.auth().signOut()
         .then(() => 
         {
-            // Sign-out successful.
+            console.log("User logged out succesfully.");
+            store.dispatch({ type: USER_LOGOUT_SUCCESS });
         })
         .catch((err) => 
         {
-            // An error happened.
+            console.error(err);
+            store.dispatch({ type: USER_LOGOUT_FAIL });
         });
 };
 
-export const userCanEditFirebase = (reduxLoadingType, reduxSuccessType, reduxFailType) =>
+export const userCanEditFirebase = async() =>
 {
-    store.dispatch({ type: reduxLoadingType });
-
-    // firebase.auth.user
-    // .. return true/false user can edit db
-    store.dispatch({ type: reduxSuccessType });
-    return false;
+    await confirmUserPermissions("firebase", "write");
 };

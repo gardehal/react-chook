@@ -5,6 +5,18 @@ import store from "../store";
 import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC, MAIN_TITLE } from "./language";
 import { getTextColor } from "./colors";
 import { Toast } from "../components/common/Toast";
+import { USER_LOADING, USER_LOGIN_FAIL } from "../actions/types";
+
+// Firebase user can edit
+export const confirmUserPermissions = (provider, action) =>
+{
+    if(provider === undefined || provider === null || action === undefined || action === null)
+        return null;
+
+    // return firebase.auth().
+    // store.dispatch({ type: USER_LOADING });
+    // store.dispatch({ type: USER_LOGIN_FAIL });
+}
 
 // Get
 export const getDatabaseData = async (tableName, reduxSuccessType = "", reduxFailType = "", reduxLoadingType = "", orderByChild = "", equalTo = "", limit = 0) =>
