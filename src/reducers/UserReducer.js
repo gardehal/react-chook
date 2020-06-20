@@ -9,11 +9,7 @@ const INITIAL_STATE =
 { 
     userError: null, 
     userLoading: false,
-    userResult: {},
-    displayName: null,
-    email: null,
-    uid: null,
-    loggedIn: false,
+    user: null,
 };
 
 export default (state = INITIAL_STATE, action) =>
@@ -30,9 +26,7 @@ export default (state = INITIAL_STATE, action) =>
             return { ...state, userLoading: false, userError: action.payload };
 
         case USER_LOGIN_SUCCESS:
-            return { ...state, userLoading: false, userError: null, 
-                displayName: action.payload.displayName, email: action.payload.email, uid: action.payload.uid,
-                    loggedIn: true };
+            return { ...state, userLoading: false, userError: null, user: action.payload };
         case USER_LOGIN_FAIL:
             return { ...state, userLoading: false, userError: ERROR_INVALID_USERNAME_PASSWORD };
         case USER_LOGIN_FAIL_EMAIL:
@@ -43,8 +37,7 @@ export default (state = INITIAL_STATE, action) =>
             return { ...state, userLoading: false, userError: ERROR_TOO_MANY_REQUESTS };
 
         case USER_LOGOUT_SUCCESS:
-            return { ...state, userLoading: false, userError: null, displayName: null, email: null, uid: null,
-                loggedIn: false };
+            return { ...state, userLoading: false, userError: null, user: null };
         case USER_LOGOUT_FAIL:
             return { ...state, userLoading: false, userError: UNKNOWN_ERROR };
 

@@ -12,7 +12,7 @@ import { toggleContrastmode, callToast } from "../actions/SettingsActions";
 // Variable imports
 import { TEST_ERROR, DB_META, TOTAL_RECIPES, TOTAL_INGREDIENTS, 
     LAST_UPDATED, UPDATE_METADATA, METADATA, CONTRASTMODE, DEV,
-    FUNCTIONALITY_TEST_PANEL, SCRIPT_PANEL, LOG_IN, LOG_OUT, CAN_EDIT_DB, NOT_LOGGED_IN, LOGGED_IN_AS } from "../resources/language";
+    FUNCTIONALITY_TEST_PANEL, SCRIPT_PANEL, LOG_IN, LOG_OUT, CAN_EDIT_DB, NOT_LOGGED_IN, LOGGED_IN_AS, ERROR } from "../resources/language";
 import { getBackgroundColor, getTextColor } from "../resources/colors";
 
 // Component imports
@@ -49,9 +49,11 @@ class DevPage extends React.Component
         return { };
     }
 
-    updateMetaData()
+    async updateMetaData()
     {
-        setMetadataData();
+        await setMetadataData();
+        
+        window.location.reload();
     }
 
     sleep(milliseconds)
@@ -143,8 +145,8 @@ class DevPage extends React.Component
             userError = this.props.userError; // + scary red text and some h3-h4s
 
         let loggedInAs = NOT_LOGGED_IN;
-        if(this.props.loggedIn)
-            loggedInAs = LOGGED_IN_AS + " " + (this.props.displayName ?? this.props.email);
+        if(this.props.user)
+            loggedInAs = LOGGED_IN_AS + " " + (this.props.user.user.displayName ?? this.props.user.user.email) ?? ERROR;
 
         let loginButton = null;
         if(this.props.userLoading)
@@ -154,7 +156,7 @@ class DevPage extends React.Component
                 contrastmode={this.props.contrastmode} />;
 
         let logoutButton = null;
-        if(this.props.loggedIn)
+        if(this.props.user)
             logoutButton = <Button onClick={() => logout("firebase")} text={LOG_OUT}
                 contrastmode={this.props.contrastmode} />;
         else
@@ -164,18 +166,18 @@ class DevPage extends React.Component
         return (
             <div>
                 <div>
-                    {loggedInAs}
+                    <div style={getTextColor(this.props.contrastmode)}>{loggedInAs}</div>  
                 </div>
                 <div>
-                    Username: 
+                    <div style={getTextColor(this.props.contrastmode)}>Username: </div>
                     <input type="email" onChange={e => uInput = e.target.value} />
                 </div>
                 <div>
-                    Password: 
+                    <div style={getTextColor(this.props.contrastmode)}>Password: </div>
                     <input type="password" onChange={e => pInput = e.target.value} />
                 </div>
                 <div>
-                    {userError}
+                    <div style={getTextColor(this.props.contrastmode)}>{userError}</div>
                 </div>
                 <div className="rowStyle">
                     {loginButton}
@@ -226,7 +228,6 @@ class DevPage extends React.Component
                     </div> 
                     
                     {/* Login for doing dev things */}
-                    {/* <div className="rowStyle"> */}
                     <div>
                         {this.renderLogin()}   
                     </div> 
@@ -278,10 +279,10 @@ const mapStateToProps = state =>
 {
     const { contrastmode, toastMessage } = state.settings;
     const { metadataError, metadataLoading, metadataResult } = state.meta;
-    const { userError, userLoading, displayName, email, uid, loggedIn, } = state.user;
+    const { user } = state.user;
     return { contrastmode, toastMessage, 
         metadataError, metadataLoading, metadataResult,
-        userError, userLoading, displayName, email, uid, loggedIn, };
+        user, };
 };
   
 export default connect(

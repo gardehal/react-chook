@@ -61,7 +61,7 @@ export const setDatabaseData = async (tableName, uploadObject, reduxSuccessType,
 {
     store.dispatch({ type: reduxLoadingType });
 
-    firebase.database().ref("/" + tableName + "/" + path)
+    await firebase.database().ref("/" + tableName + "/" + path)
         .set(uploadObject)
         .then(() =>
         {

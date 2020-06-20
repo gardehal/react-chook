@@ -5,7 +5,7 @@ import store from "./store";
 import { BrowserRouter, Route } from "react-router-dom";
 
 // Redux imports
-import { SETTINGS_TOGGLE_CONTRASTMODE } from "./actions/types";
+import { SETTINGS_TOGGLE_CONTRASTMODE, USER_LOGIN_SUCCESS, USER_LOGIN_FAIL } from "./actions/types";
 import { getApiExample } from "./resources/ApiExample";
 
 // Variable imports
@@ -19,6 +19,9 @@ import ListPage from "./components/ListPage";
 import RecipeDetailsPage from "./components/RecipeDetailsPage";
 import SearchPage from "./components/SearchPage";
 import UploadPage from "./components/UploadPage";
+
+import { contrastmodeStorageKey } from "./actions/SettingsActions";
+import { firebaseUserStorageKey } from "./actions/UserActions";
 
 class App extends React.Component 
 {
@@ -40,8 +43,19 @@ class App extends React.Component
         // getApiExample("https://rallycoding.herokuapp.com/api/music_albums");
 
         // Get stored settings from localStorage
-        if(localStorage.getItem("contrastmode") === "true")
+        if(localStorage.getItem(contrastmodeStorageKey) === "true")
             store.dispatch({ type: SETTINGS_TOGGLE_CONTRASTMODE });
+        if(localStorage.getItem(firebaseUserStorageKey))
+            try
+            {
+                store.dispatch({ type: USER_LOGIN_SUCCESS, payload: JSON.parse(localStorage.getItem(firebaseUserStorageKey)) });
+                console.log("logged in app");
+            }
+            catch
+            {
+                console.log("error logging in app");
+                store.dispatch({ type: USER_LOGIN_FAIL });
+            }
     }
    
     notFound() 

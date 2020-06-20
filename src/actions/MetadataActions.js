@@ -34,5 +34,5 @@ export const setMetadataData = async () =>
 
     let path = "content";
 
-    setDatabaseData(DB_META, uploadObject, SET_METADATA_DATA_SUCCESS, SET_METADATA_DATA_FAIL, METADATA_PERMISSION_DENIED, METADATA_LOADING, path);
+    await setDatabaseData(DB_META, uploadObject, SET_METADATA_DATA_SUCCESS, SET_METADATA_DATA_FAIL, METADATA_PERMISSION_DENIED, METADATA_LOADING, path);
 }

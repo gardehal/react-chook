@@ -6,6 +6,9 @@ import { confirmUserPermissions } from "../resources/Shared";
 
 require('firebase/auth');
 
+// Had this code not been public I'd use non-related variable name as part of security through obscurity
+export const firebaseUserStorageKey = "firebaseUser"; 
+
 // Authentication
 export const login = async(username, password, provider) =>
 {
@@ -16,7 +19,7 @@ export const login = async(username, password, provider) =>
     if(provider === "firebase" || provider === 1)
         await loginFirebase(username, password);
 
-    // window.location.reload();
+    window.location.reload();
 };
 
 export const logout = async(provider) =>
@@ -28,7 +31,7 @@ export const logout = async(provider) =>
     if(provider === "firebase" || provider === 1)
         await logoutFirebase();
 
-    // window.location.reload();
+    window.location.reload();
 };
 
 //Firebase
@@ -40,7 +43,8 @@ const loginFirebase = async(username, password) =>
         .then((u) =>
         {
             console.log("User " + username + " logged in succesfully.");
-            store.dispatch({ type: USER_LOGIN_SUCCESS, payload: u.user });
+            store.dispatch({ type: USER_LOGIN_SUCCESS, payload: u });
+            localStorage.setItem(firebaseUserStorageKey, JSON.stringify(u));
         })
         .catch((err) =>
         {
@@ -63,6 +67,7 @@ const logoutFirebase = async() =>
         {
             console.log("User logged out succesfully.");
             store.dispatch({ type: USER_LOGOUT_SUCCESS });
+            localStorage.setItem(firebaseUserStorageKey, null);
         })
         .catch((err) => 
         {
