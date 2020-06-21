@@ -5,17 +5,40 @@ import store from "../store";
 import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC, MAIN_TITLE } from "./language";
 import { getTextColor } from "./colors";
 import { Toast } from "../components/common/Toast";
-import { USER_LOADING, USER_LOGIN_FAIL } from "../actions/types";
+import { USER_LOADING, USER_LOADING_COMPLETE } from "../actions/types";
 
 // Firebase user can edit
-export const confirmUserPermissions = (provider, action) =>
+export const confirmUserPermissions = async(provider, action, uid) =>
 {
     if(provider === undefined || provider === null || action === undefined || action === null)
         return null;
 
-    // return firebase.auth().
-    // store.dispatch({ type: USER_LOADING });
-    // store.dispatch({ type: USER_LOGIN_FAIL });
+    let res = null;
+    if(provider === "firebase" || provider === 1)
+    {
+        store.dispatch({ type: USER_LOADING });
+        
+        if(action === "write")
+        {
+            let id = getRandomString();
+            await firebase.database().ref("/ping/" + id)
+                .set({ id: id, datetime: getNow(true), uid: uid })
+                .then(() =>
+                {
+                    console.log("User may edit.");
+                    store.dispatch({ type: USER_LOADING_COMPLETE });
+                    res = true;
+                })
+                .catch((err) =>
+                {
+                    console.log("User may not edit.");
+                    store.dispatch({ type: USER_LOADING_COMPLETE });
+                    res = false;
+                });
+        }
+    }
+
+    return res;
 }
 
 // Get

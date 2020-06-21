@@ -15,6 +15,7 @@ import { NOT_FOUND_404, ERROR, PAGE_NOT_FOUND } from "./resources/language";
 import HomePage from "./components/HomePage";
 import DevPage from "./components/DevPage";
 import Header from "./components/common/Header";
+import Footer from "./components/common/Footer";
 import ListPage from "./components/ListPage";
 import RecipeDetailsPage from "./components/RecipeDetailsPage";
 import SearchPage from "./components/SearchPage";
@@ -84,7 +85,7 @@ class App extends React.Component
                         <Route exact path="/search" component={SearchPage}/>
                         <Route exact path="/upload" component={UploadPage}/>
                         
-                        {/* <Footer/>  */}
+                        <Footer/> 
                     </BrowserRouter >
                 </Provider>
         );

@@ -34,6 +34,7 @@ class DevPage extends React.Component
         this.testError = this.testError.bind(this);
         this.testSmallError = this.testSmallError.bind(this);
         this.testToast = this.testToast.bind(this);
+        this.displayUserCanEditFirebase = this.displayUserCanEditFirebase.bind(this);
     }
 
     componentWillMount()
@@ -52,7 +53,7 @@ class DevPage extends React.Component
     async updateMetaData()
     {
         await setMetadataData();
-        
+
         window.location.reload();
     }
 
@@ -184,14 +185,26 @@ class DevPage extends React.Component
                     {logoutButton}
 
                     <div>
-                        <Button onClick={() => userCanEditFirebase()} text={CAN_EDIT_DB}
+                        <Button onClick={this.displayUserCanEditFirebase} text={CAN_EDIT_DB}
                             contrastmode={this.props.contrastmode} />
-                    </div>
-                    <div>
                     </div>
                 </div>
             </div>
         );
+    }
+
+    async displayUserCanEditFirebase()
+    {
+        console.log("displayUserCanEditFirebase");
+
+        let res = false;
+        if(this.props.user)
+        {
+            console.log(this.props.user);
+            res = await userCanEditFirebase(this.props.user.user.uid);
+        }
+
+        callToast(CAN_EDIT_DB + ": " + res);
     }
 
     renderScriptsPanel()

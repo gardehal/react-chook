@@ -76,7 +76,7 @@ const logoutFirebase = async() =>
         });
 };
 
-export const userCanEditFirebase = async() =>
+export const userCanEditFirebase = async(uid) =>
 {
-    await confirmUserPermissions("firebase", "write");
+    return await confirmUserPermissions("firebase", "write", uid);
 };

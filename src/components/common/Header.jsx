@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 // Variable imports
 import {MAIN_TITLE, SEARCH, SEARCH_SOMETHING, HOME, ALL_RECIPES, UPLOAD, PROFILE, SETTINGS, RELOAD, DEV_OPTIONS, LOG_OUT, LOG_IN} from "../../resources/language";
-import { getAccentColor, getTextColor, getBackgroundColor } from "../../resources/colors";
+import { getAccentColor, getTextColor } from "../../resources/colors";
 
 class Header extends React.Component
 {

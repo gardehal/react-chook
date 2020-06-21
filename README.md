@@ -44,12 +44,14 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Alert toast
 - [x] Heroku
 - [x] Uploading to temp DB
-- [ ] API call to Kolonial, create new if no ingredient found in DB     - Waiting for Kolonial API request response (i.e. waiting for "no")
-- [ ] DB security                                                       - Must enable Firebase login
+- [ ] Selenum call to Kolonial, create new if no ingredient found in DB
+- [x] DB security
 - [ ] Footer
 
 - [ ] "Launch"
 
+- [ ] Setup buffer table, uploads not from mods/devs/admins go to buffer, must be approved to go into real DB. Uploads are limited to x char length, every 1 minutes?
+- [ ] Test table
 - [ ] Basic API
 - [ ] Transfer data to API DB
 - [ ] Editing DB data
@@ -72,7 +74,7 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Internet crawler or fentch from API for ingredients
 - [ ] Internet crawler or fentch from API for recipes
 - [ ] Adaptive style for mobile
-- [ ] Flavicon (For timer, toasts)
+- [ ] Flavicon (For timer, toasts, notification
 
 ## Known issues
 - Things are not looking good. Not figuratively but literally, style is not my strong suit.
