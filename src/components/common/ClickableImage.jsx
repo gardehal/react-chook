@@ -15,6 +15,7 @@ export class ClickableImage extends React.Component
     // onClick: what button will do when clicked, no default
     // alttext: alternative text of image, for text-to-speech tools, no default
     // title: text on top of image, no default
+    // marginBottom: padding under image, default 0.5 em
 
     constructor(props)
     {
@@ -30,7 +31,7 @@ export class ClickableImage extends React.Component
             // position: "relative",
             cursor: this.props.cursor || "pointer",
             overflow: "hidden",
-            marginBottom: "0.5em",
+            marginBottom: this.props.marginBottom || "0.5em",
         };
         this.titleContainerStyle =
         {

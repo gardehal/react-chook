@@ -78,6 +78,7 @@ export const CAN_EDIT_DB = "Kan redigere databasen";
 export const NOT_LOGGED_IN = "Du er ikke logget inn.";
 export const LOGGED_IN_AS = "Logget inn som:";
 export const SCROLL_TO_TOP = "Toppen av siden";
+export const MADE_WITH_TECH = "Laget med React, Firebase, og litt Kolonial";
 
 // Upload
 export const GENERAL_UPLOAD_INFORMATION = "På denne siden kan du laste opp ingredienser og oppskrifter til databasen. Alle ingredienser og oppskrifter har noen krav som må oppfylles før de godkjennes. Det finnes mer informasjon i panelene under.";

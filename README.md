@@ -46,7 +46,7 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Uploading to temp DB
 - [ ] Selenum call to Kolonial, create new if no ingredient found in DB
 - [x] DB security
-- [ ] Footer
+- [x] Footer
 
 - [ ] "Launch"
 
@@ -78,7 +78,7 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 
 ## Known issues
 - Things are not looking good. Not figuratively but literally, style is not my strong suit.
-- White line (padding due to some elements, varies per page) visible on the bottom of the screen.
+- Links to subrecipes/a-tags not propperly styled, may be hard to spot
 
 ## My Thoughts
 Having an interest for cooking and programming, a project like this was inevitable. The problem, however, was figuring out what to make, how to make it, when to make it, and where to do it. The conclusion was first an app, then a webpage, then an API, then a helper webpage to upload data, then back to webpage. 

@@ -39,7 +39,7 @@ class DevPage extends React.Component
 
     componentWillMount()
     {
-        getMetadataData(DB_META);
+        getMetadataData();
         console.log(this.props.metadataResult);
         
         setTitle(DEV);
@@ -278,8 +278,8 @@ class DevPage extends React.Component
     {
         return (
             <div style={{ ...getBackgroundColor(this.props.contrastmode) }}>
-                <div style={getBackgroundColor(this.props.contrastmode)}>
-                    <div className="pageRootContainer">
+                <div className="pageRootContainer">
+                    <div style={{ ...getBackgroundColor(this.props.contrastmode) }}>
                         {this.renderContent()}
                     </div>
                 </div>
