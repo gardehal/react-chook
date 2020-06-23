@@ -2,12 +2,14 @@ import React from "react";
 import * as firebase from "firebase";
 import store from "../store";
 
-import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC, MAIN_TITLE } from "./language";
+import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC, MAIN_TITLE, DB_RECIPE, DB_FETCH_FAILED } from "./language";
 import { getTextColor } from "./colors";
 import { Toast } from "../components/common/Toast";
-import { USER_LOADING, USER_LOADING_COMPLETE } from "../actions/types";
+import { USER_LOADING, USER_LOADING_COMPLETE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING } from "../actions/types";
+import { callToast } from "../actions/SettingsActions";
 
-// Firebase user can edit
+// Database basic functions
+
 export const confirmUserPermissions = async(provider, action, uid) =>
 {
     if(provider === undefined || provider === null || action === undefined || action === null)
@@ -41,8 +43,7 @@ export const confirmUserPermissions = async(provider, action, uid) =>
     return res;
 }
 
-// Get
-export const getDatabaseData = async (tableName, reduxSuccessType = "", reduxFailType = "", reduxLoadingType = "", orderByChild = "", equalTo = "", limit = 0) =>
+export const getDatabaseData = async (tableName, reduxSuccessType = "", reduxFailType = "", reduxLoadingType = "", orderByChild = "", equalTo = "", limit = 0, indexOn = 0) =>
 {
     store.dispatch({ type: reduxLoadingType });
     let data = [];
@@ -54,6 +55,8 @@ export const getDatabaseData = async (tableName, reduxSuccessType = "", reduxFai
         ref = ref.equalTo(equalTo);
     if(limit > 1)
         ref = ref.limitToFirst(limit);
+    if(indexOn > 1)
+        ref = ref.indexOn(indexOn);
 
     console.log("getDatabaseData for table \"" + tableName + "\"" 
         + (orderByChild ? ", orderByChild: \"" + orderByChild + "\"" : "") 
@@ -79,7 +82,6 @@ export const getDatabaseData = async (tableName, reduxSuccessType = "", reduxFai
     return data;
 }
 
-// Set DB
 export const setDatabaseData = async (tableName, uploadObject, reduxSuccessType, reduxFailType, reduxFailPermissionType = null, reduxLoadingType = null,  path = "") =>
 {
     store.dispatch({ type: reduxLoadingType });
@@ -102,10 +104,46 @@ export const setDatabaseData = async (tableName, uploadObject, reduxSuccessType,
         });
 }
 
+// Random related functions
+
+// TODO: When database grows this will be slower. Add a table for index and ID, getRandomRecipe gets random int, look up in recipeIndex-table, return ID of recipe
+// OR: get metadata, number of recipes, use .indexOn with random index, length 1? depends on how indexOn works, will be limited to last update 
+// (can never get those added after latest update, may get index out of range)
+export const getRandomRecipe = async(getByKey = null, getByValue = null, gotoDetails = false) =>
+{
+    let recipes = await getDatabaseData(DB_RECIPE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING, getByKey.toString(), getByValue);
+
+    if(recipes.length === 0)
+    {
+        callToast(DB_FETCH_FAILED);
+        return null;
+    }
+
+    let i = getRandomInt(recipes.length - 1);
+    console.log("Random recipe: " + i + "/" + recipes.length);
+    console.log(recipes);
+    let recipe = recipes[i];
+
+    if(gotoDetails)
+        window.location.assign("/details/?recipe=" + recipe.id);
+    else
+        return recipe; 
+}
+
 export const getRandomInt = (max) =>
 {
     return Math.floor(Math.random() * Math.floor(max));
 }
+
+export const getRandomString = (length = 16) =>
+{
+    if(length > 32) length = 32;
+    
+    return (Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10) 
+    + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)).substring(0, length);
+};
+
+// Render common items
 
 export const renderLoading = (bigSpinner = false, contrastmode = false) =>
 {
@@ -152,6 +190,8 @@ export const renderToast = (message, time = 5000, contrastmode = false, alttext 
     if(message)
         return <Toast key="alertToast" message={message} time={time} contrastmode={contrastmode} alttext={alttext} onClick={onClick}/>;
 };
+
+// Date/time
 
 export const getNow = (includeTime = false) => 
 {
@@ -217,6 +257,8 @@ export const getLongFormatDate = (date, includeDay = true, includeYear = true ) 
     return full;
 };
 
+// Utilities
+
 // Adds nOfZeros zeros in front of n, to the max digit-size of leadingLimit
 export const addLeadingZeros = (n, nOfZeros = 1, leadingLimit = 10) =>
 {
@@ -231,14 +273,6 @@ export const addLeadingZeros = (n, nOfZeros = 1, leadingLimit = 10) =>
 export const setTitle = (title = "") =>
 {
     document.title = MAIN_TITLE + (title ? " | " + title : "");
-};
-
-export const getRandomString = (length = 16) =>
-{
-    if(length > 32) length = 32;
-    
-    return (Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10) 
-    + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)).substring(0, length);
 };
 
 export const toCamelCase = (s, delim = " ") =>
@@ -262,38 +296,5 @@ export const uppercaseFirst = (s) =>
 export const getKolonialItemWithSelenium = (ingredientName) =>
 {
     // Input capabilities
-    var capabilities = {
-        'browserName' : 'Chrome',
-        'browser_version' : '84.0 beta',
-        'os' : 'Windows',
-        'os_version' : '10',
-        'resolution' : '1024x768',
-        'browserstack.user' : 'USERNAME',
-        'browserstack.key' : 'ACCESS_KEY',
-        'name' : 'Bstack-[Node] Sample Test'
-    };
-
-    var webdriver = require('selenium-webdriver');
-    var driver = new webdriver.Builder() 
-        .usingServer('http://hub-cloud.browserstack.com/wd/hub')
-        .withCapabilities(capabilities)
-        .build();
-
-    // driver.get('https://www.kolonial.no')
-    //     .then(function()
-    //     {
-    //         console.log(driver.getTitle());
-    //         driver.quit();
-    //         // driver.findElement(webdriver.By.name('q')).sendKeys('BrowserStack\n')
-    //         //     .then(function()
-    //         //     {
-    //         //         driver.getTitle()
-    //         //             .then(function(title)
-    //         //             {
-    //         //                 console.log(title);
-    //         //                 driver.quit();
-    //         //             });
-    //         //     });
-    //     });
-
+    
 };

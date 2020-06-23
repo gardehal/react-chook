@@ -12,15 +12,16 @@
     "react-scripts": "^3.4.1",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "selenium-webdriver": "^4.0.0-alpha.7",
-    "typescript": "^3.9.3"
+    "typescript": "^3.9.3",
+    "webdriverio": "^6.1.20"
   },
   "scripts": {
     "start": "node server",
     "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "wdio": "wdio"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -38,6 +39,9 @@
     ]
   },
   "devDependencies": {
+    "wdio-mocha-framework": "^0.6.4",
+    "wdio-selenium-standalone-service": "0.0.12",
+    "wdio-spec-reporter": "^0.1.5",
     "webpack-cli": "^3.3.11"
   }
 }
