@@ -7,6 +7,7 @@ import { getTextColor } from "./colors";
 import { Toast } from "../components/common/Toast";
 import { USER_LOADING, USER_LOADING_COMPLETE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING } from "../actions/types";
 import { callToast } from "../actions/SettingsActions";
+import { Spinner } from "../components/common/Spinner";
 
 // Database basic functions
 
@@ -150,7 +151,7 @@ export const renderLoading = (bigSpinner = false, contrastmode = false) =>
     if(bigSpinner)
         return (
             <div key="renderLoadingLarge" className="centerContentDiv"> 
-                {/* <Spinner/> */}
+                <Spinner/>
                 <h1 style={{ ...getTextColor(contrastmode) }}>
                     {LOADING}
                 </h1> 
@@ -158,10 +159,10 @@ export const renderLoading = (bigSpinner = false, contrastmode = false) =>
 
     return (
         <div key="renderLoadingSmall"> 
+            <Spinner/>
             <p style={{ ...getTextColor(contrastmode) }}>
                 {LOADING}
             </p> 
-            {/* <Spinner/> */}
         </div>);
 }
 
