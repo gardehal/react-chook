@@ -12,8 +12,7 @@
     "react-scripts": "^3.4.1",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "typescript": "^3.9.3",
-    "webdriverio": "^6.1.20"
+    "typescript": "^3.9.3"
   },
   "scripts": {
     "start": "node server",

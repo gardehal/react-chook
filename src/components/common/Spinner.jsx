@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef} from 'react'
-import { Illustration, Shape, Group, Ellipse, useRender } from 'react-zdog'
+// import { Illustration, Shape, Group, Ellipse, useRender } from 'react-zdog'
 
 export class Spinner extends React.Component
 {
@@ -9,8 +9,8 @@ export class Spinner extends React.Component
 
     render()
     {
-        const group = useRef();
-        useRender(() => group.current.rotate.y += 0.05);
+        // const group = useRef();
+        // useRender(() => group.current.rotate.y += 0.05);
         return (
             // <Illustration zoom={8}>
             //   <Group ref={group}>
