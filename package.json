@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "express-favicon": "^2.0.1",
-    "firebase": "^7.14.4",
+    "firebase": "^7.15.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.0",
@@ -12,7 +12,7 @@
     "react-scripts": "^3.4.1",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "typescript": "^3.9.3"
+    "typescript": "^3.9.5"
   },
   "scripts": {
     "start": "node server",
@@ -41,6 +41,6 @@
     "wdio-mocha-framework": "^0.6.4",
     "wdio-selenium-standalone-service": "0.0.12",
     "wdio-spec-reporter": "^0.1.5",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.12"
   }
 }
