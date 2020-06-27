@@ -19,8 +19,7 @@
     "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "wdio": "wdio"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -36,11 +35,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "wdio-mocha-framework": "^0.6.4",
-    "wdio-selenium-standalone-service": "0.0.12",
-    "wdio-spec-reporter": "^0.1.5",
-    "webpack-cli": "^3.3.12"
   }
 }
