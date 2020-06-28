@@ -6,7 +6,7 @@ import store from "../store";
 import { METADATA_LOADING, METADATA_LOADING_COMPLETE, METADATA_TEST_ERROR, METADATA_ERROR_RESOLVED } from "../actions/types";
 import { getMetadataData, setMetadataData } from "../actions/MetadataActions";
 import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast, getKolonialItemWithSelenium } from "../resources/Shared";
-import { login, logout, userCanEditFirebase } from "../actions/UserActions";
+import { login, logout, userCanEditFirebase, getUsername } from "../actions/UserActions";
 import { toggleContrastmode, callToast } from "../actions/SettingsActions";
 
 // Variable imports
@@ -147,7 +147,7 @@ class DevPage extends React.Component
 
         let loggedInAs = NOT_LOGGED_IN;
         if(this.props.user)
-            loggedInAs = LOGGED_IN_AS + " " + (this.props.user.user.displayName ?? this.props.user.user.email) ?? ERROR;
+            loggedInAs = LOGGED_IN_AS + " " + getUsername() ?? ERROR;
 
         let loginButton = null;
         if(this.props.userLoading)

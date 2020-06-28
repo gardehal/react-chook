@@ -80,3 +80,9 @@ export const userCanEditFirebase = async(uid) =>
 {
     return await confirmUserPermissions("firebase", "write", uid);
 };
+
+export const getUsername = (splitAt = true) =>
+{
+    const res = store.getState().user.user.user.email;
+    return splitAt ? res.split("@")[0] : res;
+};

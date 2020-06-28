@@ -5,11 +5,20 @@ import { CookingMethod } from "./enums/CookingMethod";
 import { TempratureUnit } from "./enums/TempratureUnit";
 import { RecipeIngredient } from "./RecipeIngredient";
 import { getNow } from "../resources/Shared";
+import { getIngredientData } from "../actions/IngredientActions";
+import { Source } from "./Source";
+import { getUsername } from "../actions/UserActions";
 
 export class Recipe 
 {
     id: String;
-    date: String;
+    // source_id: String;
+    // calories: Number;
+    // protein: Number;
+    // carbohydrates: Number;
+    // sugar: Number;
+    // fat: Number;
+    // saturated_fat: Number;
     title: String;
     cost: Number;
     total_cost: Number;
@@ -28,8 +37,14 @@ export class Recipe
     sub_recipes:Array<Recipe>;
     instructions:Array<String>;
     notes:Array<String>;
+    comments: String;
+    regby: String;
+    regtime: String;
+    modby: String;
+    modtime: String;
 
     constructor(id: String,
+      // source_id: String,
       title: String,
       type: RecipeType = RecipeType.OTHER, 
       difficulty: Difficulty = Difficulty.NONE, 
@@ -44,7 +59,8 @@ export class Recipe
       recipe_ingredients: Array<RecipeIngredient> = [],
       sub_recipes:Array<Recipe> = [], 
       instructions: Array<String> = [],
-      notes: Array<String> = []
+      notes: Array<String> = [],
+      comments: String = ""
       ) 
     {
       this.id = id;
@@ -63,27 +79,45 @@ export class Recipe
       this.sub_recipes = sub_recipes;
       this.instructions = instructions;
       this.notes = notes;
+      this.comments = comments;
 
-      this.date = getNow(true);
-      this.cost = this.calculateCost();
-      this.total_cost = this.calculateTotalCost();
+      // this.source_id = source_id;
+      // this.calories = Number(this.calculateX("calories"));
+      // this.protein = x
+      // this.carbohydrates = x
+      // this.sugar = x
+      // this.fat = x
+      // this.saturated_fat = x
+      this.cost = Number(this.calculateCost(true));
+      this.total_cost = Number(this.calculateCost());
+
+      this.regby = getUsername();
+      this.regtime = getNow(true);
+      this.modby = this.regby;
+      this.modtime = this.regtime;
     }
 
-    // TODO
-    private calculateCost(): Number
+    private async calculateX(type: String)
     {
-      if(this.recipe_ingredients.length === 0)
-        return 0;
-      else
-        return 0;
+      // TODO
     }
 
-    private calculateTotalCost(): Number
+    private async calculateCost(excludeCommon = false)
     {
-      if(this.recipe_ingredients.length === 0)
-        return 0;
-      else
-        return 0;
-    }
+      let cost: Number = 0;
+      const ri = this.recipe_ingredients;
+      if(ri.length > 0)
+      {
+        for (let i = 0; i < ri.length; i++)
+        {
+          let ingredient = await getIngredientData("id", ri[i].id.toString(), 1);
+          if(excludeCommon && !ingredient[0].common)
+            cost += ingredient[0].price;
+          else
+            cost += ingredient[0].price;
+        }
+      }
 
+      return cost;
+    }
   }

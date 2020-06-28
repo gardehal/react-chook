@@ -44,9 +44,11 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Alert toast
 - [x] Heroku
 - [x] Uploading to temp DB
-- [ ] Selenum call to Kolonial, create new if no ingredient found in DB
+- [ ] Selenum/WebdriverIO call to Kolonial, create new if no ingredient found in DB
 - [x] DB security
 - [x] Footer
+- [x] Recipe/Ingredient source (nullable), comments(string, array?), modby, moddate, regby, regdate 
+- [ ] Recipe calories, protein, carbs, sugar, fat, other fat
 
 - [ ] "Launch"
 
@@ -75,6 +77,10 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Internet crawler or fentch from API for recipes
 - [ ] Adaptive style for mobile
 - [ ] Flavicon (For timer, toasts, notification
+- [ ] Clean up dependencies
+- [ ] Expanding all panels in upload white line over footer
+- [ ] Improved style for mobile (width, footer escpecially)
+- [ ] Unauthorized upload recipe/ingredient error handleing
 
 ## Known issues
 - Things are not looking good. Not figuratively but literally, style is not my strong suit.

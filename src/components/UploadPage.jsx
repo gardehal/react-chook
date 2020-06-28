@@ -571,8 +571,8 @@ class UploadPage extends React.Component
     {
         if(this.state.errorsQueue.length > 0)
         {
-            this.state.errorsQueue.forEach(f => {
-                console.log(f);
+            this.state.errorsQueue.forEach(e => {
+                console.log(e);
             });
         }
 
