@@ -5,7 +5,7 @@ import store from "../store";
 // Redux imports
 import { METADATA_LOADING, METADATA_LOADING_COMPLETE, METADATA_TEST_ERROR, METADATA_ERROR_RESOLVED } from "../actions/types";
 import { getMetadataData, setMetadataData } from "../actions/MetadataActions";
-import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast, getKolonialItemWithSelenium } from "../resources/Shared";
+import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast, getKolonialItemWithCheerio } from "../resources/Shared";
 import { login, logout, userCanEditFirebase, getUsername } from "../actions/UserActions";
 import { toggleContrastmode, callToast } from "../actions/SettingsActions";
 
@@ -209,7 +209,7 @@ class DevPage extends React.Component
 
     renderScriptsPanel()
     {
-        return <Button onClick={() => getKolonialItemWithSelenium("egg")} contrastmode={this.props.contrastmode} text={"test Selenium"}/>   
+        return <Button onClick={() => getKolonialItemWithCheerio("egg")} contrastmode={this.props.contrastmode} text={"Test Cheerio"}/>   
     }
 
 

@@ -1,6 +1,7 @@
 import React from "react";
 import * as firebase from "firebase";
 import store from "../store";
+// import { remote } from "webdriverio";
 
 import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC, MAIN_TITLE, DB_RECIPE, DB_FETCH_FAILED } from "./language";
 import { getTextColor } from "./colors";
@@ -294,8 +295,73 @@ export const uppercaseFirst = (s) =>
 // As Kolonial has responded with a bot response that boild down to "you're probably not getting API access" just use Selenium to do basically the same thing.
 // Function should use Kolonial to search for ingredientName, get data for the first item such as name, price, mapping to IngredientType
 // and return an Ingredient.
-export const getKolonialItemWithSelenium = (ingredientName) =>
+export const getKolonialItemWithCheerio = async (ingredientName) =>
 {
-    // Input capabilities
+    console.log("getKolonialItemWithWdio start");
+    let request = require('request');
+    let cheerio = require('cheerio');
+    // $("*") — selects all elements
+    // $("#first") — selects the element with id="first"
+    // $(".intro") — selects all elements with class="intro"
+    // $("div") — selects all <div> elements
+    // $("h2, div, p") — selects all <h2>, <div>, <p> elements
+    // $("li:first") — selects the first <li> element
+    // $("li:last") — selects the last <li> element
+    // $("li:even") — selects all even <li> elements
+    // $("li:odd") — selects all odd <li> elements
+    // $(":empty") — selects all elements that are empty
+    // $(":focus") — selects the element that currently has focus
+
+    console.log("getKolonialItemWithWdio mid");
+
+    // request('https://www.google.com/', 
+    //     function(err, resp, html) 
+    //     {
+    //         if (!err)
+    //         {
+    //             const $ = cheerio.load(html);
+    //             console.log(html); 
+    //         }
+    //     });
+       
+    let customHeaderRequest = request.defaults({
+        headers: 
+        {
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.142 Safari/537.36",
+            "accept": "text/html, application/xhtml+xml, application/xml",
+            "access-control-allow-origin": "*",
+            "access-control-allow-methods": "GET, POST",
+            "mode": "no-cors"
+        },
+    });
     
+    let url = 'https://www.google.com/';
+    // let url = 'https://kolonial.no';
+    // https://kolonial.no/sok/?q=egg
+    // https://cors-anywhere.herokuapp.com/iscorsneeded
+    
+    await customHeaderRequest.get(url, 
+        async function(err, resp, body) 
+        {
+            console.log("body");
+            let $ = await cheerio.load(body);
+        
+            console.log(err);
+            console.log(resp);
+            console.log(body);
+            // $('.sh-dlr__list-result .sh-dlr__content').each((index, value) => 
+            // {
+        
+            //     let entryObj = {};
+            //     //image
+            //     $(value).find('.TL92Hc').each(function (idx, ele) {
+            //         //image
+            //         console.log($(ele).attr('src'));
+        
+            //     });
+            // });
+        
+        });
+
+    console.log("getKolonialItemWithWdio end");
 };
