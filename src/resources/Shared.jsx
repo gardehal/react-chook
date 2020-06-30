@@ -297,7 +297,7 @@ export const uppercaseFirst = (s) =>
 // and return an Ingredient.
 export const getKolonialItemWithCheerio = async (ingredientName) =>
 {
-    console.log("getKolonialItemWithWdio start");
+    console.log("getKolonialItemWithCheerio: Starting ASYNC call go get ingredient \"" + ingredientName + "\" from Kolonial.no...");
     let request = require('request');
     let cheerio = require('cheerio');
     // $("*") — selects all elements
@@ -311,19 +311,8 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
     // $("li:odd") — selects all odd <li> elements
     // $(":empty") — selects all elements that are empty
     // $(":focus") — selects the element that currently has focus
-
-    console.log("getKolonialItemWithWdio mid");
-
-    // request('https://www.google.com/', 
-    //     function(err, resp, html) 
-    //     {
-    //         if (!err)
-    //         {
-    //             const $ = cheerio.load(html);
-    //             console.log(html); 
-    //         }
-    //     });
        
+    // May not be needed
     let customHeaderRequest = request.defaults({
         headers: 
         {
@@ -334,34 +323,69 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
             "mode": "no-cors"
         },
     });
+    // https://github.com/Rob--W/cors-anywhere Lib?
     
-    let url = 'https://www.google.com/';
-    // let url = 'https://kolonial.no';
-    // https://kolonial.no/sok/?q=egg
-    // https://cors-anywhere.herokuapp.com/iscorsneeded
-    
+    // Using cors-anywhere (Github: https://github.com/Rob--W/cors-anywhere/ ) as a proxy to circumvent CORS issues
+    let corsAnywhere = "https://cors-anywhere.herokuapp.com/";
+    let url = corsAnywhere + "https://kolonial.no/sok/?q=" + ingredientName;
+    let detailsUrl = null;
+
     await customHeaderRequest.get(url, 
         async function(err, resp, body) 
         {
-            console.log("body");
+            console.log("getKolonialItemWithCheerio: Started ASYNC call 1");
+            if(err) // TODO hand (probably ignore)
+            {
+                console.log(err);
+                return;
+            }   
+            console.log(resp);
+            // console.log(body); 
+                
             let $ = await cheerio.load(body);
         
-            console.log(err);
-            console.log(resp);
-            console.log(body);
-            // $('.sh-dlr__list-result .sh-dlr__content').each((index, value) => 
-            // {
-        
-            //     let entryObj = {};
-            //     //image
-            //     $(value).find('.TL92Hc').each(function (idx, ele) {
-            //         //image
-            //         console.log($(ele).attr('src'));
-        
-            //     });
-            // });
-        
-        });
+            let searchRes = $(".product-list-item ");
+            // console.log(searchRes); 
 
-    console.log("getKolonialItemWithWdio end");
+            let details = searchRes[0].children[1].attribs.href;
+            detailsUrl = corsAnywhere + "https://kolonial.no" + details;
+            console.log(detailsUrl);
+
+            await customHeaderRequest.get(detailsUrl, 
+                async function(err, resp, body) 
+                {
+                    console.log("getKolonialItemWithCheerio: Started ASYNC call 2");
+                    if(err) // TODO hand (probably ignore)
+                    {
+                        console.log(err);
+                        return;
+                    }   
+                    console.log(resp);
+                    // console.log(body); 
+                        
+                    let $ = await cheerio.load(body);
+
+                    let productInfo = $(".product-detail")[0];
+                    console.log(productInfo);
+            
+                    // ↵ = br - regex /(\r\n|\n|\r)/gm ?
+                    // reim all, remove "↵"
+                    // type-general: productInfo.children[1].children[3].children[1].children[1].children[0].data
+                    // type: productInfo.children[1].children[5].children[1].children[1].children[0].data
+                    // name productInfo.children[3].children[1].children[0].data
+                    // product-size: productInfo.children[3].children[1].children[1].children[0].data
+                    // brand: productInfo.children[5].children[1].children[1].children[0].data
+                    // image: productInfo.children[9].children[1].children[1].children[1].attribs
+                    // price: productInfo.children[9].children[3].children[1].attribs
+                    // price: productInfo.children[9].children[3].children[1].children[2].data
+                    // unit-price: productInfo.children[9].children[3].children[3].children[0].data
+                    // nutrition-tab: productInfo.children[11].children[3].children[3].children - TODO, content here
+
+
+
+                    console.log("getKolonialItemWithCheerio: Finished ASYNC call 2");
+                });
+
+            console.log("getKolonialItemWithCheerio: Finished ASYNC call 1");
+        });
 };

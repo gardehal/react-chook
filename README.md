@@ -44,14 +44,15 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Alert toast
 - [x] Heroku
 - [x] Uploading to temp DB
-- [ ] Selenum/WebdriverIO call to Kolonial, create new if no ingredient found in DB
 - [x] DB security
 - [x] Footer
-- [x] Recipe/Ingredient source (nullable), comments(string, array?), modby, moddate, regby, regdate 
-- [ ] Recipe calories, protein, carbs, sugar, fat, other fat
-
+- [x] Recipe/Ingredient comments, modby, moddate, regby, regdate 
+- [ ] If no ingredient found in DB, create from Selenum/WebdriverIO/Cheerio call to Kolonial
+- 
 - [ ] "Launch"
-
+- 
+- [ ] Recipe/Ingredient source
+- [ ] Recipe calories, protein, carbs, sugar, fat, other fat from ingredients
 - [ ] Setup buffer table, uploads not from mods/devs/admins go to buffer, must be approved to go into real DB. Uploads are limited to x char length, every 1 minutes?
 - [ ] Test table
 - [ ] Basic API
@@ -76,7 +77,7 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Internet crawler or fentch from API for ingredients
 - [ ] Internet crawler or fentch from API for recipes
 - [ ] Adaptive style for mobile
-- [ ] Flavicon (For timer, toasts, notification
+- [ ] Flavicon (For timer, toasts, notifications etc.)
 - [ ] Clean up dependencies
 - [ ] Expanding all panels in upload white line over footer
 - [ ] Improved style for mobile (width, footer escpecially)

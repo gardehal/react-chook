@@ -8,12 +8,12 @@ export const BLACK = "#000000";
 export const RED = "red";
 export const HYPERLINK_HINT = "#53a2bf";
 
-export const COLOR_BACKGROUND = "#eeeeee";
+export const COLOR_BACKGROUND = "#bbbbbb";
 export const COLOR_LIGHT_BACKGROUND = "#f3f3f3";
 export const COLOR_TEXT = "#333333";
 export const COLOR_BUTTON_TEXT = "#ffffff";
 export const COLOR_BUTTON = "#b76e79";
-export const COLOR_ACCENT = "#3a9b62";
+export const COLOR_ACCENT = "#3EC35D";
 
 export const CONTRAST_BACKGROUND = "#1e1e1e";
 export const CONTRAST_LIGHT_BACKGROUND = "#333333";
