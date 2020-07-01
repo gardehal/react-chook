@@ -9,6 +9,8 @@ import { Toast } from "../components/common/Toast";
 import { USER_LOADING, USER_LOADING_COMPLETE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING } from "../actions/types";
 import { callToast } from "../actions/SettingsActions";
 import { Spinner } from "../components/common/Spinner";
+import { Ingredient } from "../models/Ingredient";
+import { IngredientType } from "../models/enums/IngredientType";
 
 // Database basic functions
 
@@ -292,6 +294,32 @@ export const uppercaseFirst = (s) =>
     return s.toLowerCase()[0].toUpperCase();
 };
 
+export const trimString = (s, repalceComma = false, splitIndex = 0, asNumber = false) =>
+{
+    let emptyRegex = new RegExp("\\s+", "gm");
+    let split = [];
+    let res = "";
+
+    s = s.replace("↵", "");
+    s = s.replace(emptyRegex, " ");
+    if(repalceComma)
+        s = s.replace(",", ".")
+    
+    s = s.trim();
+    split = s.split(" ")
+    
+    if(splitIndex < 1)
+        splitIndex = split.length;
+
+    for (let i = 0; i < splitIndex; i++) 
+        res += split[i] + " ";
+
+    if(asNumber)
+        return Number(res.trim());
+
+    return res.trim();
+};
+
 // As Kolonial has responded with a bot response that boild down to "you're probably not getting API access" just use Selenium to do basically the same thing.
 // Function should use Kolonial to search for ingredientName, get data for the first item such as name, price, mapping to IngredientType
 // and return an Ingredient.
@@ -300,17 +328,6 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
     console.log("getKolonialItemWithCheerio: Starting ASYNC call go get ingredient \"" + ingredientName + "\" from Kolonial.no...");
     let request = require('request');
     let cheerio = require('cheerio');
-    // $("*") — selects all elements
-    // $("#first") — selects the element with id="first"
-    // $(".intro") — selects all elements with class="intro"
-    // $("div") — selects all <div> elements
-    // $("h2, div, p") — selects all <h2>, <div>, <p> elements
-    // $("li:first") — selects the first <li> element
-    // $("li:last") — selects the last <li> element
-    // $("li:even") — selects all even <li> elements
-    // $("li:odd") — selects all odd <li> elements
-    // $(":empty") — selects all elements that are empty
-    // $(":focus") — selects the element that currently has focus
        
     // May not be needed
     let customHeaderRequest = request.defaults({
@@ -323,21 +340,20 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
             "mode": "no-cors"
         },
     });
-    // https://github.com/Rob--W/cors-anywhere Lib?
-    
+
+    // https://github.com/Rob--W/cors-anywhere Local library?
     // Using cors-anywhere (Github: https://github.com/Rob--W/cors-anywhere/ ) as a proxy to circumvent CORS issues
     let corsAnywhere = "https://cors-anywhere.herokuapp.com/";
     let url = corsAnywhere + "https://kolonial.no/sok/?q=" + ingredientName;
-    let detailsUrl = null;
 
     await customHeaderRequest.get(url, 
         async function(err, resp, body) 
         {
             console.log("getKolonialItemWithCheerio: Started ASYNC call 1");
-            if(err) // TODO hand (probably ignore)
+            if(err)
             {
                 console.log(err);
-                return;
+                return null;
             }   
             console.log(resp);
             // console.log(body); 
@@ -348,21 +364,22 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
             // console.log(searchRes); 
 
             let details = searchRes[0].children[1].attribs.href;
-            detailsUrl = corsAnywhere + "https://kolonial.no" + details;
-            console.log(detailsUrl);
+            let kolDetails = "https://kolonial.no" + details;
+            let detailsUrl = corsAnywhere + kolDetails;
+            console.log(kolDetails);
 
             await customHeaderRequest.get(detailsUrl, 
                 async function(err, resp, body) 
                 {
                     console.log("getKolonialItemWithCheerio: Started ASYNC call 2");
-                    if(err) // TODO hand (probably ignore)
+                    if(err)
                     {
                         console.log(err);
-                        return;
+                        return null;
                     }   
                     console.log(resp);
                     // console.log(body); 
-                        
+                    
                     let $ = await cheerio.load(body);
 
                     let productInfo = $(".product-detail")[0];
@@ -370,20 +387,54 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
             
                     // ↵ = br - regex /(\r\n|\n|\r)/gm ?
                     // reim all, remove "↵"
-                    // type-general: productInfo.children[1].children[3].children[1].children[1].children[0].data
-                    // type: productInfo.children[1].children[5].children[1].children[1].children[0].data
-                    // name productInfo.children[3].children[1].children[0].data
-                    // product-size: productInfo.children[3].children[1].children[1].children[0].data
-                    // brand: productInfo.children[5].children[1].children[1].children[0].data
-                    // image: productInfo.children[9].children[1].children[1].children[1].attribs
-                    // price: productInfo.children[9].children[3].children[1].attribs
-                    // price: productInfo.children[9].children[3].children[1].children[2].data
-                    // unit-price: productInfo.children[9].children[3].children[3].children[0].data
-                    // nutrition-tab: productInfo.children[11].children[3].children[3].children - TODO, content here
+                    // NB: Values per 100g/ml
+                    // type-general:            productInfo.children[1].children[3].children[1].children[1].children[0].data
+                    // type:                    productInfo.children[1].children[5].children[1].children[1].children[0].data
+                    // name:                    productInfo.children[3].children[1].children[0].data
+                    // product-size:            productInfo.children[3].children[1].children[1].children[0].data
+                    // brand:                   productInfo.children[5].children[1].children[1].children[0].data
+                    // image:                   productInfo.children[9].children[1].children[1].children[1].attribs
+                    // price-whole:             productInfo.children[9].children[3].children[1].children[2].data
+                    // price-dec:               productInfo.children[9].children[3].children[1].children[4].children[0].data
+                    // unit-price:              productInfo.children[9].children[3].children[3].children[0].data
+                    // nutrition-tab:           productInfo.children[11].children[3].children[3].children
+                    // (næringsinnhold)?:       productInfo.children[11].children[3].children[3].children[1].children[1].children[0].data
+                    // engery:                  productInfo.children[11].children[3].children[3].children[1].children[3].children[1].children[3].children[0].data
+                    // fat:                     productInfo.children[11].children[3].children[3].children[1].children[3].children[3].children[3].children[0].data
+                    // sat-fat:                 productInfo.children[11].children[3].children[3].children[1].children[3].children[5].children[3].children[0].data
+                    // en-umettede-fettsyrer:   productInfo.children[11].children[3].children[3].children[1].children[3].children[7].children[3].children[0].data
+                    // fler-umettede:           productInfo.children[11].children[3].children[3].children[1].children[3].children[9].children[3].children[0].data
+                    // carbs:                   productInfo.children[11].children[3].children[3].children[1].children[3].children[11].children[3].children[0].data
+                    // sugartypes-carbs:        productInfo.children[11].children[3].children[3].children[1].children[3].children[13].children[3].children[0].data
+                    // protein:                 productInfo.children[11].children[3].children[3].children[1].children[3].children[15].children[3].children[0].data
+                    // salt:                    productInfo.children[11].children[3].children[3].children[1].children[3].children[17].children[3].children[0].data
+                    
+                    
+                    let neutritionTable = productInfo.children[11].children[3].children[3].children[1].children[3];
 
+                    // NB: Values per 100g/ml
+                    let id = getRandomString();
+                    let name = trimString(productInfo.children[3].children[1].children[0].data.toString());
+                    let band = trimString(productInfo.children[5].children[1].children[1].children[0].data.toString());
+                    let price = trimString(productInfo.children[9].children[3].children[1].children[2].data.toString(), true, 1, true)
+                        + "." + trimString(productInfo.children[9].children[3].children[1].children[4].children[0].data.toString(), true, 1, true);
+                    let type = IngredientType[0]; // TODO adapt/pasre/translate productInfo.children[1].children[5].children[1].children[1].children[0].data.toString().trim()
+                    let common = false;
+                    let cals = trimString(neutritionTable.children[1].children[3].children[0].data.toString(), true, 2);
+                    let protein = trimString(neutritionTable.children[15].children[3].children[0].data.toString(), true, 1, true);
+                    let carbs = trimString(neutritionTable.children[11].children[3].children[0].data.toString(), true, 1, true);
+                    let sugar = trimString(neutritionTable.children[13].children[3].children[0].data.toString(), true, 1, true);
+                    let fat = trimString(neutritionTable.children[3].children[3].children[0].data.toString(), true, 1, true);
+                    let satFat = trimString(neutritionTable.children[5].children[3].children[0].data.toString(), true, 1, true);
+                    let salt = trimString(neutritionTable.children[17].children[3].children[0].data.toString(), true, 1, true);
+                    let sourceLink = kolDetails;
 
+                    let ingredient = new Ingredient(id, name, type, price, common, cals, protein, carbs, sugar, fat, satFat, sourceLink);
+                    console.log("Created new ingredient from Kolonial:");
+                    console.log(ingredient);
 
                     console.log("getKolonialItemWithCheerio: Finished ASYNC call 2");
+                    return Ingredient;
                 });
 
             console.log("getKolonialItemWithCheerio: Finished ASYNC call 1");

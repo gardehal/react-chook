@@ -17,6 +17,7 @@ export class Ingredient
     fat: Number;
     saturated_fat: Number;
 
+    source_link: String 
     regby: String;
     regtime: String;
 
@@ -30,7 +31,8 @@ export class Ingredient
       carbohydrates: Number = 0, 
       sugar: Number = 0, 
       fat: Number = 0, 
-      saturated_fat: Number = 0) 
+      saturated_fat: Number = 0,
+      source_link: String = "") 
     {
       this.id = id;
       this.name = name;
@@ -45,6 +47,7 @@ export class Ingredient
       this.fat = fat;
       this.saturated_fat = saturated_fat;
 
+      this.source_link = source_link;
       this.regby = getUsername();
       this.regtime = getNow(true);
     }
