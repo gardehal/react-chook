@@ -93,8 +93,8 @@ export class Recipe
 
       this.regby = getUsername();
       this.regtime = getNow(true);
-      this.modby = this.regby;
-      this.modtime = this.regtime;
+      this.modby = getUsername();
+      this.modtime = getNow(true);
     }
 
     private async calculateX(type: String)
@@ -111,7 +111,7 @@ export class Recipe
         for (let i = 0; i < ri.length; i++)
         {
           let ingredient = await getIngredientData("id", ri[i].id.toString(), 1);
-          if(excludeCommon && !ingredient[0].common)
+          if(excludeCommon && !ingredient[0].common) // ingredient[0] because getIngredientData() returns array
             cost += ingredient[0].price;
           else
             cost += ingredient[0].price;

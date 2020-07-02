@@ -7,11 +7,11 @@ import { METADATA_LOADING, METADATA_LOADING_COMPLETE, METADATA_TEST_ERROR, METAD
 import { getMetadataData, setMetadataData } from "../actions/MetadataActions";
 import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast, getKolonialItemWithCheerio } from "../resources/Shared";
 import { login, logout, userCanEditFirebase, getUsername } from "../actions/UserActions";
-import { toggleContrastmode, callToast } from "../actions/SettingsActions";
+import { toggleContrastmode, callToast, toggleScraper } from "../actions/SettingsActions";
 
 // Variable imports
 import { TEST_ERROR, DB_META, TOTAL_RECIPES, TOTAL_INGREDIENTS, 
-    LAST_UPDATED, UPDATE_METADATA, METADATA, CONTRASTMODE, DEV,
+    LAST_UPDATED, UPDATE_METADATA, METADATA, CONTRASTMODE, SCRAPERMODE, DEV,
     FUNCTIONALITY_TEST_PANEL, SCRIPT_PANEL, LOG_IN, LOG_OUT, CAN_EDIT_DB, NOT_LOGGED_IN, LOGGED_IN_AS, ERROR } from "../resources/language";
 import { getBackgroundColor, getTextColor } from "../resources/colors";
 
@@ -209,7 +209,23 @@ class DevPage extends React.Component
 
     renderScriptsPanel()
     {
-        return <Button onClick={() => getKolonialItemWithCheerio("egg")} contrastmode={this.props.contrastmode} text={"Test Cheerio"}/>   
+        return <Button onClick={() => getKolonialItemWithCheerio("egg")} contrastmode={this.props.contrastmode} text={"Test Cheerio (\"Egg\")"}/>   
+    }
+
+    renderFunctionButtons()
+    {
+        if(false) // if user is not admin
+            return null;
+        
+        let contrastModeText = CONTRASTMODE + (this.props.contrastmode ? " ✔️" : " ❌");
+        let scraperModeText = SCRAPERMODE + (this.props.scraper ? " ✔️" : " ❌");
+
+        return (
+            <div className="rowStyle">
+                <Button onClick={this.updateMetaData} contrastmode={this.props.contrastmode} text={UPDATE_METADATA}/>   
+                <Button onClick={() => toggleContrastmode(this.props.contrastmode)} contrastmode={this.props.contrastmode} text={contrastModeText}/>  
+                <Button onClick={() => toggleScraper()} contrastmode={this.props.contrastmode} text={scraperModeText}/>          
+            </div> );
     }
 
 
@@ -224,10 +240,7 @@ class DevPage extends React.Component
                     {renderToast(this.props.toastMessage, 5000, this.props.contrastmode)}
 
                     {/* Call functions */}
-                    <div className="rowStyle">
-                        <Button onClick={this.updateMetaData} contrastmode={this.props.contrastmode} text={UPDATE_METADATA}/>   
-                        <Button onClick={() => toggleContrastmode(this.props.contrastmode)} contrastmode={this.props.contrastmode} text={CONTRASTMODE}/>         
-                    </div> 
+                    {this.renderFunctionButtons()}   
 
                     {/* Call scripts from app */}
                     {/* <div className="rowStyle">
@@ -290,10 +303,10 @@ class DevPage extends React.Component
 
 const mapStateToProps = state => 
 {
-    const { contrastmode, toastMessage } = state.settings;
+    const { contrastmode, scraper, toastMessage } = state.settings;
     const { metadataError, metadataLoading, metadataResult } = state.meta;
     const { user } = state.user;
-    return { contrastmode, toastMessage, 
+    return { contrastmode, scraper, toastMessage, 
         metadataError, metadataLoading, metadataResult,
         user, };
 };

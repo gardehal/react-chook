@@ -2,6 +2,7 @@
 export const SETTINGS_LOADING = "settings_loading";
 export const SETTINGS_SET_LANGUAGE = "settings_set_language";
 export const SETTINGS_TOGGLE_CONTRASTMODE = "settings_toggle_contrastmode";
+export const SETTINGS_TOGGLE_SCRAPER = "settings_toggle_scraper";
 export const SETTINGS_SET_FONTSIZE = "settings_set_fontsize";
 export const SHOW_ALERT_TOAST = "show_alert_toast";
 export const HIDE_ALERT_TOAST = "hide_alert_toast";

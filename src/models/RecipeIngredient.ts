@@ -4,6 +4,7 @@ import { Preparation } from "./enums/Preparation";
 
 export class RecipeIngredient 
 {
+    // TODO quantity can be null or unspecified, should not default to 1 or 0: "salt" "pepper", "oil"
     id: String;
     quantity: Number;
     name: String;

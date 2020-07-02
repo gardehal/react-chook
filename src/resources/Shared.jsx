@@ -113,7 +113,7 @@ export const setDatabaseData = async (tableName, uploadObject, reduxSuccessType,
 // TODO: When database grows this will be slower. Add a table for index and ID, getRandomRecipe gets random int, look up in recipeIndex-table, return ID of recipe
 // OR: get metadata, number of recipes, use .indexOn with random index, length 1? depends on how indexOn works, will be limited to last update 
 // (can never get those added after latest update, may get index out of range)
-export const getRandomRecipe = async(getByKey = null, getByValue = null, gotoDetails = false) =>
+export const getRandomRecipe = async (getByKey = null, getByValue = null, gotoDetails = false) =>
 {
     let recipes = await getDatabaseData(DB_RECIPE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING, getByKey.toString(), getByValue);
 
@@ -291,7 +291,7 @@ export const toCamelCase = (s, delim = " ") =>
 
 export const uppercaseFirst = (s) =>
 {
-    return s.toLowerCase()[0].toUpperCase();
+    return s.toLowerCase()[0].toUpperCase() + s.slice(1, s.length);
 };
 
 export const trimString = (s, repalceComma = false, splitIndex = 0, asNumber = false) =>
@@ -326,8 +326,16 @@ export const trimString = (s, repalceComma = false, splitIndex = 0, asNumber = f
 export const getKolonialItemWithCheerio = async (ingredientName) =>
 {
     console.log("getKolonialItemWithCheerio: Starting ASYNC call go get ingredient \"" + ingredientName + "\" from Kolonial.no...");
-    let request = require('request');
-    let cheerio = require('cheerio');
+    let request = require("request");
+    let cheerio = require("cheerio");
+
+    let name = ingredientName;
+    let common = false;
+    if(name[name.length - 1] === "*")
+    {
+        common = true;
+        name = name.slice(0, name.length - 1);
+    } 
        
     // May not be needed
     let customHeaderRequest = request.defaults({
@@ -344,10 +352,10 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
     // https://github.com/Rob--W/cors-anywhere Local library?
     // Using cors-anywhere (Github: https://github.com/Rob--W/cors-anywhere/ ) as a proxy to circumvent CORS issues
     let corsAnywhere = "https://cors-anywhere.herokuapp.com/";
-    let url = corsAnywhere + "https://kolonial.no/sok/?q=" + ingredientName;
+    let url = corsAnywhere + "https://kolonial.no/sok/?q=" + name;
 
-    await customHeaderRequest.get(url, 
-        async function(err, resp, body) 
+    // TODO not alowing async functionality, need different library than "request" (https, fetch?)
+    return await request.get(url, async (err, resp, body) => 
         {
             console.log("getKolonialItemWithCheerio: Started ASYNC call 1");
             if(err)
@@ -368,8 +376,7 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
             let detailsUrl = corsAnywhere + kolDetails;
             console.log(kolDetails);
 
-            await customHeaderRequest.get(detailsUrl, 
-                async function(err, resp, body) 
+            return await request.get(detailsUrl, async (err, resp, body) => 
                 {
                     console.log("getKolonialItemWithCheerio: Started ASYNC call 2");
                     if(err)
@@ -414,12 +421,12 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
 
                     // NB: Values per 100g/ml
                     let id = getRandomString();
-                    let name = trimString(productInfo.children[3].children[1].children[0].data.toString());
+                    name = trimString(uppercaseFirst(name));
+                    let originalName = trimString(productInfo.children[3].children[1].children[0].data.toString());
                     let band = trimString(productInfo.children[5].children[1].children[1].children[0].data.toString());
                     let price = trimString(productInfo.children[9].children[3].children[1].children[2].data.toString(), true, 1, true)
                         + "." + trimString(productInfo.children[9].children[3].children[1].children[4].children[0].data.toString(), true, 1, true);
                     let type = IngredientType[0]; // TODO adapt/pasre/translate productInfo.children[1].children[5].children[1].children[1].children[0].data.toString().trim()
-                    let common = false;
                     let cals = trimString(neutritionTable.children[1].children[3].children[0].data.toString(), true, 2);
                     let protein = trimString(neutritionTable.children[15].children[3].children[0].data.toString(), true, 1, true);
                     let carbs = trimString(neutritionTable.children[11].children[3].children[0].data.toString(), true, 1, true);
@@ -429,14 +436,15 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
                     let salt = trimString(neutritionTable.children[17].children[3].children[0].data.toString(), true, 1, true);
                     let sourceLink = kolDetails;
 
-                    let ingredient = new Ingredient(id, name, type, price, common, cals, protein, carbs, sugar, fat, satFat, sourceLink);
+                    let ingredient = new Ingredient(id, name, type, price, common, cals, protein, carbs, sugar, fat, satFat, originalName, sourceLink);
                     console.log("Created new ingredient from Kolonial:");
                     console.log(ingredient);
 
                     console.log("getKolonialItemWithCheerio: Finished ASYNC call 2");
-                    return Ingredient;
+                    return ingredient;
                 });
 
             console.log("getKolonialItemWithCheerio: Finished ASYNC call 1");
         });
+    console.log("getKolonialItemWithCheerio end");
 };

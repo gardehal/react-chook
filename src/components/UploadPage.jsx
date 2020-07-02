@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 // Redux imports
 import { getRecipeData, setRecipeError, setRecipeData } from "../actions/RecipeActions";
 import { getIngredientData, setIngredientData } from "../actions/IngredientActions";
-import { renderLoading, renderError, setTitle, getRandomString, toCamelCase } from "../resources/Shared";
+import { renderLoading, renderError, setTitle, getRandomString, toCamelCase, getKolonialItemWithCheerio } from "../resources/Shared";
 
 // Variable imports
 import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, 
@@ -404,14 +404,34 @@ class UploadPage extends React.Component
             }
             else
             {
-                let recipeIngredient = await getIngredientData("name", ingredientName);
-                if(recipeIngredient.length !== 1)
+                let ingredientsDbRes = await getIngredientData("name", ingredientName, 1);
+                let ingredient = null;
+
+                if(ingredientsDbRes.length !== 1 && this.props.scraper)
+                {
+                    ingredient = await getKolonialItemWithCheerio(ingredientName);
+                    console.log("upload i");
+                    console.log(ingredient);
+                    
+                    // Would be nice to have a small list saying "added this (INPUTFIELD: name) (Accept button)" where user can change name in inputfield and upload ingredient with accept
+                    // TODO Add specially rendered input field and button, should include original name from Kolonial, button triggers function to upload single ingredient
+                    failedItems.push("<div className='rowStyle'>" + RECIPE + " " + i + " (" + ingredientName + "): " + INGREDIENT_NOT_FOUND_DB + "</div>"
+                        + "<div className='rowStyle'>" + "Create new?: " + ingredient.original_name
+                        + <Button onClick={() => window.open("https://kolonial.no")} contrastmode={this.props.contrastmode} text={"Kolonial"}/> + "</div>");
+                    
+                    return null;
+                    // l++;
+                    // continue;
+                }
+                else if(ingredientsDbRes.length !== 1)
                 {
                     failedItems.push(RECIPE + " " + i + " (" + ingredientName + "): " + INGREDIENT_NOT_FOUND_DB);
                     return null;
                 }
+                else
+                    ingredient = ingredientsDbRes[0];
                 
-                recipeIngredients.push(new RecipeIngredient(recipeIngredient[0].id, quantity, recipeIngredient[0].name, quantityUnit, preparation));
+                recipeIngredients.push(new RecipeIngredient(ingredient.id, quantity, ingredient.name, quantityUnit, preparation));
             }
             l++;
         }
@@ -794,10 +814,10 @@ class UploadPage extends React.Component
 
 const mapStateToProps = state => 
 {
-    const { contrastmode } = state.settings;
+    const { contrastmode, scraper } = state.settings;
     const { recipeError, recipeLoading, recipeResult } = state.recipe;
     const { ingredientError, ingredientLoading, ingredientResult } = state.ingredient;
-    return { contrastmode, 
+    return { contrastmode, scraper,
         recipeError, recipeLoading, recipeResult, 
         ingredientError, ingredientLoading, ingredientResult };
 };
