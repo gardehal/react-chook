@@ -47,7 +47,10 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] DB security
 - [x] Footer
 - [x] Recipe/Ingredient comments, modby, moddate, regby, regdate 
-- [ ] If no ingredient found in DB, create from Selenum/WebdriverIO/Cheerio call to Kolonial | TODO - call when unknown ingredient, option to choose it, enhanced search for ingredient/recipes in db (split on spaces, contains 70?%), set commonality (name + "*")
+- [ ] If no ingredient found in DB, create from Selenum/WebdriverIO/Cheerio call to Kolonial
+- - TODO: option to rename and upload
+- - TODO: Fix Cheerio/fatch call issue when kolonial ingredient is missing fields
+- - TODO: enhanced search for ingredient/recipes in db (split on spaces, contains 70?%)
 - 
 - [ ] "Launch"
 - 

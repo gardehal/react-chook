@@ -320,13 +320,11 @@ export const trimString = (s, repalceComma = false, splitIndex = 0, asNumber = f
     return res.trim();
 };
 
-// As Kolonial has responded with a bot response that boild down to "you're probably not getting API access" just use Selenium to do basically the same thing.
-// Function should use Kolonial to search for ingredientName, get data for the first item such as name, price, mapping to IngredientType
-// and return an Ingredient.
+// As Kolonial has responded with an automated response that boils down to "you're probably not getting API access", just use Cheerio to do basically the same thing.
+// Function should use Kolonial to search for ingredientName, get data for the first item , create and return an Ingredient.
 export const getKolonialItemWithCheerio = async (ingredientName) =>
 {
     console.log("getKolonialItemWithCheerio: Starting ASYNC call go get ingredient \"" + ingredientName + "\" from Kolonial.no...");
-    let request = require("request");
     let cheerio = require("cheerio");
 
     let name = ingredientName;
@@ -335,39 +333,21 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
     {
         common = true;
         name = name.slice(0, name.length - 1);
-    } 
-       
-    // May not be needed
-    let customHeaderRequest = request.defaults({
-        headers: 
-        {
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.142 Safari/537.36",
-            "accept": "text/html, application/xhtml+xml, application/xml",
-            "access-control-allow-origin": "*",
-            "access-control-allow-methods": "GET, POST",
-            "mode": "no-cors"
-        },
-    });
+    }
 
     // https://github.com/Rob--W/cors-anywhere Local library?
     // Using cors-anywhere (Github: https://github.com/Rob--W/cors-anywhere/ ) as a proxy to circumvent CORS issues
     let corsAnywhere = "https://cors-anywhere.herokuapp.com/";
     let url = corsAnywhere + "https://kolonial.no/sok/?q=" + name;
 
-    // TODO not alowing async functionality, need different library than "request" (https, fetch?)
-    return await request.get(url, async (err, resp, body) => 
+    return await fetch(url)
+        .then(response => response.text())
+        .then(data =>
         {
             console.log("getKolonialItemWithCheerio: Started ASYNC call 1");
-            if(err)
-            {
-                console.log(err);
-                return null;
-            }   
-            console.log(resp);
-            // console.log(body); 
+            // console.log(data); 
                 
-            let $ = await cheerio.load(body);
-        
+            let $ = cheerio.load(data);
             let searchRes = $(".product-list-item ");
             // console.log(searchRes); 
 
@@ -376,21 +356,16 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
             let detailsUrl = corsAnywhere + kolDetails;
             console.log(kolDetails);
 
-            return await request.get(detailsUrl, async (err, resp, body) => 
+            return fetch(detailsUrl)
+                .then(response => response.text())
+                .then(data =>
                 {
                     console.log("getKolonialItemWithCheerio: Started ASYNC call 2");
-                    if(err)
-                    {
-                        console.log(err);
-                        return null;
-                    }   
-                    console.log(resp);
-                    // console.log(body); 
+                    // console.log(data); 
                     
-                    let $ = await cheerio.load(body);
-
+                    let $ = cheerio.load(data);
                     let productInfo = $(".product-detail")[0];
-                    console.log(productInfo);
+                    // console.log(productInfo);
             
                     // ↵ = br - regex /(\r\n|\n|\r)/gm ?
                     // reim all, remove "↵"
@@ -416,14 +391,16 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
                     // protein:                 productInfo.children[11].children[3].children[3].children[1].children[3].children[15].children[3].children[0].data
                     // salt:                    productInfo.children[11].children[3].children[3].children[1].children[3].children[17].children[3].children[0].data
                     
-                    
                     let neutritionTable = productInfo.children[11].children[3].children[3].children[1].children[3];
+
+                    // TODO neutrition table is not static, ex. salt can moce up if items like en-umettede-fettsyrer is not defined
+                    // add all to array, if id?class? = x, set x value
 
                     // NB: Values per 100g/ml
                     let id = getRandomString();
-                    name = trimString(uppercaseFirst(name));
+                    name = trimString(uppercaseFirst(name)) ?? null;
                     let originalName = trimString(productInfo.children[3].children[1].children[0].data.toString());
-                    let band = trimString(productInfo.children[5].children[1].children[1].children[0].data.toString());
+                    let brand = trimString(productInfo.children[5].children[1].children[1].children[0].data.toString());
                     let price = trimString(productInfo.children[9].children[3].children[1].children[2].data.toString(), true, 1, true)
                         + "." + trimString(productInfo.children[9].children[3].children[1].children[4].children[0].data.toString(), true, 1, true);
                     let type = IngredientType[0]; // TODO adapt/pasre/translate productInfo.children[1].children[5].children[1].children[1].children[0].data.toString().trim()
@@ -433,10 +410,10 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
                     let sugar = trimString(neutritionTable.children[13].children[3].children[0].data.toString(), true, 1, true);
                     let fat = trimString(neutritionTable.children[3].children[3].children[0].data.toString(), true, 1, true);
                     let satFat = trimString(neutritionTable.children[5].children[3].children[0].data.toString(), true, 1, true);
-                    let salt = trimString(neutritionTable.children[17].children[3].children[0].data.toString(), true, 1, true);
+                    let salt = neutritionTable.children[17] ? trimString(neutritionTable.children[17].children[3].children[0].data.toString(), true, 1, true) : null;
                     let sourceLink = kolDetails;
 
-                    let ingredient = new Ingredient(id, name, type, price, common, cals, protein, carbs, sugar, fat, satFat, originalName, sourceLink);
+                    let ingredient = new Ingredient(id, name, type, price, common, cals, protein, carbs, sugar, fat, satFat, brand + " " + originalName, sourceLink);
                     console.log("Created new ingredient from Kolonial:");
                     console.log(ingredient);
 

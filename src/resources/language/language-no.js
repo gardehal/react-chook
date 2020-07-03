@@ -80,6 +80,7 @@ export const NOT_LOGGED_IN = "Du er ikke logget inn.";
 export const LOGGED_IN_AS = "Logget inn som:";
 export const SCROLL_TO_TOP = "Toppen av siden";
 export const MADE_WITH_TECH = "Laget med React, Firebase, og litt Kolonial";
+export const WAS = "var";
 
 // Upload
 export const GENERAL_UPLOAD_INFORMATION = "På denne siden kan du laste opp ingredienser og oppskrifter til databasen. Alle ingredienser og oppskrifter har noen krav som må oppfylles før de godkjennes. Det finnes mer informasjon i panelene under.";
@@ -127,6 +128,7 @@ export const INGREDIENT_NOT_FOUND_FILE = "Ingrediens ikke funnet i fil.";
 export const INGREDIENT_NOT_FOUND_DB = "Ingrediens ikke funnet i database.";
 export const RECIPE_NOT_FOUND_DB = "Oppskrift ikke funnet i database.";
 export const OUT_OF_BOUNDS = "Utenfor gyldig rekkevidde.";
+export const SET_NAME = "Sett navn";
 
 export const TITLE = "Tittel";
 export const TYPE = "type";

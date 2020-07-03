@@ -15,7 +15,7 @@ import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLO
     FREETEXT_SYNTAX_COMMON, FREETEXT_SYNTAX_EXAMPLE_START, SEASALT, SPICE, FREETEXT_SYNTAX_EXAMPLE_PRICE, TRUE, FREETEXT, FREETEXT_MISSING,
     FREETEXT_SYNTAX_INFO_EXCLAMATION, FREETEXT_SYNTAX_INFO_TYPES, FREETEXT_SYNTAX_INFO_PRICE, FREETEXT_SYNTAX_INFO_COMMON, FREETEXT_SYNTAX_INFO_KOLONIAL, 
     FREETEXT_SYNTAX_INFO_OVERVIEW, ELEMENT, SIMILAR_IN_DB, SECTION_MISSING, MAX_INGREDIENTS_IN_RECIPE, MAX_INSTRUCTIONS_IN_RECIPE, MAX_NOTES_IN_RECIPE, ERROR,
-    INGREDIENT_NOT_FOUND_FILE, INGREDIENT_NOT_FOUND_DB, RECIPE_NOT_FOUND_DB, OUT_OF_BOUNDS } from "../resources/language";
+    INGREDIENT_NOT_FOUND_FILE, INGREDIENT_NOT_FOUND_DB, RECIPE_NOT_FOUND_DB, OUT_OF_BOUNDS, SET_NAME, WAS } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
 // Component imports
@@ -212,6 +212,7 @@ class UploadPage extends React.Component
 
     async parseRecipe(lines, i, failedItems)
     {
+        let canUpload = true;
         let nLines = lines.length;
         let sectionDelim = "+";
         let metaLinesMax = 6;
@@ -409,22 +410,29 @@ class UploadPage extends React.Component
 
                 if(ingredientsDbRes.length !== 1 && this.props.scraper)
                 {
+                    canUpload = false;
                     ingredient = await getKolonialItemWithCheerio(ingredientName);
-                    console.log("upload i");
-                    console.log(ingredient);
                     
                     // Would be nice to have a small list saying "added this (INPUTFIELD: name) (Accept button)" where user can change name in inputfield and upload ingredient with accept
                     // TODO Add specially rendered input field and button, should include original name from Kolonial, button triggers function to upload single ingredient
-                    failedItems.push("<div className='rowStyle'>" + RECIPE + " " + i + " (" + ingredientName + "): " + INGREDIENT_NOT_FOUND_DB + "</div>"
-                        + "<div className='rowStyle'>" + "Create new?: " + ingredient.original_name
-                        + <Button onClick={() => window.open("https://kolonial.no")} contrastmode={this.props.contrastmode} text={"Kolonial"}/> + "</div>");
+                    let createdNewIngredientHtml = (<div>
+                            <div className="rowStyle">{RECIPE + " " + i + " (" + ingredientName + "): " + INGREDIENT_NOT_FOUND_DB}</div>
+                            <div>
+                                { SET_NAME + " (" + WAS + " \"" + ingredient.original_name + "\"):" } 
+                                <div className="rowStyle">
+                                    <input style={{ width: "50%", height: "1.5em" }} id="kolonial-upload-ingredient-name"></input>
+                                    <Button onClick={() => window.open("https://kolonial.no")} contrastmode={this.props.contrastmode} text={UPLOAD + " " + INGREDIENT}/>
+                                </div>
+                            </div>
+                        </div>);
+                    failedItems.push(createdNewIngredientHtml);
                     
-                    return null;
-                    // l++;
-                    // continue;
+                    l++;
+                    continue;
                 }
                 else if(ingredientsDbRes.length !== 1)
                 {
+                    canUpload = false;
                     failedItems.push(RECIPE + " " + i + " (" + ingredientName + "): " + INGREDIENT_NOT_FOUND_DB);
                     return null;
                 }
@@ -465,6 +473,9 @@ class UploadPage extends React.Component
             }
             n++;
         }
+
+        if(!canUpload)
+            return null;
 
         return new Recipe(getRandomString(), 
         toCamelCase(title), 
