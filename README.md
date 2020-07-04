@@ -49,8 +49,9 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Recipe/Ingredient comments, modby, moddate, regby, regdate 
 - [ ] If no ingredient found in DB, create from Selenum/WebdriverIO/Cheerio call to Kolonial
 - - TODO: option to rename and upload
-- - TODO: Fix Cheerio/fatch call issue when kolonial ingredient is missing fields
-- - TODO: enhanced search for ingredient/recipes in db (split on spaces, contains 70?%)
+- - TODO: Fix Cheerio/fetch call issue when kolonial ingredient is missing fields
+- [ ] Enhanced search for upload items
+- [ ] Freetext Enumns from display/language
 - 
 - [ ] "Launch"
 - 

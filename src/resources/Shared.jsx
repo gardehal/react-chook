@@ -3,10 +3,10 @@ import * as firebase from "firebase";
 import store from "../store";
 // import { remote } from "webdriverio";
 
-import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC, MAIN_TITLE, DB_RECIPE, DB_FETCH_FAILED } from "./language";
+import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC, MAIN_TITLE, DB_RECIPE, DB_FETCH_FAILED, DB_INGREDIENT } from "./language";
 import { getTextColor } from "./colors";
 import { Toast } from "../components/common/Toast";
-import { USER_LOADING, USER_LOADING_COMPLETE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING } from "../actions/types";
+import { USER_LOADING, USER_LOADING_COMPLETE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING, GET_INGREDIENT_DATA_SUCCESS, GET_INGREDIENT_DATA_FAIL, INGREDIENT_LOADING } from "../actions/types";
 import { callToast } from "../actions/SettingsActions";
 import { Spinner } from "../components/common/Spinner";
 import { Ingredient } from "../models/Ingredient";
@@ -106,6 +106,116 @@ export const setDatabaseData = async (tableName, uploadObject, reduxSuccessType,
             else
                 store.dispatch({ type: reduxFailType ?? UNKNOWN_ERROR });
         });
+}
+
+// TODO - want to minimize send/recieve load as this is client side sorting
+// Search database for searchterm.
+// - searchterm is searchterm, regex allowed. Required.
+// - matchLevel is how similar term and candidate must be; 0(strict), 1(medium), 2(relaxed), 3(loose), 4(regex). Default 0.
+// - searchPropperties are propperties which should be searched, if empty search all. Default empty.
+// - table is name of table to search, if null, search in all. Default null.
+// - startIndex is what index in database search should start from, will affect the entire collection. Default 0.
+// - endIndex is what index in databases search should end on, if zero take all, will affect the entire collection. Default 0.
+export const searchDatabase = async (searchTerm, matchLevel = 0, searchPropperties = [], table = null, startIndex = 0, endIndex = 0) =>
+{
+    if(searchTerm === null)
+        return null;
+    
+    let termsArray = [];
+    let collection = [];
+    let results = [];
+
+    // Set termsArray from searchTerm depending on matchLevel
+    if(matchLevel === 0)
+    {
+        termsArray[0] = searchTerm;
+    }
+    else if(matchLevel === 1)
+    {
+        termsArray = searchTerm.split(" ");
+    }
+    else if(matchLevel === 2 || matchLevel === 3)
+    {
+        searchTerm = searchTerm.toLowerCase();
+        searchTerm = searchTerm.replace(",", "");
+        termsArray = searchTerm.split(" ");
+    }
+    else if(matchLevel === 4)
+    {
+        let regexSplit = searchTerm.split(";");
+        termsArray[0] = new RegExp(regexSplit[0], regexSplit[1] ?? "gm");
+    }
+    else 
+        return null;
+
+    // Get data from DB
+    if(table === null)
+    {
+        collection = collection.concat(await getDatabaseData(DB_INGREDIENT, GET_INGREDIENT_DATA_SUCCESS, GET_INGREDIENT_DATA_FAIL, INGREDIENT_LOADING));
+        collection = collection.concat(await getDatabaseData(DB_RECIPE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING));
+    }
+    else if(table === DB_INGREDIENT)
+    {
+        collection = await getDatabaseData(DB_INGREDIENT, GET_INGREDIENT_DATA_SUCCESS, GET_INGREDIENT_DATA_FAIL, INGREDIENT_LOADING);
+    }
+    else if(table === DB_RECIPE)
+    {
+        collection = await getDatabaseData(DB_RECIPE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING);
+    }
+    else 
+        return null;
+
+    // Slice collection on indexes
+    if((startIndex > 0 || endIndex < collection.length) && endIndex > 0)
+        collection = collection.slice(startIndex, endIndex)
+
+    console.log("Searching for " + termsArray + " in " + collection.length + " items, matchLevel " + matchLevel + " ...");
+    // For each item in collection, go though each propperty and search on each term in termsArray
+    for (let i = 0; i < collection.length; i++) 
+    {
+        let item = collection[i];
+        console.log(item);
+
+        for(let key in item)
+        {
+            if(searchPropperties.length > 0 && !searchPropperties.includes(key))
+                continue;
+
+            let v = item[key];
+
+            // TODO consider what to do if item has arrays of objects etc. recursivly (take searching loop content out in method, run recursivly)
+            for(let term in termsArray)
+            {
+                let t = termsArray[term];
+
+                // TODO continuously adjustments for matchlevels
+                if(matchLevel === 0)
+                {     
+                    if(v === t)
+                        results.push(item);
+                }
+                else if(matchLevel === 1 || matchLevel === 2)
+                {
+                    if(v.includes(t))
+                        results.push(item);
+                }
+                else if(matchLevel === 3)
+                {
+                    if(v.toLowerCase().includes(t.toLowerCase()))
+                        results.push(item);
+                }
+                else if(matchLevel === 4)
+                {
+                    if(t.test(v))
+                        results.push(item);
+                }
+            }
+        }
+    }
+
+    console.log("results");
+    console.log(results); // Filtrate unique? Add add index based on hits and sort by that?
+    return results;
 }
 
 // Random related functions
