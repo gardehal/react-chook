@@ -73,7 +73,7 @@ export class Recipe
       this.time_total = time_total;
       this.cooking_method = cooking_method;
       this.cooking_method_temprature = cooking_method_temprature;
-      this.cooking_method_temprature_unit = cooking_method_temprature_unit;
+      this.cooking_method_temprature_unit = cooking_method_temprature_unit; // TODO If not C, convert to C
       this.main_protein = main_protein;
       this.recipe_ingredients = recipe_ingredients;
       this.sub_recipes = sub_recipes;
@@ -88,8 +88,8 @@ export class Recipe
       // this.sugar = x
       // this.fat = x
       // this.saturated_fat = x
-      this.cost = Number(this.calculateCost(true));
-      this.total_cost = Number(this.calculateCost());
+      this.cost = 0;//Number(this.calculateCost(true));
+      this.total_cost = 0;//Number(this.calculateCost());
 
       this.regby = getUsername();
       this.regtime = getNow(true);

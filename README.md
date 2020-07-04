@@ -47,11 +47,14 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] DB security
 - [x] Footer
 - [x] Recipe/Ingredient comments, modby, moddate, regby, regdate 
-- [ ] If no ingredient found in DB, create from Selenum/WebdriverIO/Cheerio call to Kolonial
-- - TODO: option to rename and upload
-- - TODO: Fix Cheerio/fetch call issue when kolonial ingredient is missing fields
-- [ ] Enhanced search for upload items
-- [ ] Freetext Enumns from display/language
+- [ ] Finish Upload for Launch
+- - [ ] If no ingredient found in DB, create from Selenum/WebdriverIO/Cheerio call to Kolonial
+- - [ ] Option to rename and upload
+- - [ ] Fix Cheerio/fetch call issue when kolonial ingredient is missing fields
+- - [ ] Enhanced search for upload items (+ implement for searchpage)
+- - [ ] Freetext Enumns from display/language
+- - [ ] Upload Enum list, freetext recipe example + syntax, loading on recipe/ingredient creation (including scraper)
+- [ ] Cost/calories.. etc. calculation in Recipe 
 - 
 - [ ] "Launch"
 - 

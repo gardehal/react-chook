@@ -5,14 +5,14 @@ import store from "../store";
 // Redux imports
 import { METADATA_LOADING, METADATA_LOADING_COMPLETE, METADATA_TEST_ERROR, METADATA_ERROR_RESOLVED } from "../actions/types";
 import { getMetadataData, setMetadataData } from "../actions/MetadataActions";
-import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast, getKolonialItemWithCheerio } from "../resources/Shared";
+import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast, getKolonialItemWithCheerio, searchDatabase } from "../resources/Shared";
 import { login, logout, userCanEditFirebase, getUsername } from "../actions/UserActions";
 import { toggleContrastmode, callToast, toggleScraper } from "../actions/SettingsActions";
 
 // Variable imports
 import { TEST_ERROR, DB_META, TOTAL_RECIPES, TOTAL_INGREDIENTS, 
     LAST_UPDATED, UPDATE_METADATA, METADATA, CONTRASTMODE, SCRAPERMODE, DEV,
-    FUNCTIONALITY_TEST_PANEL, SCRIPT_PANEL, LOG_IN, LOG_OUT, CAN_EDIT_DB, NOT_LOGGED_IN, LOGGED_IN_AS, ERROR } from "../resources/language";
+    FUNCTIONALITY_TEST_PANEL, SCRIPT_PANEL, LOG_IN, LOG_OUT, CAN_EDIT_DB, NOT_LOGGED_IN, LOGGED_IN_AS, ERROR, EMOJI_GREEN_CHECK, EMOJI_RED_X } from "../resources/language";
 import { getBackgroundColor, getTextColor } from "../resources/colors";
 
 // Component imports
@@ -136,6 +136,39 @@ class DevPage extends React.Component
         return <div/>
     }
 
+
+    async displayUserCanEditFirebase()
+    {
+        console.log("displayUserCanEditFirebase");
+
+        let res = false;
+        if(this.props.user)
+        {
+            console.log(this.props.user);
+            res = await userCanEditFirebase(this.props.user.user.uid);
+        }
+
+        callToast(CAN_EDIT_DB + ": " + res);
+    }
+
+    renderFunctionButtons()
+    {
+        if(false) // if user is not admin
+            return null;
+        
+        let contrastModeText = CONTRASTMODE + (this.props.contrastmode ? " " + EMOJI_GREEN_CHECK : " " + EMOJI_RED_X);
+        let scraperModeText = SCRAPERMODE + (this.props.scraper ? " " + EMOJI_GREEN_CHECK : " " + EMOJI_RED_X);
+
+        return (
+            <div className="rowStyle">
+                <Button onClick={this.updateMetaData} contrastmode={this.props.contrastmode} text={UPDATE_METADATA}/>   
+                <Button onClick={() => toggleContrastmode(this.props.contrastmode)} contrastmode={this.props.contrastmode} text={contrastModeText}/>  
+                <Button onClick={() => toggleScraper()} contrastmode={this.props.contrastmode} text={scraperModeText}/> 
+                <Button onClick={() => window.open("https://console.firebase.google.com/u/0/")} contrastmode={this.props.contrastmode} text={"Firebase"}/> 
+                <Button onClick={() => window.open("https://kolonial.no")} contrastmode={this.props.contrastmode} text={"Kolonial"}/>            
+            </div> );
+    }
+
     renderLogin()
     {
         let uInput = "";
@@ -192,42 +225,37 @@ class DevPage extends React.Component
             </div>
         );
     }
-
-    async displayUserCanEditFirebase()
-    {
-        console.log("displayUserCanEditFirebase");
-
-        let res = false;
-        if(this.props.user)
-        {
-            console.log(this.props.user);
-            res = await userCanEditFirebase(this.props.user.user.uid);
-        }
-
-        callToast(CAN_EDIT_DB + ": " + res);
-    }
-
+    
     renderScriptsPanel()
     {
-        return <Button onClick={() => getKolonialItemWithCheerio("egg")} contrastmode={this.props.contrastmode} text={"Test Cheerio (\"Egg\")"}/>   
+        return (<div className="rowStyle">
+            <Button onClick={() => getKolonialItemWithCheerio("egg")} contrastmode={this.props.contrastmode} text={"Test Cheerio (\"Egg\")"}/> 
+            <Button onClick={() => searchDatabase("dim, sum", 4)} contrastmode={this.props.contrastmode} text={"Search Database (4, \"dim, sum\")"}/>
+            <Button onClick={() => searchDatabase("Dim sum", 4, "title")} contrastmode={this.props.contrastmode} text={"Search Database (4, title includes \"Dim sum\")"}/>
+            <Button onClick={() => searchDatabase(".?im su.?")} contrastmode={this.props.contrastmode} text={"Search Database (0 \".?im su.?\")"}/>
+        </div>);
     }
 
-    renderFunctionButtons()
+    renderTestPanel()
     {
-        if(false) // if user is not admin
-            return null;
-        
-        let contrastModeText = CONTRASTMODE + (this.props.contrastmode ? " ✔️" : " ❌");
-        let scraperModeText = SCRAPERMODE + (this.props.scraper ? " ✔️" : " ❌");
-
-        return (
+        return (<div>
             <div className="rowStyle">
-                <Button onClick={this.updateMetaData} contrastmode={this.props.contrastmode} text={UPDATE_METADATA}/>   
-                <Button onClick={() => toggleContrastmode(this.props.contrastmode)} contrastmode={this.props.contrastmode} text={contrastModeText}/>  
-                <Button onClick={() => toggleScraper()} contrastmode={this.props.contrastmode} text={scraperModeText}/>          
-            </div> );
-    }
+                <Button onClick={this.testLoading} contrastmode={this.props.contrastmode} text={"Test Loading"}/> 
+                <Button onClick={this.testSmallLoading} contrastmode={this.props.contrastmode} text={"Test Small Loading"}/> 
+            </div>   
+            <div style={getTextColor(this.props.contrastmode)}>{this.state.smallLoading ? renderLoading(false, this.props.contrastmode) : "Click Test Small Loading"}</div>  
+            
+            <div className="rowStyle">
+                <Button onClick={this.testError} contrastmode={this.props.contrastmode} text={"Test Error"}/>   
+                <Button onClick={this.testSmallError} contrastmode={this.props.contrastmode} text={"Test Small Error"}/>
+            </div>
+            <div style={getTextColor(this.props.contrastmode)}>{this.state.smallError ? renderError(this.state.smallError, false, this.props.contrastmode) : "Click Test Small Error"}</div>
 
+            <div className="rowStyle">
+                <Button onClick={this.testToast} contrastmode={this.props.contrastmode} text={"Test Toast"}/> 
+            </div>
+        </div>);
+    }
 
     renderContent()
     {
@@ -240,48 +268,19 @@ class DevPage extends React.Component
                     {renderToast(this.props.toastMessage, 5000, this.props.contrastmode)}
 
                     {/* Call functions */}
-                    {this.renderFunctionButtons()}   
+                    {this.renderFunctionButtons()} 
 
-                    {/* Call scripts from app */}
-                    {/* <div className="rowStyle">
-                        <Button onClick={this.testToast} contrastmode={this.props.contrastmode} text={"Test Toast"}/> 
-                    </div> */}
-
-                    {/* Usefull resources */}
-                    <div className="rowStyle">
-                        <Button onClick={() => window.open("https://console.firebase.google.com/u/0/")} contrastmode={this.props.contrastmode} text={"Firebase"}/> 
-                        <Button onClick={() => window.open("https://kolonial.no")} contrastmode={this.props.contrastmode} text={"Kolonial"}/>      
-                    </div> 
-                    
                     {/* Login for doing dev things */}
-                    <div>
-                        {this.renderLogin()}   
-                    </div> 
+                    {this.renderLogin()}   
 
+                    {/* Skripts for doing backend jobs */}
                     <Panel title={SCRIPT_PANEL} contrastmode={this.props.contrastmode}>
-                        {/* Skripts for doing backend jobs */}
-                        <div className="rowStyle">
-                            {this.renderScriptsPanel()}   
-                        </div> 
+                        {this.renderScriptsPanel()}
                     </Panel>
 
+                    {/* Testing functionality */}
                     <Panel title={FUNCTIONALITY_TEST_PANEL} contrastmode={this.props.contrastmode}>
-                        {/* Testing functionality */}
-                        <div className="rowStyle">
-                            <Button onClick={this.testLoading} contrastmode={this.props.contrastmode} text={"Test Loading"}/> 
-                            <Button onClick={this.testSmallLoading} contrastmode={this.props.contrastmode} text={"Test Small Loading"}/> 
-                        </div>   
-                        <div style={getTextColor(this.props.contrastmode)}>{this.state.smallLoading ? renderLoading(false, this.props.contrastmode) : "Click Test Small Loading"}</div>  
-                        
-                        <div className="rowStyle">
-                            <Button onClick={this.testError} contrastmode={this.props.contrastmode} text={"Test Error"}/>   
-                            <Button onClick={this.testSmallError} contrastmode={this.props.contrastmode} text={"Test Small Error"}/>
-                        </div>
-                        <div style={getTextColor(this.props.contrastmode)}>{this.state.smallError ? renderError(this.state.smallError, false, this.props.contrastmode) : "Click Test Small Error"}</div>
-
-                        <div className="rowStyle">
-                            <Button onClick={this.testToast} contrastmode={this.props.contrastmode} text={"Test Toast"}/> 
-                        </div>
+                        {this.renderTestPanel()}   
                     </Panel>
                 </div>
             </div>);

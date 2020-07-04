@@ -111,39 +111,40 @@ export const setDatabaseData = async (tableName, uploadObject, reduxSuccessType,
 // TODO - want to minimize send/recieve load as this is client side sorting
 // Search database for searchterm.
 // - searchterm is searchterm, regex allowed. Required.
-// - matchLevel is how similar term and candidate must be; 0(strict), 1(medium), 2(relaxed), 3(loose), 4(regex). Default 0.
+// - matchLevel is how similar term and candidate must be; 0(regex), 1(strict), 2(medium), 3(relaxed), 4(loose). Default 0.
 // - searchPropperties are propperties which should be searched, if empty search all. Default empty.
 // - table is name of table to search, if null, search in all. Default null.
 // - startIndex is what index in database search should start from, will affect the entire collection. Default 0.
 // - endIndex is what index in databases search should end on, if zero take all, will affect the entire collection. Default 0.
-export const searchDatabase = async (searchTerm, matchLevel = 0, searchPropperties = [], table = null, startIndex = 0, endIndex = 0) =>
+// - dbLimit is limit of elements Firebase should include, if null, no limit. Individual for each table. Default null.
+export const searchDatabase = async (searchTerm, matchLevel = 0, searchPropperties = [], table = null, startIndex = 0, endIndex = 0, dblimit = null) =>
 {
     if(searchTerm === null)
         return null;
     
     let termsArray = [];
     let collection = [];
-    let results = [];
+    let results = []; // TODO consider making it object of {find: item, reason: "level x: matched term on \"key\": \"value\""}
 
     // Set termsArray from searchTerm depending on matchLevel
     if(matchLevel === 0)
     {
-        termsArray[0] = searchTerm;
+        let regexSplit = searchTerm.split(";");
+        termsArray[0] = new RegExp(regexSplit[0], regexSplit[1] ?? "gmi");
     }
     else if(matchLevel === 1)
     {
-        termsArray = searchTerm.split(" ");
+        termsArray[0] = searchTerm;
     }
     else if(matchLevel === 2 || matchLevel === 3)
     {
-        searchTerm = searchTerm.toLowerCase();
-        searchTerm = searchTerm.replace(",", "");
         termsArray = searchTerm.split(" ");
     }
     else if(matchLevel === 4)
     {
-        let regexSplit = searchTerm.split(";");
-        termsArray[0] = new RegExp(regexSplit[0], regexSplit[1] ?? "gm");
+        searchTerm = searchTerm.toLowerCase();
+        searchTerm = searchTerm.replace(",", "");
+        termsArray = searchTerm.split(" ");
     }
     else 
         return null;
@@ -151,8 +152,8 @@ export const searchDatabase = async (searchTerm, matchLevel = 0, searchPropperti
     // Get data from DB
     if(table === null)
     {
-        collection = collection.concat(await getDatabaseData(DB_INGREDIENT, GET_INGREDIENT_DATA_SUCCESS, GET_INGREDIENT_DATA_FAIL, INGREDIENT_LOADING));
-        collection = collection.concat(await getDatabaseData(DB_RECIPE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING));
+        collection = collection.concat(await getDatabaseData(DB_INGREDIENT, GET_INGREDIENT_DATA_SUCCESS, GET_INGREDIENT_DATA_FAIL, INGREDIENT_LOADING, null, null, dblimit));
+        collection = collection.concat(await getDatabaseData(DB_RECIPE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING, null, null, dblimit));
     }
     else if(table === DB_INGREDIENT)
     {
@@ -174,47 +175,79 @@ export const searchDatabase = async (searchTerm, matchLevel = 0, searchPropperti
     for (let i = 0; i < collection.length; i++) 
     {
         let item = collection[i];
-        console.log(item);
 
-        for(let key in item)
+        let res = findIn(termsArray, item, searchPropperties, matchLevel);
+        if(res.length > 0)
+            results = results.concat(res);
+    }
+
+    console.log("results: " + results.length);
+    console.log(results); // Filtrate unique? Add add index based on hits and sort by that?
+    return results;
+}
+
+const findIn = (termsArray, searchItem, searchPropperties, matchLevel) =>
+{
+    // console.log("findIn: ");
+    // console.log(searchItem);
+    let results = [];
+    for(let key in searchItem)
+    {
+        if(searchPropperties.length > 0 && !searchPropperties.includes(key))
+            continue;
+
+        let v = searchItem[key];
+
+        if(Array.isArray(v) || typeof v === "object")
         {
-            if(searchPropperties.length > 0 && !searchPropperties.includes(key))
-                continue;
-
-            let v = item[key];
-
-            // TODO consider what to do if item has arrays of objects etc. recursivly (take searching loop content out in method, run recursivly)
-            for(let term in termsArray)
+            // console.log("recursive on " + v);
+            let res = findIn(termsArray, v, searchPropperties, matchLevel);
+            if(res !== null)
+                results = results.concat(res);
+        }
+        else
+        {
+            for(let tIndex in termsArray)
             {
-                let t = termsArray[term];
-
-                // TODO continuously adjustments for matchlevels
+                let t = termsArray[tIndex];
+                // console.log(key + ": " + v + " <- " + t)
+                
                 if(matchLevel === 0)
                 {     
-                    if(v === t)
-                        results.push(item);
+                    if(t.test(v))
+                    {
+                        console.log("Match on: " + t + " -> " + v);
+                        results.push(searchItem);
+                    }
                 }
                 else if(matchLevel === 1 || matchLevel === 2)
                 {
-                    if(v.includes(t))
-                        results.push(item);
+                    if(v === t)
+                    {
+                        console.log("Match on: " + t + " -> " + v);
+                        results.push(searchItem);
+                    }
                 }
                 else if(matchLevel === 3)
                 {
-                    if(v.toLowerCase().includes(t.toLowerCase()))
-                        results.push(item);
+                    if(v.includes(t))
+                    {
+                        console.log("Match on: " + t + " -> " + v);
+                        results.push(searchItem);
+                    }
                 }
                 else if(matchLevel === 4)
                 {
-                    if(t.test(v))
-                        results.push(item);
+                    if(v.toString().toLowerCase().includes(t.toLowerCase()))
+                    {
+                        console.log("Match on: " + t + " -> " + v);
+                        results.push(searchItem);
+                    }
                 }
-            }
+            }   
         }
     }
-
-    console.log("results");
-    console.log(results); // Filtrate unique? Add add index based on hits and sort by that?
+    
     return results;
 }
 

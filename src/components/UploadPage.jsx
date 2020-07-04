@@ -15,7 +15,7 @@ import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLO
     FREETEXT_SYNTAX_COMMON, FREETEXT_SYNTAX_EXAMPLE_START, SEASALT, SPICE, FREETEXT_SYNTAX_EXAMPLE_PRICE, TRUE, FREETEXT, FREETEXT_MISSING,
     FREETEXT_SYNTAX_INFO_EXCLAMATION, FREETEXT_SYNTAX_INFO_TYPES, FREETEXT_SYNTAX_INFO_PRICE, FREETEXT_SYNTAX_INFO_COMMON, FREETEXT_SYNTAX_INFO_KOLONIAL, 
     FREETEXT_SYNTAX_INFO_OVERVIEW, ELEMENT, SIMILAR_IN_DB, SECTION_MISSING, MAX_INGREDIENTS_IN_RECIPE, MAX_INSTRUCTIONS_IN_RECIPE, MAX_NOTES_IN_RECIPE, ERROR,
-    INGREDIENT_NOT_FOUND_FILE, INGREDIENT_NOT_FOUND_DB, RECIPE_NOT_FOUND_DB, OUT_OF_BOUNDS, SET_NAME, WAS } from "../resources/language";
+    INGREDIENT_NOT_FOUND_FILE, INGREDIENT_NOT_FOUND_DB, RECIPE_NOT_FOUND_DB, OUT_OF_BOUNDS, SET_NAME, WAS, UNDEFINED } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
 // Component imports
@@ -420,8 +420,9 @@ class UploadPage extends React.Component
                             <div>
                                 { SET_NAME + " (" + WAS + " \"" + ingredient.original_name + "\"):" } 
                                 <div className="rowStyle">
-                                    <input style={{ width: "50%", height: "1.5em" }} id="kolonial-upload-ingredient-name"></input>
-                                    <Button onClick={() => window.open("https://kolonial.no")} contrastmode={this.props.contrastmode} text={UPLOAD + " " + INGREDIENT}/>
+                                    <input style={{ width: "50%", height: "1.5em", padding: "auto" }} id="kolonial-upload-ingredient-name" placeholder={ingredientName}/>
+                                    <Button onClick={() => this.uploadScraperIngredient(ingredient, ingredientName)} 
+                                        contrastmode={this.props.contrastmode} text={UPLOAD + " " + INGREDIENT}/>
                                 </div>
                             </div>
                         </div>);
@@ -614,74 +615,81 @@ class UploadPage extends React.Component
             this.setState({ errorsQueue: [] });
 
             if(this.state.ingredientQueue.length > 0)
-            {
-                let failedUploads = [];
-                
+            {                
                 // For each, look for ingredient with the same name, and ID.
                 // If no duplicates, upload async.
                 // TODO: Consider hash excluding name?,  name could look for 90% match? for similar, include hash? same hash for price and type only, with x% match on name?
                 var iQueue = this.state.ingredientQueue;
                 for (var j = 0; j < iQueue.length; j++) 
-                {
-                    const i = iQueue[j];
-                    console.log("\nUploading ingredient: " + i.name);
-
-                    let byNameData = await getIngredientData("name", i.name);
-                    if(byNameData !== undefined && byNameData.length !== 0)
-                    {
-                        failedUploads.push(INGREDIENT + " \"" + i.name + "\": " + SIMILAR_IN_DB + ": " + byNameData[0].name);
-                        this.setState({ errorsQueue: failedUploads });
-                        continue;
-                    }
-
-                    let byIdData = await getIngredientData("id", i.id);
-                    if(byIdData !== undefined && byIdData.length !== 0)
-                    {
-                        failedUploads.push(INGREDIENT + " \"" + i.id + "\": " + SIMILAR_IN_DB + ", ID: " + byIdData[0].id);
-                        this.setState({ errorsQueue: failedUploads });
-                        continue;
-                    }
-                    
-                    console.log("Ingredients ok, will upload async.");
-                    setIngredientData(i);
-                }
+                    this.uploadItem(iQueue[j]);
                     
                 this.setState({ ingredientQueue: [] });
             }
 
             if(this.state.recipeQueue.length > 0)
             {
-                let failedUploads = [];
-                
                 var rQueue = this.state.recipeQueue;
                 for (var j = 0; j < rQueue.length; j++) 
-                {
-                    const r = rQueue[j];
-                    console.log("\nUploading recipes: " + r.title);
-
-                    let byNameData = await getRecipeData("title", r.title);
-                    if(byNameData !== undefined && byNameData.length !== 0)
-                    {
-                        failedUploads.push(RECIPE + " \"" + r.title + "\": " + SIMILAR_IN_DB + ": " + byNameData[0].title);
-                        this.setState({ errorsQueue: failedUploads });
-                        continue;
-                    }
-
-                    let byIdData = await getRecipeData("id", r.id);
-                    if(byIdData !== undefined && byIdData.length !== 0)
-                    {
-                        failedUploads.push(RECIPE + " \"" + r.id + "\": " + SIMILAR_IN_DB + ", ID: " + byIdData[0].id);
-                        this.setState({ errorsQueue: failedUploads });
-                        continue;
-                    }
-                    
-                    console.log("Recipe ok, will upload async.");
-                    setRecipeData(r);
-                }
+                    this.uploadItem(rQueue[j], RECIPE);
 
                 this.setState({ recipeQueue: [] });
             }
         }
+    }
+
+    async uploadScraperIngredient(i, customName)
+    {
+        if(customName.length > 1)
+            i.name = customName;
+        this.uploadItem(i);
+        this.setState({ ingredientQueue: [], recipeQueue: [], errorsQueue: [] });
+    }
+
+    async uploadItem(i, itemName = INGREDIENT)
+    {
+        console.log("\nUploading: " + i.name);
+        let failedUploads = this.state.errorsQueue;
+
+        if(i.name === undefined && i.title === undefined)
+        {
+            failedUploads.push(itemName + " \"" + i.name + "\": " + UNDEFINED);
+            this.setState({ errorsQueue: failedUploads });
+            return null;
+        }
+
+        let byNameData = null;
+        if(itemName === INGREDIENT)
+            byNameData = await getIngredientData("name", i.name);
+        else if(itemName === RECIPE)
+            byNameData = await getRecipeData("title", i.title);
+
+        if(byNameData !== undefined && byNameData.length !== 0)
+        {
+            failedUploads.push(itemName + " \"" + i.name + "\": " + SIMILAR_IN_DB + ": " + byNameData[0].name ?? byNameData[0].title);
+            this.setState({ errorsQueue: failedUploads });
+            return null;
+        }
+
+        let byIdData = null;
+        if(itemName === INGREDIENT)
+            byIdData = await getIngredientData("id", i.id);
+        else if(itemName === RECIPE)
+            byIdData = await getRecipeData("id", i.id);
+
+        if(byIdData !== undefined && byIdData.length !== 0)
+        {
+            failedUploads.push(itemName + " \"" + i.id + "\": " + SIMILAR_IN_DB + ", ID: " + byIdData[0].id);
+            this.setState({ errorsQueue: failedUploads });
+            return null;
+        }
+        
+        console.log("Item ok, will upload async.");
+        if(itemName === INGREDIENT)
+            setIngredientData(i);
+        else if(itemName === RECIPE)
+            setRecipeData(i);
+
+        return i;
     }
 
     renderUploadButtons()

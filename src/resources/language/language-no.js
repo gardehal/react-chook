@@ -13,25 +13,25 @@ export const FUNCTIONALITY_TEST_PANEL = "Testpanel for funksjonalitet";
 export const SCRIPT_PANEL = "Skriptpanel";
 
 // Days, Months
-export const MON = 'Mandag';
-export const TUE = 'Tirsdag';
-export const WED = 'Onsdag';
-export const THU = 'Torsdag';
-export const FRI = 'Fredag';
-export const SAT = 'Lørdag';
-export const SUN = 'Søndag';
-export const JAN = 'Januar';
-export const FEB = 'Februar';
-export const MAR = 'Mars';
-export const APR = 'April';
-export const MAY = 'Mai';
-export const JUNE = 'Juni';
-export const JULY = 'Juli';
-export const AUG = 'August';
-export const SEPT = 'September';
-export const OCT = 'Oktober';
-export const NOV = 'November';
-export const DEC = 'Desember';
+export const MON = "Mandag";
+export const TUE = "Tirsdag";
+export const WED = "Onsdag";
+export const THU = "Torsdag";
+export const FRI = "Fredag";
+export const SAT = "Lørdag";
+export const SUN = "Søndag";
+export const JAN = "Januar";
+export const FEB = "Februar";
+export const MAR = "Mars";
+export const APR = "April";
+export const MAY = "Mai";
+export const JUNE = "Juni";
+export const JULY = "Juli";
+export const AUG = "August";
+export const SEPT = "September";
+export const OCT = "Oktober";
+export const NOV = "November";
+export const DEC = "Desember";
 
 // Pages
 export const HOME = "Hjem";
@@ -42,6 +42,12 @@ export const DEV_OPTIONS = "Utvikler alternativer";
 export const DEV = "Utvikler";
 export const LOG_IN = "Logg inn";
 export const LOG_OUT = "Logg ut";
+
+// Emojis
+export const EMOJI_RED_X = "❌";
+export const EMOJI_GREEN_CHECK = "✔️";
+export const EMOJI_CHICKEN = "🐔";
+export const EMOJI_CHEF = "👨‍🍳";
 
 // Misc.
 export const MAIN_TITLE = "Chook";
@@ -178,6 +184,7 @@ export const ERROR_PERMISSION_DENIED = "Feil: Tilgang avslått.";
 export const ERROR_INVALID_USERNAME_PASSWORD = "Feil: Ugyldig brukernavn eller passord.";
 export const ERROR_INVALID_EMAIL = "Feil: Malformatert E-post";
 export const ERROR_TOO_MANY_REQUESTS = "Feil: For mange forespørsler.";
+export const UNDEFINED = "Udefinert";
 
 // Enums
 export const ENUM_OTHER = "Annet";
