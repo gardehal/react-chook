@@ -185,6 +185,7 @@ export const ERROR_INVALID_USERNAME_PASSWORD = "Feil: Ugyldig brukernavn eller p
 export const ERROR_INVALID_EMAIL = "Feil: Malformatert E-post";
 export const ERROR_TOO_MANY_REQUESTS = "Feil: For mange forespørsler.";
 export const UNDEFINED = "Udefinert";
+export const CHEERIO_KOLONIAL_ERROR = "Feil i Kolonial (Cheerio)";
 
 // Enums
 export const ENUM_OTHER = "Annet";

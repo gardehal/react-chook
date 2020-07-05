@@ -6,7 +6,7 @@ import store from "../store";
 import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC, MAIN_TITLE, DB_RECIPE, DB_FETCH_FAILED, DB_INGREDIENT } from "./language";
 import { getTextColor } from "./colors";
 import { Toast } from "../components/common/Toast";
-import { USER_LOADING, USER_LOADING_COMPLETE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING, GET_INGREDIENT_DATA_SUCCESS, GET_INGREDIENT_DATA_FAIL, INGREDIENT_LOADING } from "../actions/types";
+import { USER_LOADING, USER_LOADING_COMPLETE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING, GET_INGREDIENT_DATA_SUCCESS, GET_INGREDIENT_DATA_FAIL, INGREDIENT_LOADING, INGREDIENT_LOADING_COMPLETE } from "../actions/types";
 import { callToast } from "../actions/SettingsActions";
 import { Spinner } from "../components/common/Spinner";
 import { Ingredient } from "../models/Ingredient";
@@ -132,11 +132,11 @@ export const searchDatabase = async (searchTerm, matchLevel = 0, searchPropperti
         let regexSplit = searchTerm.split(";");
         termsArray[0] = new RegExp(regexSplit[0], regexSplit[1] ?? "gmi");
     }
-    else if(matchLevel === 1)
+    else if(matchLevel === 1 || matchLevel === 2)
     {
         termsArray[0] = searchTerm;
     }
-    else if(matchLevel === 2 || matchLevel === 3)
+    else if(matchLevel === 3)
     {
         termsArray = searchTerm.split(" ");
     }
@@ -182,7 +182,7 @@ export const searchDatabase = async (searchTerm, matchLevel = 0, searchPropperti
     }
 
     console.log("results: " + results.length);
-    console.log(results); // Filtrate unique? Add add index based on hits and sort by that?
+    // console.log(results); // Filtrate unique? Add add index based on hits and sort by that?
     return results;
 }
 
@@ -216,23 +216,31 @@ const findIn = (termsArray, searchItem, searchPropperties, matchLevel) =>
                 {     
                     if(t.test(v))
                     {
-                        console.log("Match on: " + t + " -> " + v);
+                        // console.log("Match on: " + t + " -> " + v);
                         results.push(searchItem);
                     }
                 }
-                else if(matchLevel === 1 || matchLevel === 2)
+                else if(matchLevel === 1)
                 {
                     if(v === t)
                     {
-                        console.log("Match on: " + t + " -> " + v);
+                        // console.log("Match on: " + t + " -> " + v);
+                        results.push(searchItem);
+                    }
+                }
+                else if(matchLevel === 2)
+                {
+                    if(v.toString().toLowerCase().includes(t.toLowerCase()))
+                    {
+                        // console.log("Match on: " + t + " -> " + v);
                         results.push(searchItem);
                     }
                 }
                 else if(matchLevel === 3)
                 {
-                    if(v.includes(t))
+                    if(v.toString().toLowerCase().includes(t.toLowerCase()))
                     {
-                        console.log("Match on: " + t + " -> " + v);
+                        // console.log("Match on: " + t + " -> " + v);
                         results.push(searchItem);
                     }
                 }
@@ -240,7 +248,7 @@ const findIn = (termsArray, searchItem, searchPropperties, matchLevel) =>
                 {
                     if(v.toString().toLowerCase().includes(t.toLowerCase()))
                     {
-                        console.log("Match on: " + t + " -> " + v);
+                        // console.log("Match on: " + t + " -> " + v);
                         results.push(searchItem);
                     }
                 }
@@ -443,6 +451,7 @@ export const trimString = (s, repalceComma = false, splitIndex = 0, asNumber = f
     let split = [];
     let res = "";
 
+    s = s.toString();
     s = s.replace("↵", "");
     s = s.replace(emptyRegex, " ");
     if(repalceComma)
@@ -467,6 +476,7 @@ export const trimString = (s, repalceComma = false, splitIndex = 0, asNumber = f
 // Function should use Kolonial to search for ingredientName, get data for the first item , create and return an Ingredient.
 export const getKolonialItemWithCheerio = async (ingredientName) =>
 {
+    store.dispatch({ type: INGREDIENT_LOADING });
     console.log("getKolonialItemWithCheerio: Starting ASYNC call go get ingredient \"" + ingredientName + "\" from Kolonial.no...");
     let cheerio = require("cheerio");
 
@@ -494,10 +504,25 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
             let searchRes = $(".product-list-item ");
             // console.log(searchRes); 
 
-            let details = searchRes[0].children[1].attribs.href;
-            let kolDetails = "https://kolonial.no" + details;
+            if(!searchRes[0])
+            {
+                console.log("First fetch failed: searchRes was empty");
+                store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
+                return null;
+            }
+
+            let detailsPath = searchRes[0].children[1].attribs.href;
+            let kolonialId = detailsPath.match(/\/(\d+)-/)[1];
+            let kolDetails = "https://kolonial.no" + detailsPath;
             let detailsUrl = corsAnywhere + kolDetails;
             console.log(kolDetails);
+
+            if(!detailsUrl)
+            {
+                console.log("First fetch failed: detailsUrl was null");
+                store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
+                return null;
+            }
 
             return fetch(detailsUrl)
                 .then(response => response.text())
@@ -505,61 +530,114 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
                 {
                     console.log("getKolonialItemWithCheerio: Started ASYNC call 2");
                     // console.log(data); 
+
+                    if(!data)
+                    {
+                        console.log("Second fetch failed: data was null");
+                        store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
+                        return null;
+                    }
                     
                     let $ = cheerio.load(data);
                     let productInfo = $(".product-detail")[0];
-                    // console.log(productInfo);
-            
-                    // ↵ = br - regex /(\r\n|\n|\r)/gm ?
-                    // reim all, remove "↵"
-                    // NB: Values per 100g/ml
-                    // type-general:            productInfo.children[1].children[3].children[1].children[1].children[0].data
-                    // type:                    productInfo.children[1].children[5].children[1].children[1].children[0].data
-                    // name:                    productInfo.children[3].children[1].children[0].data
-                    // product-size:            productInfo.children[3].children[1].children[1].children[0].data
-                    // brand:                   productInfo.children[5].children[1].children[1].children[0].data
-                    // image:                   productInfo.children[9].children[1].children[1].children[1].attribs
-                    // price-whole:             productInfo.children[9].children[3].children[1].children[2].data
-                    // price-dec:               productInfo.children[9].children[3].children[1].children[4].children[0].data
-                    // unit-price:              productInfo.children[9].children[3].children[3].children[0].data
-                    // nutrition-tab:           productInfo.children[11].children[3].children[3].children
-                    // (næringsinnhold)?:       productInfo.children[11].children[3].children[3].children[1].children[1].children[0].data
-                    // engery:                  productInfo.children[11].children[3].children[3].children[1].children[3].children[1].children[3].children[0].data
-                    // fat:                     productInfo.children[11].children[3].children[3].children[1].children[3].children[3].children[3].children[0].data
-                    // sat-fat:                 productInfo.children[11].children[3].children[3].children[1].children[3].children[5].children[3].children[0].data
-                    // en-umettede-fettsyrer:   productInfo.children[11].children[3].children[3].children[1].children[3].children[7].children[3].children[0].data
-                    // fler-umettede:           productInfo.children[11].children[3].children[3].children[1].children[3].children[9].children[3].children[0].data
-                    // carbs:                   productInfo.children[11].children[3].children[3].children[1].children[3].children[11].children[3].children[0].data
-                    // sugartypes-carbs:        productInfo.children[11].children[3].children[3].children[1].children[3].children[13].children[3].children[0].data
-                    // protein:                 productInfo.children[11].children[3].children[3].children[1].children[3].children[15].children[3].children[0].data
-                    // salt:                    productInfo.children[11].children[3].children[3].children[1].children[3].children[17].children[3].children[0].data
+                    console.log(productInfo);
                     
-                    let neutritionTable = productInfo.children[11].children[3].children[3].children[1].children[3];
-
-                    // TODO neutrition table is not static, ex. salt can moce up if items like en-umettede-fettsyrer is not defined
-                    // add all to array, if id?class? = x, set x value
-
-                    // NB: Values per 100g/ml
+                    let originalName, brand, currency, price, type, energy, cals, protein, carbs, sugar, fat, satFat, salt = null;
+                    let sourceLink = kolDetails;
                     let id = getRandomString();
                     name = trimString(uppercaseFirst(name)) ?? null;
-                    let originalName = trimString(productInfo.children[3].children[1].children[0].data.toString());
-                    let brand = trimString(productInfo.children[5].children[1].children[1].children[0].data.toString());
-                    let price = trimString(productInfo.children[9].children[3].children[1].children[2].data.toString(), true, 1, true)
-                        + "." + trimString(productInfo.children[9].children[3].children[1].children[4].children[0].data.toString(), true, 1, true);
-                    let type = IngredientType[0]; // TODO adapt/pasre/translate productInfo.children[1].children[5].children[1].children[1].children[0].data.toString().trim()
-                    let cals = trimString(neutritionTable.children[1].children[3].children[0].data.toString(), true, 2);
-                    let protein = trimString(neutritionTable.children[15].children[3].children[0].data.toString(), true, 1, true);
-                    let carbs = trimString(neutritionTable.children[11].children[3].children[0].data.toString(), true, 1, true);
-                    let sugar = trimString(neutritionTable.children[13].children[3].children[0].data.toString(), true, 1, true);
-                    let fat = trimString(neutritionTable.children[3].children[3].children[0].data.toString(), true, 1, true);
-                    let satFat = trimString(neutritionTable.children[5].children[3].children[0].data.toString(), true, 1, true);
-                    let salt = neutritionTable.children[17] ? trimString(neutritionTable.children[17].children[3].children[0].data.toString(), true, 1, true) : null;
-                    let sourceLink = kolDetails;
+                    
+                    let nameDiv = $(".name-extra")[0].parent;
+                    originalName = trimString(nameDiv.children[0].data);
+                    // console.log(originalName);
+                    
+                    let brandDiv = $(".brand-name")[0];
+                    brand = brandDiv ? trimString(brandDiv.children[1].children[1].children[0].data) + " " : "";
+                    // console.log(brand);
 
-                    let ingredient = new Ingredient(id, name, type, price, common, cals, protein, carbs, sugar, fat, satFat, brand + " " + originalName, sourceLink);
+                    let priceDiv = $(".price ")[0];
+                    currency = priceDiv ? " " + trimString(priceDiv.children[1].children[0].data) : "";
+                    let intPrice = priceDiv ? trimString(priceDiv.children[2].data) : 0;
+                    let decPrice = priceDiv ? trimString(priceDiv.children[4].children[0].data) : 0;
+                    price = Number(intPrice + "." + decPrice);
+                    // console.log(price);
+                    // console.log("(" + currency + ") " + price.toString());
+
+                    // TODO adapt/pasre/translate productInfo.children[1].children[5].children[1].children[1].children[0].data.toString().trim()
+                    let typeDiv = $(".breadcrum")[0];
+                    type = IngredientType[0];
+                    // console.log(typeDiv);
+                    
+                    let nutritionDivId = "#nutrition-" + kolonialId;
+                    let nutritionDiv = $(nutritionDivId);
+                    // console.log(nutritionDiv);
+
+                    // NB: Values per 100g/ml 
+                    if(nutritionDiv.length === 0)
+                        console.log("No nutrition-tab found.");
+                    else
+                    {
+                        let nutritionTable = nutritionDiv.find(".table-striped")[0];
+                        let nutritionArray = nutritionTable.children[3].children;
+                        console.log(nutritionArray);
+
+                        let nutritionArrayDestilled = [];
+                        for (let i = 0; i < nutritionArray.length; i++) 
+                            if(nutritionArray[i].children)
+                                nutritionArrayDestilled.push(nutritionArray[i]);
+
+                        console.log(nutritionArrayDestilled);
+                        for (let i = 0; i < nutritionArrayDestilled.length; i++) 
+                        {
+                            let label = trimString(nutritionArrayDestilled[i].children[1].children[0].data);
+                            let value = nutritionArrayDestilled[i].children[3].children[0].data;
+
+                            console.log("Setting value - \"" + label + "\": \"" + value + "\"");
+                            if(label === "Energi")
+                            {
+                                energy = trimString(value, true, 2);
+                                cals = trimString(value.split("/")[1], true, 2);
+                            }
+                            else if(label === "Fett")
+                            {
+                                fat = trimString(value, true);
+                            }
+                            else if(label === "hvorav mettede fettsyrer")
+                            {
+                                satFat = trimString(value, true);
+                            }
+                            else if(label === "Karbohydrater")
+                            {
+                                carbs = trimString(value, true);
+                            }
+                            else if(label === "hvorav sukkerarter")
+                            {
+                                sugar = trimString(value, true);
+                            }
+                            else if(label === "Protein")
+                            {
+                                protein = trimString(value, true);
+                            }
+                            else if(label === "Salt")
+                            {
+                                salt = trimString(value, true);
+                            }
+                        }
+
+                        // let cals = trimString(neutritionTable.children[1].children[3].children[0].data.toString(), true, 2);
+                        // let protein = trimString(neutritionTable.children[15].children[3].children[0].data.toString(), true, 1, true);
+                        // let carbs = trimString(neutritionTable.children[11].children[3].children[0].data.toString(), true, 1, true);
+                        // let sugar = trimString(neutritionTable.children[13].children[3].children[0].data.toString(), true, 1, true);
+                        // let fat = trimString(neutritionTable.children[3].children[3].children[0].data.toString(), true, 1, true);
+                        // let satFat = trimString(neutritionTable.children[5].children[3].children[0].data.toString(), true, 1, true);
+                        // let salt = neutritionTable.children[17] ? trimString(neutritionTable.children[17].children[3].children[0].data.toString(), true, 1, true) : null;
+                    }
+
+                    let ingredient = new Ingredient(id, name, type, price, common, cals, protein, carbs, sugar, fat, satFat, brand + originalName, sourceLink);
                     console.log("Created new ingredient from Kolonial:");
                     console.log(ingredient);
 
+                    store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
                     console.log("getKolonialItemWithCheerio: Finished ASYNC call 2");
                     return ingredient;
                 });

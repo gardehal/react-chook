@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 // Redux imports
 import { getRecipeData, setRecipeError, setRecipeData } from "../actions/RecipeActions";
 import { getIngredientData, setIngredientData } from "../actions/IngredientActions";
-import { renderLoading, renderError, setTitle, getRandomString, toCamelCase, getKolonialItemWithCheerio } from "../resources/Shared";
+import { renderLoading, renderError, setTitle, getRandomString, toCamelCase, getKolonialItemWithCheerio, searchDatabase } from "../resources/Shared";
 
 // Variable imports
 import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, 
@@ -15,7 +15,7 @@ import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLO
     FREETEXT_SYNTAX_COMMON, FREETEXT_SYNTAX_EXAMPLE_START, SEASALT, SPICE, FREETEXT_SYNTAX_EXAMPLE_PRICE, TRUE, FREETEXT, FREETEXT_MISSING,
     FREETEXT_SYNTAX_INFO_EXCLAMATION, FREETEXT_SYNTAX_INFO_TYPES, FREETEXT_SYNTAX_INFO_PRICE, FREETEXT_SYNTAX_INFO_COMMON, FREETEXT_SYNTAX_INFO_KOLONIAL, 
     FREETEXT_SYNTAX_INFO_OVERVIEW, ELEMENT, SIMILAR_IN_DB, SECTION_MISSING, MAX_INGREDIENTS_IN_RECIPE, MAX_INSTRUCTIONS_IN_RECIPE, MAX_NOTES_IN_RECIPE, ERROR,
-    INGREDIENT_NOT_FOUND_FILE, INGREDIENT_NOT_FOUND_DB, RECIPE_NOT_FOUND_DB, OUT_OF_BOUNDS, SET_NAME, WAS, UNDEFINED } from "../resources/language";
+    INGREDIENT_NOT_FOUND_FILE, INGREDIENT_NOT_FOUND_DB, RECIPE_NOT_FOUND_DB, OUT_OF_BOUNDS, SET_NAME, WAS, UNDEFINED, DB_INGREDIENT, CHEERIO_KOLONIAL_ERROR } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
 // Component imports
@@ -405,13 +405,22 @@ class UploadPage extends React.Component
             }
             else
             {
-                let ingredientsDbRes = await getIngredientData("name", ingredientName, 1);
+                // let searchResult = await getIngredientData("name", ingredientName, 1);
+                let searchResult = await searchDatabase(ingredientName, 2, ["name"], DB_INGREDIENT);
                 let ingredient = null;
 
-                if(ingredientsDbRes.length !== 1 && this.props.scraper)
+                if(searchResult.length === 0 && this.props.scraper)
                 {
                     canUpload = false;
                     ingredient = await getKolonialItemWithCheerio(ingredientName);
+                    let customIngredientName = "";
+
+                    if(!ingredient)
+                    {
+                        failedItems.push(RECIPE + " " + i + " (" + ingredientName + "): " + CHEERIO_KOLONIAL_ERROR);
+                        l++;
+                        continue;
+                    }
                     
                     // Would be nice to have a small list saying "added this (INPUTFIELD: name) (Accept button)" where user can change name in inputfield and upload ingredient with accept
                     // TODO Add specially rendered input field and button, should include original name from Kolonial, button triggers function to upload single ingredient
@@ -420,8 +429,9 @@ class UploadPage extends React.Component
                             <div>
                                 { SET_NAME + " (" + WAS + " \"" + ingredient.original_name + "\"):" } 
                                 <div className="rowStyle">
-                                    <input style={{ width: "50%", height: "1.5em", padding: "auto" }} id="kolonial-upload-ingredient-name" placeholder={ingredientName}/>
-                                    <Button onClick={() => this.uploadScraperIngredient(ingredient, ingredientName)} 
+                                    <input style={{ width: "50%", height: "1.5em", padding: "auto" }} id="kolonial-upload-ingredient-name" 
+                                        onChange={e => customIngredientName = e.target.value} defaultValue={ingredientName}/>
+                                    <Button onClick={() => this.uploadScraperIngredient(ingredient, customIngredientName)} 
                                         contrastmode={this.props.contrastmode} text={UPLOAD + " " + INGREDIENT}/>
                                 </div>
                             </div>
@@ -431,14 +441,14 @@ class UploadPage extends React.Component
                     l++;
                     continue;
                 }
-                else if(ingredientsDbRes.length !== 1)
+                else if(searchResult.length === 0)
                 {
                     canUpload = false;
                     failedItems.push(RECIPE + " " + i + " (" + ingredientName + "): " + INGREDIENT_NOT_FOUND_DB);
                     return null;
                 }
                 else
-                    ingredient = ingredientsDbRes[0];
+                    ingredient = searchResult[0];
                 
                 recipeIngredients.push(new RecipeIngredient(ingredient.id, quantity, ingredient.name, quantityUnit, preparation));
             }
@@ -637,12 +647,15 @@ class UploadPage extends React.Component
         }
     }
 
-    async uploadScraperIngredient(i, customName)
+    async uploadScraperIngredient(i, customIngredientName)
     {
-        if(customName.length > 1)
-            i.name = customName;
+        if(customIngredientName)
+            i.name = customIngredientName;
         this.uploadItem(i);
-        this.setState({ ingredientQueue: [], recipeQueue: [], errorsQueue: [] });
+
+        let spliceOn = this.state.errorsQueue.map(e => { return e.id; }).indexOf(i.id);
+        let newErrorsQueue = this.state.errorsQueue.splice(spliceOn, 1);
+        this.setState({ ingredientQueue: [], recipeQueue: [], errorsQueue: newErrorsQueue });
     }
 
     async uploadItem(i, itemName = INGREDIENT)
@@ -657,6 +670,7 @@ class UploadPage extends React.Component
             return null;
         }
 
+        // let searchResult = await searchDatabase(itemName, 4, ["name"], DB_INGREDIENT); // TODO consider use search function (firebase side ok for now)
         let byNameData = null;
         if(itemName === INGREDIENT)
             byNameData = await getIngredientData("name", i.name);

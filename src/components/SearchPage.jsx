@@ -86,6 +86,7 @@ class SearchPage extends React.Component
         setTitle(term);
 
         // Get our data
+        // let searchResult = await searchDatabase(itemName, 4); // TODO implement search
         getRecipeData();
         getIngredientData();
     

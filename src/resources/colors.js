@@ -8,10 +8,10 @@ export const BLACK = "#000000";
 export const RED = "red";
 export const HYPERLINK_HINT = "#53a2bf";
 
-export const COLOR_BACKGROUND = "#bbbbbb";
+export const COLOR_BACKGROUND = "#dedede";
 export const COLOR_LIGHT_BACKGROUND = "#f3f3f3";
-export const COLOR_TEXT = "#333333";
-export const COLOR_BUTTON_TEXT = "#ffffff";
+export const COLOR_TEXT = "#111111";
+export const COLOR_BUTTON_TEXT = "#111111";
 export const COLOR_BUTTON = "#b76e79";
 export const COLOR_ACCENT = "#3EC35D";
 

@@ -229,7 +229,8 @@ class DevPage extends React.Component
     renderScriptsPanel()
     {
         return (<div className="rowStyle">
-            <Button onClick={() => getKolonialItemWithCheerio("egg")} contrastmode={this.props.contrastmode} text={"Test Cheerio (\"Egg\")"}/> 
+            <Button onClick={() => getKolonialItemWithCheerio("chili")} contrastmode={this.props.contrastmode} text={"Test Cheerio (\"chili\")"}/> 
+            <Button onClick={() => getKolonialItemWithCheerio("egg")} contrastmode={this.props.contrastmode} text={"Test Cheerio (\"egg\")"}/> 
             <Button onClick={() => searchDatabase("dim, sum", 4)} contrastmode={this.props.contrastmode} text={"Search Database (4, \"dim, sum\")"}/>
             <Button onClick={() => searchDatabase("Dim sum", 4, "title")} contrastmode={this.props.contrastmode} text={"Search Database (4, title includes \"Dim sum\")"}/>
             <Button onClick={() => searchDatabase(".?im su.?")} contrastmode={this.props.contrastmode} text={"Search Database (0 \".?im su.?\")"}/>
