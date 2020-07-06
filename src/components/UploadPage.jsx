@@ -22,16 +22,16 @@ import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "
 import { Button } from "./common/Button";
 import { Panel } from "./common/Panel";
 import { Ingredient } from "../models/Ingredient";
-import { IngredientType } from "../models/enums/IngredientType";
+import { IngredientType, IngredientTypeValue, IngredientTypeList } from "../models/enums/IngredientType";
 import { Recipe } from "../models/Recipe";
 import { RecipeIngredient } from "../models/RecipeIngredient";
-import { RecipeType } from "../models/enums/RecipeType";
-import { Difficulty } from "../models/enums/Difficulty";
-import { CookingMethod } from "../models/enums/CookingMethod";
-import { TempratureUnit } from "../models/enums/TempratureUnit";
-import { QuantityUnit } from "../models/enums/QuantityUnit";
-import { Preparation } from "../models/enums/Preparation";
-import { Protein } from "../models/enums/Protein";
+import { RecipeType, RecipeTypeValue } from "../models/enums/RecipeType";
+import { Difficulty, DifficultyValue } from "../models/enums/Difficulty";
+import { CookingMethod, CookingMethodValue } from "../models/enums/CookingMethod";
+import { TempratureUnit, TempratureUnitValue } from "../models/enums/TempratureUnit";
+import { QuantityUnitValue } from "../models/enums/QuantityUnit";
+import { PreparationValue } from "../models/enums/Preparation";
+import { Protein, ProteinValue } from "../models/enums/Protein";
 
 class UploadPage extends React.Component
 {
@@ -63,7 +63,6 @@ class UploadPage extends React.Component
         return (
             <div>
                 <h3 style={{ ...getTextColor(this.props.contrastmode) }}>{UPLOAD}</h3>
-                <h3 style={{ ...getTextColor(this.props.contrastmode) }}>{WIP}</h3>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{GENERAL_UPLOAD_INFORMATION}</p>
             </div>
         );
@@ -182,7 +181,7 @@ class UploadPage extends React.Component
     {
         // let nLines = lines.length;
         let name = lines[0].replace("\t", "").toString().toLowerCase();
-        let type = String(lines[1]).toUpperCase().replace("\t", "").toString();
+        let type = IngredientTypeValue(String(lines[1]).toUpperCase().replace("\t", "").toString());
         let price = lines[2];
         let common = false;
 
@@ -230,16 +229,16 @@ class UploadPage extends React.Component
         
         // type, difficulty, rating line. type is required, diff and rate is optional
         let typeDiffRate = lines[3].toString().split(" ");
-        let type = typeDiffRate[0].toUpperCase().replace("\t", "");
-        let difficulty = typeDiffRate.length > 1 ? typeDiffRate[1].toUpperCase().replace("\t", "") : null;
+        let type = RecipeTypeValue(typeDiffRate[0].toUpperCase().replace("\t", ""));
+        let difficulty = typeDiffRate.length > 1 ? DifficultyValue(typeDiffRate[1].toUpperCase().replace("\t", "")) : null;
         let rating = typeDiffRate.length > 2 ? typeDiffRate[2] : null;
         
         // method++ line
         let methodLine = lines[4].toString().split(" ");
-        let cookingMethod = methodLine[0].toUpperCase().replace("\t", "");
+        let cookingMethod = CookingMethodValue(methodLine[0].toUpperCase().replace("\t", ""));
         let cookingMethodTemp = methodLine.length > 2 ? methodLine[1] : null;
-        let cookingMethodTempUnit = methodLine.length > 1 ? methodLine[2].toUpperCase().replace("\t", "") : null;
-        let protein = lines[5].toString().toUpperCase().replace("\t", "");
+        let cookingMethodTempUnit = methodLine.length > 1 ? TempratureUnitValue(methodLine[2].toUpperCase().replace("\t", "")) : null;
+        let protein = ProteinValue(lines[5].toString().toUpperCase().replace("\t", ""));
 
         // Arrays
         let subRecipes = [];
@@ -371,14 +370,14 @@ class UploadPage extends React.Component
             // Quantity unit is always second if not null
             if(recipeIngredientIndex === 1)
             {
-                let parsedQUnit = QuantityUnit[ingredientLine[1].toUpperCase().trim()]
+                let parsedQUnit = QuantityUnitValue(ingredientLine[1].toUpperCase().trim());
                 quantityUnit = parsedQUnit === undefined ? null : parsedQUnit;
                 if(quantityUnit)
                     recipeIngredientIndex++;
             }
 
             // Preparation will always be the last entry
-            let parsedPrep = Preparation[ingredientLine[ingredientLine.length - 1].toUpperCase().trim()];
+            let parsedPrep = PreparationValue(ingredientLine[ingredientLine.length - 1].toUpperCase().trim());
             preparation = parsedPrep === undefined ? null : parsedPrep;
             let hasPreparation = preparation === null ? false : true;
             
@@ -797,6 +796,7 @@ class UploadPage extends React.Component
                     <hr/>
                     <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_EXCLAMATION}</p>
                     <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_TYPES}</p>
+
                     <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_PRICE}</p>
                     <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_COMMON}</p>
                     <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_KOLONIAL}</p>

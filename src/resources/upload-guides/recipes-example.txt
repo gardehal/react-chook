@@ -2,14 +2,14 @@
 Dim Sum
 4
 15 90
-SIDE_DISH EASY 7
-steam 200 c
-swine
+tilbehør enkel 7
+dampet 200 c
+svin
 +
-400 g svinekjøttdeig
-1 fist fersk koriander MINCED
-2 rød chili MINCED
-3 clove hvitløk MINCED
+400 gram svinekjøttdeig
+1 fist fersk koriander finhakket
+2 rød chili finhakket
+3 fedd hvitløk 
 3 tbs ingefær MINCED
 Dim Sum ark
 +

@@ -52,8 +52,9 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - - [x] Option to rename and upload ingredient from Kolonial
 - - [x] Fix Cheerio/fetch call issue when kolonial ingredient is missing fields
 - - [x] Enhanced search for upload items
-- - [ ] Freetext Enumns from display/language
+- - [x] Freetext Enumns from display/language
 - - [ ] Upload Enum list, freetext recipe example + syntax, loading on recipe/ingredient creation (including scraper)
+- - [ ] Kolonial/Cors-anywhere blocked? ( https://cors-anywhere.herokuapp.com/http://www.kolonial.no )
 - [ ] Cost/calories.. etc. calculation in Recipe 
 - 
 - [ ] "Launch"

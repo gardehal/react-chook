@@ -20,6 +20,15 @@ import { ClickableImage } from "./common/ClickableImage";
 import { Button } from "./common/Button";
 import { Panel } from "./common/Panel";
 import { Spinner } from "./common/Spinner";
+import { IngredientType, IngredientTypeList } from "../models/enums/IngredientType";
+import { createEnumFunctions } from "../resources/Scripts";
+import { CookingMethod } from "../models/enums/CookingMethod";
+import { Difficulty } from "../models/enums/Difficulty";
+import { Preparation } from "../models/enums/Preparation";
+import { QuantityUnit } from "../models/enums/QuantityUnit";
+import { Protein } from "../models/enums/Protein";
+import { RecipeType } from "../models/enums/RecipeType";
+import { TempratureUnit } from "../models/enums/TempratureUnit";
 
 class DevPage extends React.Component
 {
@@ -228,12 +237,27 @@ class DevPage extends React.Component
     
     renderScriptsPanel()
     {
-        return (<div className="rowStyle">
-            <Button onClick={() => getKolonialItemWithCheerio("chili")} contrastmode={this.props.contrastmode} text={"Test Cheerio (\"chili\")"}/> 
-            <Button onClick={() => getKolonialItemWithCheerio("egg")} contrastmode={this.props.contrastmode} text={"Test Cheerio (\"egg\")"}/> 
-            <Button onClick={() => searchDatabase("dim, sum", 4)} contrastmode={this.props.contrastmode} text={"Search Database (4, \"dim, sum\")"}/>
-            <Button onClick={() => searchDatabase("Dim sum", 4, "title")} contrastmode={this.props.contrastmode} text={"Search Database (4, title includes \"Dim sum\")"}/>
-            <Button onClick={() => searchDatabase(".?im su.?")} contrastmode={this.props.contrastmode} text={"Search Database (0 \".?im su.?\")"}/>
+        return (<div>
+            <div className="rowStyle">
+                <Button onClick={() => getKolonialItemWithCheerio("chili")} contrastmode={this.props.contrastmode} text={"Test Cheerio (\"chili\")"}/> 
+                <Button onClick={() => getKolonialItemWithCheerio("egg")} contrastmode={this.props.contrastmode} text={"Test Cheerio (\"egg\")"}/> 
+                <Button onClick={() => searchDatabase("dim, sum", 4)} contrastmode={this.props.contrastmode} text={"Search Database (4, \"dim, sum\")"}/>
+                <Button onClick={() => searchDatabase(".?im su.?")} contrastmode={this.props.contrastmode} text={"Search Database (0 \".?im su.?\")"}/>
+                <Button onClick={() => console.log(IngredientTypeList(true))} contrastmode={this.props.contrastmode} text={"List IType t"}/>
+                <Button onClick={() => console.log(IngredientTypeList(false))} contrastmode={this.props.contrastmode} text={"List IType f"}/>
+            </div>
+            <div className="rowStyle">
+                <Button onClick={() => createEnumFunctions(CookingMethod, "CookingMethod")} contrastmode={this.props.contrastmode} text={"Create CookingMethod"}/>
+                <Button onClick={() => createEnumFunctions(Difficulty, "Difficulty")} contrastmode={this.props.contrastmode} text={"Create Difficulty"}/>
+                <Button onClick={() => createEnumFunctions(IngredientType, "IngredientType")} contrastmode={this.props.contrastmode} text={"Create IngredientType"}/>
+                <Button onClick={() => createEnumFunctions(Preparation, "Preparation")} contrastmode={this.props.contrastmode} text={"Create Preparation"}/>
+            </div>
+            <div className="rowStyle">
+                <Button onClick={() => createEnumFunctions(Protein, "Protein")} contrastmode={this.props.contrastmode} text={"Create Protein"}/>
+                <Button onClick={() => createEnumFunctions(QuantityUnit, "QuantityUnit")} contrastmode={this.props.contrastmode} text={"Create QuantityUnit"}/>
+                <Button onClick={() => createEnumFunctions(RecipeType, "RecipeType")} contrastmode={this.props.contrastmode} text={"Create RecipeType"}/>
+                <Button onClick={() => createEnumFunctions(TempratureUnit, "TempratureUnit")} contrastmode={this.props.contrastmode} text={"Create TempratureUnit"}/>
+            </div>
         </div>);
     }
 
