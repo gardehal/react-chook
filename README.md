@@ -47,14 +47,14 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] DB security
 - [x] Footer
 - [x] Recipe/Ingredient comments, modby, moddate, regby, regdate 
-- [ ] Finish Upload for Launch
+- [x] Finish Upload for Launch
 - - [x] If no ingredient found in DB, create from Selenum/WebdriverIO/Cheerio call to Kolonial
 - - [x] Option to rename and upload ingredient from Kolonial
 - - [x] Fix Cheerio/fetch call issue when kolonial ingredient is missing fields
 - - [x] Enhanced search for upload items
 - - [x] Freetext Enumns from display/language
-- - [ ] Upload Enum list, freetext recipe example + syntax, loading on recipe/ingredient creation (including scraper)
-- - [ ] Kolonial/Cors-anywhere blocked? ( https://cors-anywhere.herokuapp.com/http://www.kolonial.no )
+- - [x] Upload Enum list, freetext recipe example + syntax, loading on recipe/ingredient creation (including scraper)
+- - [x] Kolonial/Cors-anywhere blocked? ( https://cors-anywhere.herokuapp.com/http://www.kolonial.no )
 - [ ] Cost/calories.. etc. calculation in Recipe 
 - 
 - [ ] "Launch"

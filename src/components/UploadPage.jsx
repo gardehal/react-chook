@@ -7,15 +7,22 @@ import { getIngredientData, setIngredientData } from "../actions/IngredientActio
 import { renderLoading, renderError, setTitle, getRandomString, toCamelCase, getKolonialItemWithCheerio, searchDatabase } from "../resources/Shared";
 
 // Variable imports
-import { UPLOAD, WIP, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, 
+import { UPLOAD, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, 
     GRADE, RATING, PORTIONS, PREP_TIME, TOTAL_TIME, COOKING_METHOD, COOKING_METHOD_TEMPERATURE, COOKING_METHOD_TEMPERATURE_UNIT, 
     INGREDIENTS, INSTRUCTIONS, TIPS_NOTES, FILE_UPLOAD_ERROR, NO_FILE_ERROR, VALIDATE_UPLOAD_DATA, NO_VALID_ITEMS_IN_FILE,
-    INGREDIENT, RECIPE, FAILED, PRICE, NOT_VALID_NAME, NOT_A_NUMBER, NUMBER_BELOW_ZERO, NOT_AN_INGREDIENTTYPE, INVALID_TYPE, FAILED_ITEMS, RECIPES, MORE_INFORMATION, 
+    INGREDIENT, RECIPE, FAILED, PRICE, NOT_VALID_NAME, NOT_A_NUMBER, INVALID_TYPE, FAILED_ITEMS, RECIPES, 
     FREETEXT_INFO, FREETEXT_INPUT_INFO, FREETEXT_SYNTAX_START, FREETEXT_SYNTAX_DELIM, FREETEXT_SYNTAX_NAME, FREETEXT_SYNTAX_TYPE, FREETEXT_SYNTAX_PRICE, 
-    FREETEXT_SYNTAX_COMMON, FREETEXT_SYNTAX_EXAMPLE_START, SEASALT, SPICE, FREETEXT_SYNTAX_EXAMPLE_PRICE, TRUE, FREETEXT, FREETEXT_MISSING,
+    FREETEXT_SYNTAX_COMMON, SEASALT, SPICE, FREETEXT_SYNTAX_EXAMPLE_PRICE, TRUE, FREETEXT, FREETEXT_MISSING,
     FREETEXT_SYNTAX_INFO_EXCLAMATION, FREETEXT_SYNTAX_INFO_TYPES, FREETEXT_SYNTAX_INFO_PRICE, FREETEXT_SYNTAX_INFO_COMMON, FREETEXT_SYNTAX_INFO_KOLONIAL, 
-    FREETEXT_SYNTAX_INFO_OVERVIEW, ELEMENT, SIMILAR_IN_DB, SECTION_MISSING, MAX_INGREDIENTS_IN_RECIPE, MAX_INSTRUCTIONS_IN_RECIPE, MAX_NOTES_IN_RECIPE, ERROR,
-    INGREDIENT_NOT_FOUND_FILE, INGREDIENT_NOT_FOUND_DB, RECIPE_NOT_FOUND_DB, OUT_OF_BOUNDS, SET_NAME, WAS, UNDEFINED, DB_INGREDIENT, CHEERIO_KOLONIAL_ERROR } from "../resources/language";
+    FREETEXT_SYNTAX_INFO_OVERVIEW, ELEMENT, SIMILAR_IN_DB, SECTION_MISSING, MAX_INGREDIENTS_IN_RECIPE, MAX_INSTRUCTIONS_IN_RECIPE, MAX_NOTES_IN_RECIPE,
+    INGREDIENT_NOT_FOUND_FILE, INGREDIENT_NOT_FOUND_DB, RECIPE_NOT_FOUND_DB, OUT_OF_BOUNDS, SET_NAME, WAS, UNDEFINED, DB_INGREDIENT, CHEERIO_KOLONIAL_ERROR, 
+    VALID_ENUM_VALUES, INGREDIENT_TYPE_ENUMS, RECIPE_TYPE_ENUMS, DIFFICULTY_ENUMS, COOKING_METHOD_ENUMS, TEMPRATURE_UNIT_ENUMS, PROTEIN_ENUMS, QUANTITY_UNIT_ENUMS, 
+    PREPARATION_ENUMS, MORE_INFORMATION_RECIPE, MORE_INFORMATION_INGREDIENT, FREETEXT_SYNTAX_TIME, FREETEXT_SYNTAX_TYPE_DIFF_RATE, FREETEXT_SYNTAX_METHOD_TEMP_UNIT, 
+    FREETEXT_SYNTAX_PROTEIN, FREETEXT_SYNTAX_SECTION_DELIM, FREETEXT_SYNTAX_INSTRUCTIONS, EXAMPLE_RECIPE_TITLE, EXAMPLE_RECIPE_PORTIONS, EXAMPLE_RECIPE_TIME, 
+    EXAMPLE_RECIPE_TYPE_DIFF_RATE, EXAMPLE_RECIPE_METHOD_TEMP_UNIT, EXAMPLE_RECIPE_PROTEIN, EXAMPLE_RECIPE_RECIPE_INGREDIENT1, EXAMPLE_RECIPE_RECIPE_INGREDIENT2, 
+    EXAMPLE_RECIPE_RECIPE_INGREDIENT3, EXAMPLE_RECIPE_RECIPE_INGREDIENT4, EXAMPLE_RECIPE_RECIPE_INGREDIENT5, EXAMPLE_RECIPE_RECIPE_INGREDIENT6, EXAMPLE_RECIPE_INSTRUCTION1, 
+    EXAMPLE_RECIPE_INSTRUCTION2, EXAMPLE_RECIPE_NOTE1, FREETEXT_SYNTAX_EXAMPLE_START_RECIPE, FREETEXT_SYNTAX_TITLE, FREETEXT_SYNTAX_PORTIONS, FREETEXT_SYNTAX_INGREDIENTS, FREETEXT_SYNTAX_RECIPE_INGREDIENT, FREETEXT_SYNTAX_NOTES 
+} from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
 // Component imports
@@ -25,13 +32,13 @@ import { Ingredient } from "../models/Ingredient";
 import { IngredientType, IngredientTypeValue, IngredientTypeList } from "../models/enums/IngredientType";
 import { Recipe } from "../models/Recipe";
 import { RecipeIngredient } from "../models/RecipeIngredient";
-import { RecipeType, RecipeTypeValue } from "../models/enums/RecipeType";
-import { Difficulty, DifficultyValue } from "../models/enums/Difficulty";
-import { CookingMethod, CookingMethodValue } from "../models/enums/CookingMethod";
-import { TempratureUnit, TempratureUnitValue } from "../models/enums/TempratureUnit";
-import { QuantityUnitValue } from "../models/enums/QuantityUnit";
-import { PreparationValue } from "../models/enums/Preparation";
-import { Protein, ProteinValue } from "../models/enums/Protein";
+import { RecipeType, RecipeTypeValue, RecipeTypeList } from "../models/enums/RecipeType";
+import { Difficulty, DifficultyValue, DifficultyList } from "../models/enums/Difficulty";
+import { CookingMethod, CookingMethodValue, CookingMethodList } from "../models/enums/CookingMethod";
+import { TempratureUnit, TempratureUnitValue, TempratureUnitList } from "../models/enums/TempratureUnit";
+import { QuantityUnitValue, QuantityUnitList } from "../models/enums/QuantityUnit";
+import { PreparationValue, PreparationList } from "../models/enums/Preparation";
+import { Protein, ProteinValue, ProteinList } from "../models/enums/Protein";
 
 class UploadPage extends React.Component
 {
@@ -181,7 +188,7 @@ class UploadPage extends React.Component
     {
         // let nLines = lines.length;
         let name = lines[0].replace("\t", "").toString().toLowerCase();
-        let type = IngredientTypeValue(String(lines[1]).toUpperCase().replace("\t", "").toString());
+        let type = IngredientTypeValue(lines[1].replace("\t", "").toUpperCase());
         let price = lines[2];
         let common = false;
 
@@ -193,8 +200,7 @@ class UploadPage extends React.Component
         }
 
         // type must be parsable to IngredientType
-        type = this.parseEnum(failedItems, type, IngredientType, INGREDIENT, i, name);
-        if(type === null)
+        if(!this.parseEnum(failedItems, type, IngredientType, INGREDIENT, i, name))
             return null;
 
         // price must be a number, 0 or more
@@ -218,7 +224,7 @@ class UploadPage extends React.Component
         let maxArrayItems = 64;
 
         // Metadata
-        let title = lines[0].replace("\t", "").toString();
+        let title = lines[0].replace("\t", "");
         let portions = lines[1];
         // let cuisine = lines[1];
         
@@ -229,16 +235,16 @@ class UploadPage extends React.Component
         
         // type, difficulty, rating line. type is required, diff and rate is optional
         let typeDiffRate = lines[3].toString().split(" ");
-        let type = RecipeTypeValue(typeDiffRate[0].toUpperCase().replace("\t", ""));
-        let difficulty = typeDiffRate.length > 1 ? DifficultyValue(typeDiffRate[1].toUpperCase().replace("\t", "")) : null;
+        let type = RecipeTypeValue(typeDiffRate[0].replace("\t", "").toUpperCase());
+        let difficulty = typeDiffRate.length > 1 ? DifficultyValue(typeDiffRate[1].replace("\t", "").toUpperCase()) : null;
         let rating = typeDiffRate.length > 2 ? typeDiffRate[2] : null;
         
         // method++ line
         let methodLine = lines[4].toString().split(" ");
-        let cookingMethod = CookingMethodValue(methodLine[0].toUpperCase().replace("\t", ""));
+        let cookingMethod = CookingMethodValue(methodLine[0].replace("\t", "").toUpperCase());
         let cookingMethodTemp = methodLine.length > 2 ? methodLine[1] : null;
-        let cookingMethodTempUnit = methodLine.length > 1 ? TempratureUnitValue(methodLine[2].toUpperCase().replace("\t", "")) : null;
-        let protein = ProteinValue(lines[5].toString().toUpperCase().replace("\t", ""));
+        let cookingMethodTempUnit = methodLine.length > 1 ? TempratureUnitValue(methodLine[2].replace("\t", "").toUpperCase()) : null;
+        let protein = ProteinValue(lines[5].replace("\t", "").toUpperCase());
 
         // Arrays
         let subRecipes = [];
@@ -284,50 +290,21 @@ class UploadPage extends React.Component
            
         {
             console.log("Checking enums...");
-            if(RecipeType[type] === undefined)
-            {
-                console.log("Error parsing: type");
-                failedItems.push(RECIPE + " " + i + " (" + title + "): " + INVALID_TYPE + ": \"" + type + "\"");
-                return null;
-            }
-            else
-                type = RecipeType[type];
 
-            if(difficulty != null && Difficulty[difficulty] === undefined)
-            {
-                console.log("Error parsing: difficulty");
-                failedItems.push(RECIPE + " " + i + " (" + title + "): " + INVALID_TYPE + ": \"" + difficulty + "\"");
+            if(!this.parseEnum(failedItems, type, RecipeType, RECIPE, i, title))
                 return null;
-            }
-            else
-                difficulty = Difficulty[difficulty];
 
-            if(cookingMethod != null && CookingMethod[cookingMethod] === undefined)
-            {
-                console.log("Error parsing: cookingMethod");
-                failedItems.push(RECIPE + " " + i + " (" + title + "): " + INVALID_TYPE + ": \"" + cookingMethod + "\"");
+            if(!this.parseEnum(failedItems, difficulty, Difficulty, RECIPE, i, title))
                 return null;
-            }
-            else
-                cookingMethod = CookingMethod[cookingMethod];
 
-            if(cookingMethodTempUnit != null && TempratureUnit[cookingMethodTempUnit] === undefined)
-            {
-                console.log("Error parsing: cookingMethodTempUnit");
-                failedItems.push(RECIPE + " " + i + " (" + title + "): " + INVALID_TYPE + ": \"" + cookingMethodTempUnit + "\"");
+            if(!this.parseEnum(failedItems, cookingMethod, CookingMethod, RECIPE, i, title))
                 return null;
-            }
-            else
-                cookingMethodTempUnit = TempratureUnit[cookingMethodTempUnit];
 
-            if(protein != null && Protein[protein] === undefined)
-            {
-                console.log("Error parsing: protein");
-                failedItems.push(RECIPE + " " + i + " (" + title + "): " + INVALID_TYPE + ": \"" + protein + "\"");
+            if(!this.parseEnum(failedItems, cookingMethodTempUnit, TempratureUnit, RECIPE, i, title))
                 return null;
-            }
-            else
-                protein = Protein[protein];
+
+            if(!this.parseEnum(failedItems, protein, Protein, RECIPE, i, title))
+                return null;
         } // Recipe metadata parse enums (the extra parentheses are so this section can be collapsed and make code more readable)
         
         console.log("Preparing ingredients...");
@@ -379,13 +356,13 @@ class UploadPage extends React.Component
             // Preparation will always be the last entry
             let parsedPrep = PreparationValue(ingredientLine[ingredientLine.length - 1].toUpperCase().trim());
             preparation = parsedPrep === undefined ? null : parsedPrep;
-            let hasPreparation = preparation === null ? false : true;
+            let hasPreparation = preparation === null;
             
             let ingredientName = ingredientLine.slice(recipeIngredientIndex, (ingredientLine.length - (hasPreparation ? 1 : 0))).join(" ").toLowerCase();
 
             if(!ingredientName)
             {
-                failedItems.push(RECIPE + " " + i + " (" + title + "): " + INGREDIENT_NOT_FOUND_FILE);
+                failedItems.push(RECIPE + " " + i + " (" + ingredientName + "): " + INGREDIENT_NOT_FOUND_FILE);
                 return null;
             }
 
@@ -542,10 +519,10 @@ class UploadPage extends React.Component
         if(!isNaN(value) || enumCollection[value] === undefined)
         {
             messageArray.push(parentType + " " + index + " (" + itemName + "): " + INVALID_TYPE + ": \"" + value + "\"");
-            return null;
+            return false;
         }
         
-        return enumCollection[value];
+        return true;
     }
 
     async parseFreetext()
@@ -768,40 +745,134 @@ class UploadPage extends React.Component
         );
     }
 
+    renderIngredientFreextextGuide()
+    {
+        return (
+            <Panel title={MORE_INFORMATION_INGREDIENT} contrastmode={this.props.contrastmode}>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_INFO}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_INPUT_INFO}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_START}</p>
+                <hr/>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_DELIM}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_NAME}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_TYPE}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_PRICE}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_COMMON}</p>
+                <hr/>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_EXAMPLE_START_RECIPE}</p>
+                <hr/>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_DELIM}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{SEASALT}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{SPICE}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_EXAMPLE_PRICE}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{TRUE}</p>
+                <hr/>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_EXCLAMATION}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_TYPES}</p>
+                <Panel title={VALID_ENUM_VALUES} contrastmode={this.props.contrastmode}>
+                    <Panel title={INGREDIENT_TYPE_ENUMS} contrastmode={this.props.contrastmode} startExpanded>
+                        {IngredientTypeList(true)}
+                    </Panel>
+                </Panel>
+
+                <hr/>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_PRICE}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_COMMON}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_KOLONIAL}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_OVERVIEW}</p>
+            </Panel>
+        );
+    }
+
+    renderRecipeFreextextGuide()
+    {
+        return (
+            <Panel title={MORE_INFORMATION_RECIPE} contrastmode={this.props.contrastmode}>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_INFO}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_INPUT_INFO}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_START}</p>
+                <hr/>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_DELIM}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_TITLE}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_PORTIONS}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_TIME}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_TYPE_DIFF_RATE}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_METHOD_TEMP_UNIT}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_PROTEIN}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_SECTION_DELIM}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INGREDIENTS}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_RECIPE_INGREDIENT}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_SECTION_DELIM}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INSTRUCTIONS}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_SECTION_DELIM}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_NOTES}</p>
+                <hr/>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_EXAMPLE_START_RECIPE}</p>
+                <hr/>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_DELIM}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_TITLE}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_PORTIONS}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_TIME}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_TYPE_DIFF_RATE}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_METHOD_TEMP_UNIT}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_PROTEIN}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_SECTION_DELIM}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_RECIPE_INGREDIENT1}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_RECIPE_INGREDIENT2}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_RECIPE_INGREDIENT3}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_RECIPE_INGREDIENT4}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_RECIPE_INGREDIENT5}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_RECIPE_INGREDIENT6}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_SECTION_DELIM}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_INSTRUCTION1}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_INSTRUCTION2}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_SECTION_DELIM}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_NOTE1}</p>
+                <hr/>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_EXCLAMATION}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_TYPES}</p>
+                <Panel title={VALID_ENUM_VALUES} contrastmode={this.props.contrastmode}>
+                    <Panel title={RECIPE_TYPE_ENUMS} contrastmode={this.props.contrastmode} startExpanded>
+                        {RecipeTypeList(true)}
+                    </Panel>
+                    <Panel title={DIFFICULTY_ENUMS} contrastmode={this.props.contrastmode} startExpanded>
+                        {DifficultyList(true)}
+                    </Panel>
+                    <Panel title={COOKING_METHOD_ENUMS} contrastmode={this.props.contrastmode} startExpanded>
+                        {CookingMethodList(true)}
+                    </Panel>
+                    <Panel title={TEMPRATURE_UNIT_ENUMS} contrastmode={this.props.contrastmode} startExpanded>
+                        {TempratureUnitList(true)}
+                    </Panel>
+                    <Panel title={PROTEIN_ENUMS} contrastmode={this.props.contrastmode} startExpanded>
+                        {ProteinList(true)}
+                    </Panel>
+                    <Panel title={QUANTITY_UNIT_ENUMS} contrastmode={this.props.contrastmode} startExpanded>
+                        {QuantityUnitList(true)}
+                    </Panel>
+                    <Panel title={PREPARATION_ENUMS} contrastmode={this.props.contrastmode} startExpanded>
+                        {PreparationList(true)}
+                    </Panel>
+                </Panel>
+
+                <hr/>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_OVERVIEW}</p>
+            </Panel>
+        );
+    }
+
     renderContent()
     {
         return (
             <div>
                 {this.renderGeneralInformation()}
                 <hr/>
-                {/* In debth nformation about how to upload */}
-                <Panel title={MORE_INFORMATION} contrastmode={this.props.contrastmode}>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_INFO}</p>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_INPUT_INFO}</p>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_START}</p>
-                    <hr/>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_DELIM}</p>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_NAME}</p>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_TYPE}</p>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_PRICE}</p>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_COMMON}</p>
-                    <hr/>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_EXAMPLE_START}</p>
-                    <hr/>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_DELIM}</p>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{SEASALT}</p>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{SPICE}</p>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_EXAMPLE_PRICE}</p>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{TRUE}</p>
-                    <hr/>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_EXCLAMATION}</p>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_TYPES}</p>
 
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_PRICE}</p>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_COMMON}</p>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_KOLONIAL}</p>
-                    <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INFO_OVERVIEW}</p>
-                </Panel>
+                {this.renderIngredientFreextextGuide()}
+                <hr/>
+
+                {this.renderRecipeFreextextGuide()}
+                <hr/>
 
                 {/* <hr/> */}
                 {/* Option to upload using a html input form */}
@@ -809,7 +880,6 @@ class UploadPage extends React.Component
                     {this.renderUploadForm()}
                 </Panel> */}
 
-                <hr/>
                 {/* Upload ingredients though freetext
                     -> Submit files buttons/ drag+drop area */}
                 <Panel title={FREETEXT} contrastmode={this.props.contrastmode}>  {/* Should be freetext not file */}

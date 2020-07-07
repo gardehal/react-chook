@@ -77,7 +77,7 @@ export const RecipeTypeValue = (text: String) =>
 	}
 };
 
-export const listRecipeType = (translated: Boolean = false, join: Boolean = true, delim: string = ", ") =>
+export const RecipeTypeList = (translated: Boolean = false, join: Boolean = true, delim: string = ", ") =>
 {
 	let keys = Object.keys(RecipeType).filter(k => !Number.parseInt(k) && k != "0");
 	let res: Array<String> = [];
