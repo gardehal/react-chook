@@ -6,31 +6,30 @@ import { TempratureUnit } from "./enums/TempratureUnit";
 import { RecipeIngredient } from "./RecipeIngredient";
 import { getNow } from "../resources/Shared";
 import { getIngredientData } from "../actions/IngredientActions";
-import { Source } from "./Source";
 import { getUsername } from "../actions/UserActions";
 
 export class Recipe 
 {
     id: String;
-    // source_id: String;
-    // calories: Number;
-    // protein: Number;
-    // carbohydrates: Number;
-    // sugar: Number;
-    // fat: Number;
-    // saturated_fat: Number;
+    source_id: String;
+    calories: number;
+    protein: number;
+    carbohydrates: number;
+    sugar: number;
+    fat: number;
+    saturated_fat: number;
     title: String;
-    cost: Number;
-    total_cost: Number;
+    cost: number;
+    total_cost: number;
     type: RecipeType;
     // cuisine: Cuisine; // ? cuisine/oregin (mexican, european, asian)
     difficulty: Difficulty; 
-    rating: Number;
-    portions: Number;
-    time_preparation: Number;
-    time_total: Number;
+    rating: number;
+    portions: number;
+    time_preparation: number;
+    time_total: number;
     cooking_method: CookingMethod;
-    cooking_method_temprature: Number;
+    cooking_method_temprature: number;
     cooking_method_temprature_unit: TempratureUnit;
     main_protein: Protein;
     recipe_ingredients:Array<RecipeIngredient>;
@@ -48,12 +47,12 @@ export class Recipe
       title: String,
       type: RecipeType = RecipeType.OTHER, 
       difficulty: Difficulty = Difficulty.NONE, 
-      rating: Number = 0,
-      portions: Number = 0,
-      time_preparation: Number,
-      time_total: Number,
+      rating: number = 0,
+      portions: number = 0,
+      time_preparation: number,
+      time_total: number,
       cooking_method: CookingMethod = CookingMethod.OTHER,
-      cooking_method_temprature: Number = 0,
+      cooking_method_temprature: number = 0,
       cooking_method_temprature_unit: TempratureUnit = TempratureUnit.NONE,
       main_protein: Protein,
       recipe_ingredients: Array<RecipeIngredient> = [],
@@ -81,15 +80,15 @@ export class Recipe
       this.notes = notes;
       this.comments = comments;
 
-      // this.source_id = source_id;
-      // this.calories = Number(this.calculateX("calories"));
-      // this.protein = x
-      // this.carbohydrates = x
-      // this.sugar = x
-      // this.fat = x
-      // this.saturated_fat = x
-      this.cost = 0;//Number(this.calculateCost(true));
-      this.total_cost = 0;//Number(this.calculateCost());
+      this.source_id = "";
+      this.calories = 0;
+      this.protein = 0;
+      this.carbohydrates = 0;
+      this.sugar = 0;
+      this.fat = 0;
+      this.saturated_fat = 0;
+      this.cost = 0;
+      this.total_cost = 0;
 
       this.regby = getUsername();
       this.regtime = getNow(true);
@@ -97,12 +96,34 @@ export class Recipe
       this.modtime = getNow(true);
     }
 
-    private async calculateX(type: String)
+    // More efficient to load all ingredients first rather that fetch for every calc nutrients and cost
+    public async setNutritionalAndCostAndSource(recipe: Recipe, source_id: String = "")
     {
-      // TODO
+      recipe.calories = await this.calculateNutrientInfo(recipe, "calories");
+      // TODO await xyz
+      return recipe;
     }
 
-    private async calculateCost(excludeCommon = false)
+    private async calculateNutrientInfo(recipe: Recipe, propperty: any)
+    {
+      let res: number = 0;
+      const ri = recipe.recipe_ingredients;
+      if(ri.length > 0)
+      {
+        for (let i = 0; i < ri.length; i++)
+        {
+          let ingredient = await getIngredientData("id", ri[i].id.toString(), 1);
+          ingredient = ingredient[0];
+
+          if(ingredient[propperty])
+            res += Number(ingredient[propperty].match(/\d+/gmi)); // Regex on numbers in case of "123 g"
+        }
+      }
+
+      return Number(res);
+    }
+
+    private async calculateCost(recipe: Recipe, excludeCommon = false)
     {
       let cost: Number = 0;
       const ri = this.recipe_ingredients;
@@ -118,6 +139,6 @@ export class Recipe
         }
       }
 
-      return cost;
+      return Number(cost);
     }
   }

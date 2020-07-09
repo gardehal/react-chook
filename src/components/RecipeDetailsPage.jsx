@@ -18,6 +18,9 @@ import { TempratureUnitDisplay } from "../models/enums/TempratureUnit";
 import { RecipeTypeDisplay } from "../models/enums/RecipeType";
 import { DifficultyDisplay } from "../models/enums/Difficulty";
 import { RecipeIngredientCard } from "./common/RecipeIngredientCard";
+import { Button } from "./common/Button";
+import { Panel } from "./common/Panel";
+import { Recipe } from "../models/Recipe";
 
 class RecipeDetailsPage extends React.Component
 {
@@ -148,12 +151,24 @@ class RecipeDetailsPage extends React.Component
             </div>);
     }
 
+    renderDevContent()
+    {
+        let recipe = this.props.recipeResult[0];
+
+        return (
+            <Panel title={"DEV"} contrastmode={this.props.contrastmode}>
+                <Button onClick={() => console.log(new Recipe().setNutritionalAndCostAndSource(recipe))} contrastmode={this.props.contrastmode} text={"test"}/> 
+            </Panel>
+        );
+    }
+
     render()
     {
         return (
             <div style={{ ...getBackgroundColor(this.props.contrastmode) }}>
                 <div style={{ ...getBackgroundColor(this.props.contrastmode) }}>
                     <div className="pageRootContainer">
+                        {this.renderDevContent()}
                         {this.renderContent()}
                     </div>
                 </div>

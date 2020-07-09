@@ -353,8 +353,8 @@ export const getNow = (includeTime = false) =>
     // Get today, in YYYY-MM-DD
     var date = new Date();
     let now = "";
-
-    now += "Z" + date.getUTCFullYear();
+    
+    now += date.getUTCFullYear();
     now += "-" + addLeadingZeros(date.getUTCMonth());
     now += "-" + addLeadingZeros(date.getUTCDate());
 
@@ -363,6 +363,7 @@ export const getNow = (includeTime = false) =>
         now += "T" + addLeadingZeros(date.getUTCHours());
         now += "-" + addLeadingZeros(date.getUTCMinutes());
         now += "-" + addLeadingZeros(date.getUTCSeconds());
+        now += "Z";
     }
 
     return now;
@@ -507,7 +508,7 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
             if(!searchRes[0])
             {
                 console.log("First fetch failed: searchRes was empty");
-                store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
+                store.dispatch({ type: INGREDIENT_LOADING_COMPLETE }); // TODO should fail with redux type, use error type to tell user no item found
                 return null;
             }
 

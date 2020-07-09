@@ -48,17 +48,15 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Footer
 - [x] Recipe/Ingredient comments, modby, moddate, regby, regdate 
 - [x] Finish Upload for Launch
-- - [x] If no ingredient found in DB, create from Selenum/WebdriverIO/Cheerio call to Kolonial
-- - [x] Option to rename and upload ingredient from Kolonial
-- - [x] Fix Cheerio/fetch call issue when kolonial ingredient is missing fields
-- - [x] Enhanced search for upload items
-- - [x] Freetext Enumns from display/language
-- - [x] Upload Enum list, freetext recipe example + syntax, loading on recipe/ingredient creation (including scraper)
-- - [x] Kolonial/Cors-anywhere blocked? ( https://cors-anywhere.herokuapp.com/http://www.kolonial.no )
-- [ ] Cost/calories.. etc. calculation in Recipe 
+- [ ] Cost/calories.. etc. calculation in Recipe
+- - [ ] Fix Enum Displays
+- - [ ] Implement update for async values and reupload (overwrite modby and mod time, not reg)
+- - [ ] 
+- - [ ] Hide Dev options in recipe details
 - 
 - [ ] "Launch"
 - 
+- [ ] Improve user feedback
 - [ ] Recipe/Ingredient source
 - [ ] Recipe calories, protein, carbs, sugar, fat, other fat from ingredients
 - [ ] Setup buffer table, uploads not from mods/devs/admins go to buffer, must be approved to go into real DB. Uploads are limited to x char length, every 1 minutes?
@@ -82,11 +80,11 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Style
 
 ## MISC TODOs
-- [ ] Internet crawler or fentch from API for ingredients
+- [x] Internet crawler or fentch from API for ingredients
 - [ ] Internet crawler or fentch from API for recipes
 - [ ] Adaptive style for mobile
 - [ ] Flavicon (For timer, toasts, notifications etc.)
-- [ ] Clean up dependencies
+- [x] Clean up dependencies
 - [ ] Expanding all panels in upload white line over footer
 - [ ] Improved style for mobile (width, footer escpecially)
 - [ ] Unauthorized upload recipe/ingredient error handleing

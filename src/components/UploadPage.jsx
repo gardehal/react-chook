@@ -36,8 +36,8 @@ import { RecipeType, RecipeTypeValue, RecipeTypeList } from "../models/enums/Rec
 import { Difficulty, DifficultyValue, DifficultyList } from "../models/enums/Difficulty";
 import { CookingMethod, CookingMethodValue, CookingMethodList } from "../models/enums/CookingMethod";
 import { TempratureUnit, TempratureUnitValue, TempratureUnitList } from "../models/enums/TempratureUnit";
-import { QuantityUnitValue, QuantityUnitList } from "../models/enums/QuantityUnit";
-import { PreparationValue, PreparationList } from "../models/enums/Preparation";
+import { QuantityUnitValue, QuantityUnitList, QuantityUnit } from "../models/enums/QuantityUnit";
+import { PreparationValue, PreparationList, Preparation } from "../models/enums/Preparation";
 import { Protein, ProteinValue, ProteinList } from "../models/enums/Protein";
 
 class UploadPage extends React.Component
@@ -347,18 +347,18 @@ class UploadPage extends React.Component
             // Quantity unit is always second if not null
             if(recipeIngredientIndex === 1)
             {
-                let parsedQUnit = QuantityUnitValue(ingredientLine[1].toUpperCase().trim());
-                quantityUnit = parsedQUnit === undefined ? null : parsedQUnit;
-                if(quantityUnit)
+                quantityUnit = QuantityUnitValue(ingredientLine[1].toUpperCase().trim());
+                
+                if(QuantityUnit[quantityUnit] !== undefined)
                     recipeIngredientIndex++;
             }
 
             // Preparation will always be the last entry
-            let parsedPrep = PreparationValue(ingredientLine[ingredientLine.length - 1].toUpperCase().trim());
-            preparation = parsedPrep === undefined ? null : parsedPrep;
-            let hasPreparation = preparation === null;
-            
-            let ingredientName = ingredientLine.slice(recipeIngredientIndex, (ingredientLine.length - (hasPreparation ? 1 : 0))).join(" ").toLowerCase();
+            preparation = PreparationValue(ingredientLine[ingredientLine.length - 1].toUpperCase().trim());
+
+            let hasPreparation = Preparation[preparation]; // todo test
+
+            let ingredientName = ingredientLine.slice(recipeIngredientIndex, ingredientLine.length - (hasPreparation ? 1 : 0)).join(" ").toLowerCase();
 
             if(!ingredientName)
             {
@@ -711,7 +711,7 @@ class UploadPage extends React.Component
     renderUploadSummary()
     {
         let textAreaStyle = { resize: "vertical", width: "calc(100% - 0.8em)", paddingLeft: "0.5em" };
-        let rows = "8";
+        let rows = "32";
 
         let failedQueue = this.state.errorsQueue;
         let failedList = [];
