@@ -49,9 +49,8 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Recipe/Ingredient comments, modby, moddate, regby, regdate 
 - [x] Finish Upload for Launch
 - [ ] Cost/calories.. etc. calculation in Recipe
-- - [ ] Fix Enum Displays
-- - [ ] Implement update for async values and reupload (overwrite modby and mod time, not reg)
-- - [ ] 
+- - [x] Fix Enum Displays 
+- - [ ] Implement update for async values and reupload (overwrite modby and mod time, not reg) - recipe (and ingredient) have function for calculating cost etc. async then updating
 - - [ ] Hide Dev options in recipe details
 - 
 - [ ] "Launch"

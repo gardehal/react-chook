@@ -15,6 +15,8 @@ TempratureUnitDisplay[TempratureUnit.F] = ENUM_FAHRENHEIT;
 
 export const TempratureUnitValue = (text: String) =>
 {
+	if(!text)
+		return null;
 	switch(text.toLowerCase())
 	{
 		case "0":
@@ -30,7 +32,7 @@ export const TempratureUnitValue = (text: String) =>
 		case ENUM_FAHRENHEIT.toLowerCase():
 			return TempratureUnit[TempratureUnit.F];
 		default:
-			return text;
+			return null;
 	}
 };
 

@@ -21,6 +21,8 @@ DifficultyDisplay[Difficulty.VERY_HARD] = ENUM_VERY_HARD;
 
 export const DifficultyValue = (text: String) =>
 {
+	if(!text)
+		return null;
 	switch(text.toLowerCase())
 	{
 		case "0":
@@ -48,7 +50,7 @@ export const DifficultyValue = (text: String) =>
 		case ENUM_VERY_HARD.toLowerCase():
 			return Difficulty[Difficulty.VERY_HARD];
 		default:
-			return text;
+			return null;
 	}
 };
 

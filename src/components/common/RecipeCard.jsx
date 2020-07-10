@@ -3,8 +3,8 @@ import React from "react";
 // Variable imports
 import { getLightBackgroundColor, getTextColor } from "../../resources/colors";
 import { DB_RECIPE, NORWEGIAN_KRONER, MINUTES } from "../../resources/language";
-import { RecipeTypeDisplay } from "../../models/enums/RecipeType";
-import { DifficultyDisplay } from "../../models/enums/Difficulty";
+import { RecipeTypeDisplay, RecipeType } from "../../models/enums/RecipeType";
+import { DifficultyDisplay, Difficulty } from "../../models/enums/Difficulty";
 
 export class RecipeCard extends React.Component
 {
@@ -69,8 +69,8 @@ export class RecipeCard extends React.Component
 
         let id = recipe.id;
         let title = recipe.title;
-        let type = RecipeTypeDisplay[recipe.type];
-        let difficulty = DifficultyDisplay[recipe.difficulty];
+        let type = recipe.type ? RecipeTypeDisplay[RecipeType[recipe.type]] : "";
+        let difficulty = recipe.difficulty ? DifficultyDisplay[Difficulty[recipe.difficulty]] : "";
         let cost = recipe.cost;
         let timeTotal = recipe.time_total;
 

@@ -38,6 +38,8 @@ ProteinDisplay[Protein.DAIRY] = ENUM_DAIRY;
 
 export const ProteinValue = (text: String) =>
 {
+	if(!text)
+		return null;
 	switch(text.toLowerCase())
 	{
 		case "0":
@@ -88,7 +90,7 @@ export const ProteinValue = (text: String) =>
 		case ENUM_DAIRY.toLowerCase():
 			return Protein[Protein.DAIRY];
 		default:
-			return text;
+			return null;
 	}
 };
 

@@ -55,6 +55,8 @@ IngredientTypeDisplay[IngredientType.DRINK] = ENUM_DRINK;
 
 export const IngredientTypeValue = (text: String) =>
 {
+	if(!text)
+		return null;
 	switch(text.toLowerCase())
 	{
 		case "0":
@@ -146,7 +148,7 @@ export const IngredientTypeValue = (text: String) =>
 		case ENUM_DRINK.toLowerCase():
 			return IngredientType[IngredientType.DRINK];
 		default:
-			return text;
+			return null;
 	}
 };
 

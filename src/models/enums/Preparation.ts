@@ -43,6 +43,8 @@ PreparationDisplay[Preparation.PRESSED] = ENUM_PRESSED;
 
 export const PreparationValue = (text: String) =>
 {
+	if(!text)
+		return null;
 	switch(text.toLowerCase())
 	{
 		case "0":
@@ -110,7 +112,7 @@ export const PreparationValue = (text: String) =>
 		case ENUM_PRESSED.toLowerCase():
 			return Preparation[Preparation.PRESSED];
 		default:
-			return text;
+			return null;
 	}
 };
 

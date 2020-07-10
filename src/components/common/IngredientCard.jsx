@@ -3,7 +3,7 @@ import React from "react";
 // Variable imports
 import { getLightBackgroundColor, getTextColor } from "../../resources/colors";
 import { NORWEGIAN_KRONER } from "../../resources/language";
-import { IngredientTypeDisplay } from "../../models/enums/IngredientType";
+import { IngredientTypeDisplay, IngredientType } from "../../models/enums/IngredientType";
 
 export class IngredientCard extends React.Component
 {
@@ -15,7 +15,7 @@ export class IngredientCard extends React.Component
     {
         let ingredient = this.props.ingredient;
         let name = ingredient.name;
-        let type = IngredientTypeDisplay[ingredient.type];
+        let type = ingredient.type ? IngredientTypeDisplay[IngredientType[ingredient.type]] : "";
         let price = ingredient.price;
 
         return (

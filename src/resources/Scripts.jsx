@@ -32,6 +32,8 @@ export const createEnumFunctions = (enumClass, enumClassName) =>
     stringFunctions += "\n";
     stringFunctions += "export const " + name + "Value = (text: String) =>\n";
     stringFunctions += "{\n";
+    stringFunctions += "\tif(!text)\n";
+    stringFunctions += "\t\treturn null;\n";
     stringFunctions += "\tswitch(text.toLowerCase())\n";
     stringFunctions += "\t{\n";
     
@@ -47,7 +49,7 @@ export const createEnumFunctions = (enumClass, enumClassName) =>
     }
 
     stringFunctions += "\t\tdefault:\n";
-    stringFunctions += "\t\t\treturn UNKNOWN_VALUE;\n";
+    stringFunctions += "\t\t\treturn null;\n";
     stringFunctions += "\t}\n";
     stringFunctions += "};\n";
 

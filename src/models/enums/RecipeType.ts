@@ -30,6 +30,8 @@ RecipeTypeDisplay[RecipeType.SPICE] = ENUM_SPICE;
 
 export const RecipeTypeValue = (text: String) =>
 {
+	if(!text)
+		return null;
 	switch(text.toLowerCase())
 	{
 		case "0":
@@ -73,7 +75,7 @@ export const RecipeTypeValue = (text: String) =>
 		case ENUM_SPICE.toLowerCase():
 			return RecipeType[RecipeType.SPICE];
 		default:
-			return text;
+			return null;
 	}
 };
 

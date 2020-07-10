@@ -106,6 +106,8 @@ QuantityUnitDisplay[QuantityUnit.GAL] = ENUM_GAL;
 
 export const QuantityUnitValue = (text: String) =>
 {
+	if(!text)
+		return null;
 	switch(text.toLowerCase())
 	{
 		case "0":
@@ -265,7 +267,7 @@ export const QuantityUnitValue = (text: String) =>
 		case ENUM_GAL.toLowerCase():
 			return QuantityUnit[QuantityUnit.GAL];
 		default:
-			return text;
+			return null;
 	}
 };
 

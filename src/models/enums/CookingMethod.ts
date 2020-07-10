@@ -28,6 +28,8 @@ CookingMethodDisplay[CookingMethod.STEAM] = ENUM_STEAM;
 
 export const CookingMethodValue = (text: String) =>
 {
+	if(!text)
+		return null;
 	switch(text.toLowerCase())
 	{
 		case "0":
@@ -67,7 +69,7 @@ export const CookingMethodValue = (text: String) =>
 		case ENUM_STEAM.toLowerCase():
 			return CookingMethod[CookingMethod.STEAM];
 		default:
-			return text;
+			return null;
 	}
 };
 

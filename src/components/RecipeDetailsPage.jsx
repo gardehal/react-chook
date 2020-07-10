@@ -13,14 +13,15 @@ import { DB_RECIPE, DB_FETCH_FAILED, NORWEGIAN_KRONER, MINUTES, PREPARATION, TOT
 // Component imports
 import { PreparationDisplay } from "../models/enums/Preparation";
 import { QuantityUnitDisplay } from "../models/enums/QuantityUnit";
-import { CookingMethodDisplay } from "../models/enums/CookingMethod";
-import { TempratureUnitDisplay } from "../models/enums/TempratureUnit";
-import { RecipeTypeDisplay } from "../models/enums/RecipeType";
-import { DifficultyDisplay } from "../models/enums/Difficulty";
+import { CookingMethodDisplay, CookingMethodValue, CookingMethod } from "../models/enums/CookingMethod";
+import { TempratureUnitDisplay, TempratureUnitValue, TempratureUnit } from "../models/enums/TempratureUnit";
+import { RecipeTypeDisplay, RecipeType } from "../models/enums/RecipeType";
+import { DifficultyDisplay, Difficulty } from "../models/enums/Difficulty";
 import { RecipeIngredientCard } from "./common/RecipeIngredientCard";
 import { Button } from "./common/Button";
 import { Panel } from "./common/Panel";
 import { Recipe } from "../models/Recipe";
+import { ProteinDisplay, Protein } from "../models/enums/Protein";
 
 class RecipeDetailsPage extends React.Component
 {
@@ -32,11 +33,12 @@ class RecipeDetailsPage extends React.Component
 
     componentWillMount()
     {
+        // If recipedata is null? may not trigger if other recipes are loaded
         let fromUrl = window.location.search.split("?" + DB_RECIPE + "=");
         let id = fromUrl[1];
         getRecipeData("id", id, 1);
 
-        getRecipeData();
+        // getRecipeData();
     }
 
     initStyle()
@@ -70,27 +72,23 @@ class RecipeDetailsPage extends React.Component
         let title = recipe.title;
         let cost = recipe.cost;
         let totalCost = recipe.total_cost;
-        let type = RecipeTypeDisplay[recipe.type];
-        let difficulty = DifficultyDisplay[recipe.difficulty];
+        let type = recipe.type ? RecipeTypeDisplay[RecipeType[recipe.type]] : "";
+        let difficulty = recipe.difficulty ? DifficultyDisplay[Difficulty[recipe.difficulty]] : "";
         let rating = recipe.rating;
         let portions = recipe.portions;
         let time_preparation = recipe.time_preparation;
         let time_total = recipe.time_total;
-        let cooking_method = recipe.cooking_method;
-        let cooking_method_temperature = recipe.cooking_method_temperature;
-        let cooking_method_temperature_unit = recipe.cooking_method_temperature_unit;
-        let main_protein = recipe.main_protein;
+        let method = recipe.cooking_method ? CookingMethodDisplay[CookingMethod[recipe.cooking_method]] : "";
+        let methodTemp = recipe.cooking_method_temperature ?? "";
+        let methodTempUnit = recipe.cooking_method_temperature_unit ? TempratureUnitDisplay[TempratureUnit[recipe.cooking_method_temperature_unit]] : "";
+        let main_protein = recipe.main_protein ? ProteinDisplay[Protein[recipe.main_protein]] : "";
         let ingredients = recipe.recipe_ingredients;
         let sub_recipes = recipe.sub_recipes;
         let instructions = recipe.instructions;
         let notes = recipe.notes;
+        // TODO nutrition
 
         setTitle(title);
-
-        // Extract data that can be undefined to local vars and display based on undefined or not
-        let method = CookingMethodDisplay[cooking_method] ?? "";
-        let methodTemp = cooking_method_temperature ?? "";
-        let methodTempUnit = TempratureUnitDisplay[cooking_method_temperature_unit] ?? "";
                 
         // Make a JSX array of all the sub recipes (if any) and render this array later
         let subRecipeJsx = [];
