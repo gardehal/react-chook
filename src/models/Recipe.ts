@@ -7,6 +7,7 @@ import { RecipeIngredient } from "./RecipeIngredient";
 import { getNow } from "../resources/Shared";
 import { getIngredientData } from "../actions/IngredientActions";
 import { getUsername } from "../actions/UserActions";
+import { getRecipeData, setRecipeData } from "../actions/RecipeActions";
 
 export class Recipe 
 {
@@ -96,11 +97,47 @@ export class Recipe
       this.modtime = getNow(true);
     }
 
+    public async upload(recipe: Recipe)
+    {
+      console.log("\nUploading: " + recipe.title);
+
+      recipe = await this.setNutritionalAndCostAndSource(recipe);
+
+      if(recipe.title === undefined)
+          return null;
+
+      let byNameData = await getRecipeData("title", recipe.title.toString());
+      if(byNameData !== undefined && byNameData.length !== 0)
+          return null;
+
+      let byIdData = await getRecipeData("id", recipe.id.toString());
+      if(byIdData !== undefined && byIdData.length !== 0)
+          return null;
+      
+      console.log("Item ok, will upload async:");
+      console.log(recipe);
+      setRecipeData(recipe);
+
+      return recipe;
+    }
+
+    // TODO
+    // Calculate in grams (ingredietns are values per 100ml/g, convert all units and multiply, ex 400g ground pork -> calories += (400 * ingredient.calories))
     // More efficient to load all ingredients first rather that fetch for every calc nutrients and cost
     public async setNutritionalAndCostAndSource(recipe: Recipe, source_id: String = "")
     {
-      recipe.calories = await this.calculateNutrientInfo(recipe, "calories");
-      // TODO await xyz
+      recipe.calories = await this.calculateNutrientInfo(recipe, "calories") || 0;
+      recipe.protein = await this.calculateNutrientInfo(recipe, "protein") || 0;
+      recipe.carbohydrates = await this.calculateNutrientInfo(recipe, "carbohydrates") || 0;
+      recipe.sugar = await this.calculateNutrientInfo(recipe, "sugar") || 0;
+      recipe.fat = await this.calculateNutrientInfo(recipe, "fat") || 0;
+      recipe.saturated_fat = await this.calculateNutrientInfo(recipe, "saturated_fat") || 0;
+
+      recipe.cost = await this.calculateCost(recipe, true); // Exclude common items like flour and salt to get a more accurate one-time purchase price
+      recipe.total_cost = await this.calculateCost(recipe);
+
+      recipe.source_id = source_id;
+
       return recipe;
     }
 

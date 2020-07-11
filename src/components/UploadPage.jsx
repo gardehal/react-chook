@@ -355,8 +355,7 @@ class UploadPage extends React.Component
 
             // Preparation will always be the last entry
             preparation = PreparationValue(ingredientLine[ingredientLine.length - 1].toUpperCase().trim());
-
-            let hasPreparation = Preparation[preparation]; // todo test
+            let hasPreparation = PreparationValue(preparation) !== null;
 
             let ingredientName = ingredientLine.slice(recipeIngredientIndex, ingredientLine.length - (hasPreparation ? 1 : 0)).join(" ").toLowerCase();
 
@@ -616,7 +615,8 @@ class UploadPage extends React.Component
             {
                 var rQueue = this.state.recipeQueue;
                 for (var j = 0; j < rQueue.length; j++) 
-                    this.uploadItem(rQueue[j], RECIPE);
+                    rQueue[j].upload(rQueue[j]);
+                    // this.uploadItem(rQueue[j], RECIPE);
 
                 this.setState({ recipeQueue: [] });
             }
@@ -636,7 +636,7 @@ class UploadPage extends React.Component
 
     async uploadItem(i, itemName = INGREDIENT)
     {
-        console.log("\nUploading: " + i.name);
+        console.log("\nUploading: " + i.name ?? i.title);
         let failedUploads = this.state.errorsQueue;
 
         if(i.name === undefined && i.title === undefined)

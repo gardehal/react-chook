@@ -3,8 +3,8 @@ import React from "react";
 // Variable imports
 import { getLightBackgroundColor, getTextColor } from "../../resources/colors";
 import { DB_INGREDIENT, DB_RECIPE } from "../../resources/language";
-import { QuantityUnitDisplay } from "../../models/enums/QuantityUnit";
-import { PreparationDisplay } from "../../models/enums/Preparation";
+import { QuantityUnitDisplay, QuantityUnit } from "../../models/enums/QuantityUnit";
+import { PreparationDisplay, Preparation } from "../../models/enums/Preparation";
 
 export class RecipeIngredientCard extends React.Component
 {
@@ -52,9 +52,9 @@ export class RecipeIngredientCard extends React.Component
         let ingredient = this.props.recipeIngredient;
         let id = ingredient.id;
         let quantity = ingredient.quantity ? ingredient.quantity.toString() + " " : "";
-        let quantityUnit = ingredient.quantity_unit ? QuantityUnitDisplay[ingredient.quantity_unit] + " " : "";
+        let quantityUnit = ingredient.quantity_unit ? QuantityUnitDisplay[QuantityUnit[ingredient.quantity_unit]] + " " : "";
         let name = ingredient.name;
-        let prep = ingredient.preparation ? ", " + PreparationDisplay[ingredient.preparation] : "";
+        let prep = ingredient.preparation ? ", " + PreparationDisplay[Preparation[ingredient.preparation]] : "";
         let isRecipe = ingredient.isRecipe;
         let doLink = this.props.doLink;
         let link = doLink ? () => window.open(isRecipe ?  ("/details/?" + DB_RECIPE + "=" + id) : ("/details/?" + DB_INGREDIENT + "=" + id)) : null;
