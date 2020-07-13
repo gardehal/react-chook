@@ -8,6 +8,8 @@ import { getNow } from "../resources/Shared";
 import { getIngredientData } from "../actions/IngredientActions";
 import { getUsername } from "../actions/UserActions";
 import { getRecipeData, setRecipeData } from "../actions/RecipeActions";
+import store from "../store";
+import { RECIPE_ERROR } from "../actions/types";
 
 export class Recipe 
 {
@@ -105,93 +107,98 @@ export class Recipe
           return null;
 
       let byNameData = await getRecipeData("title", recipe.title.toString());
-      if(byNameData !== undefined && byNameData.length !== 0)
-          return null;
+      if(byNameData.length !== 0)
+      {
+        store.dispatch({ type: RECIPE_ERROR})
+        console.log("Similar found in DB by title: " + recipe.title);
+        return null;
+      }
 
       let byIdData = await getRecipeData("id", recipe.id.toString());
-      if(byIdData !== undefined && byIdData.length !== 0)
-          return null;
+      if(byIdData.length !== 0)
+      {
+        store.dispatch({ type: RECIPE_ERROR})
+        console.log("Similar found in DB by id: " + recipe.title + " " + recipe.id);
+        return null;
+      }
       
       console.log("Item ok, will upload async:");
-
-      recipe = await this.setNutritionalAndCostAndSource(recipe);
+      recipe = await this.setNutritionalAndCost(recipe);
       console.log(recipe);
       setRecipeData(recipe);
 
       return recipe;
     }
 
-    public async setNutritionalAndCostAndSource(recipe: Recipe, source_id: String = "")
+    public async setNutritionalAndCost(recipe: Recipe)
     { 
-      let nutritionInfo = await this.setNutrientInfo(recipe); 
-      if(nutritionInfo)
-        recipe = nutritionInfo;
-
-      recipe.cost = await this.calculateCost(recipe, true); // Exclude common items like flour and salt to get a more accurate one-time purchase price
-      recipe.total_cost = await this.calculateCost(recipe);
-
-      recipe.source_id = source_id;
+      let updated = await this.setSecondaryInfo(recipe); 
+      if(updated)
+        recipe = updated;
 
       return recipe;
     }
 
-    private async setNutrientInfo(recipe: Recipe, propperties: Array<keyof Recipe> = [], keepDefaultPropperties: Boolean = true)
+    private async getIngredients(recipe: Recipe)
     {
-      let r: any = recipe; // Needed to be able to use propperty string as key (r[p])
-
       let ingredients = [];
-      let nutritionPropperties: Array<string> = ["calories", "protein", "carbohydrates", "sugar", "fat", "saturated_fat"];
+      let ri = recipe.recipe_ingredients;
+      for (const i in recipe.recipe_ingredients) 
+      {
+        if(ri[i].isRecipe)
+        {
+          let dbRecipes = await getRecipeData("id", ri[i].id.toString(), 1);
+          ingredients.push(dbRecipes[0]);
+        }
+        else
+        {
+          let dbIngredients = await getIngredientData("id", ri[i].id.toString(), 1);
+          ingredients.push(dbIngredients[0]);
+        }
+      }
+      return ingredients;
+    }
+
+    async setSecondaryInfo(recipe: Recipe, propperties: Array<keyof Recipe> = [], keepDefaultPropperties: Boolean = true)
+    {
+      let props: Array<string> = ["price", "calories", "protein", "carbohydrates", "sugar", "fat", "saturated_fat"];
       
       if(propperties.length === 0 && !keepDefaultPropperties)
         return null;
 
       if(!keepDefaultPropperties)
-        nutritionPropperties = propperties;
+        props = propperties;
       else if(propperties.length > 0)
-        nutritionPropperties = nutritionPropperties.concat(propperties);
+        props = props.concat(propperties);
 
-      for (const i in r.recipe_ingredients) 
-      {
-        let dbIngredients = await getIngredientData("id", r.recipe_ingredients[i].id.toString(), 1);
-        ingredients.push(dbIngredients[0]);
-      }
+      let r: any = recipe; // Needed to be able to use propperty string as key (r[p])
+      let ingredients = await this.getIngredients(recipe);
 
       for (const iIndex in ingredients) 
       {
-        for (const pindex in nutritionPropperties) 
+        for (const pindex in props) 
         {
           let i = ingredients[iIndex];
-          let p: string = nutritionPropperties[pindex];
+          let p = props[pindex];
 
-          console.log("Propperty " + iIndex + " " + pindex);
+          if(i[p] || i[p].length > 0)
+          {
+            if(p === "price")
+            {
+              if(!i.common) // Exclude common items/household commodity (salt, pepper, flour, ...) from price to get a more realistic one-time price
+                r.cost = parseFloat(parseFloat(r.cost + parseFloat(i[p])).toFixed(2));
 
-          if(i[p] && i[p].length > 0)
-            if(i.quantity_in_gram && i.quantity_in_gram.length > 0 && i.quantity_in_gram > 0)
-            r[p] += i.quantity_in_gram * (parseFloat(i[p].match(/\d+[.|,]?\d*/gmi)) / 100); // Regex on numbers in case of "123 g". Devide nutri-info by 100 because it is measured per 100ml/g
+              r.total_cost = parseFloat(parseFloat(r.total_cost + parseFloat(i[p])).toFixed(2));
+            }
+            else
+              if(r.recipe_ingredients[iIndex].quantity_in_gram && r.recipe_ingredients[iIndex].quantity_in_gram > 0)
+                r[p] += r.recipe_ingredients[iIndex].quantity_in_gram * (parseFloat(i[p].match(/\d+[.|,]?\d*/gmi)) / 100); // Regex on numbers in case of "123 g". Devide nutri-info by 100 because it is measured per 100ml/g
+              else
+                r[p] += parseFloat(i[p].match(/\d+[.|,]?\d*/gmi));
+          }
         }
       }
 
       return r;
-    }
-
-    // TODO
-    // More efficient to load all ingredients first rather that fetch for every calc nutrients and cost
-    private async calculateCost(recipe: Recipe, excludeCommon = false)
-    {
-      let cost: Number = 0;
-      const ri = this.recipe_ingredients;
-      if(ri.length > 0)
-      {
-        for (let i = 0; i < ri.length; i++)
-        {
-          let ingredient = await getIngredientData("id", ri[i].id.toString(), 1);
-          if(excludeCommon && !ingredient[0].common) // ingredient[0] because getIngredientData() returns array
-            cost += ingredient[0].price;
-          else
-            cost += ingredient[0].price;
-        }
-      }
-
-      return Number(cost.toFixed(2));
     }
   }

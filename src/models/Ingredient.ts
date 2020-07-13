@@ -9,7 +9,7 @@ export class Ingredient
     type: IngredientType;
     price: Number;
 
-    common: Boolean;
+    common: Boolean; // isCommodity
     calories: Number;
     protein: Number;
     carbohydrates: Number;
