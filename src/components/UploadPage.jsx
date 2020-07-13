@@ -224,27 +224,27 @@ class UploadPage extends React.Component
         let maxArrayItems = 64;
 
         // Metadata
-        let title = lines[0].replace("\t", "");
-        let portions = lines[1];
+        let title = lines[0].replace("\t", "").trim();
+        let portions = lines[1].trim();
         // let cuisine = lines[1];
         
         // time
-        let timeLine = lines[2].toString().split(" ");
-        let timePrep = timeLine[0];
-        let timeTotal = timeLine[1];
+        let timeLine = lines[2].toString().trim().split(" ");
+        let timePrep = timeLine[0].trim();
+        let timeTotal = timeLine[1].trim();
         
         // type, difficulty, rating line. type is required, diff and rate is optional
-        let typeDiffRate = lines[3].toString().split(" ");
-        let type = RecipeTypeValue(typeDiffRate[0].replace("\t", "").toUpperCase());
-        let difficulty = typeDiffRate.length > 1 ? DifficultyValue(typeDiffRate[1].replace("\t", "").toUpperCase()) : null;
-        let rating = typeDiffRate.length > 2 ? typeDiffRate[2] : null;
+        let typeDiffRate = lines[3].toString().trim().split(" ");
+        let type = RecipeTypeValue(typeDiffRate[0].replace("\t", "").toUpperCase().trim());
+        let difficulty = typeDiffRate.length > 1 ? DifficultyValue(typeDiffRate[1].replace("\t", "").toUpperCase().trim()) : null;
+        let rating = typeDiffRate.length > 2 ? typeDiffRate[2].trim() : null;
         
         // method++ line
-        let methodLine = lines[4].toString().split(" ");
-        let cookingMethod = CookingMethodValue(methodLine[0].replace("\t", "").toUpperCase());
-        let cookingMethodTemp = methodLine.length > 2 ? methodLine[1] : null;
-        let cookingMethodTempUnit = methodLine.length > 1 ? TempratureUnitValue(methodLine[2].replace("\t", "").toUpperCase()) : null;
-        let protein = ProteinValue(lines[5].replace("\t", "").toUpperCase());
+        let methodLine = lines[4].toString().trim().split(" ");
+        let cookingMethod = CookingMethodValue(methodLine[0].replace("\t", "").toUpperCase().trim());
+        let cookingMethodTemp = methodLine.length > 2 ? methodLine[1].trim() : null;
+        let cookingMethodTempUnit = methodLine.length > 1 ? TempratureUnitValue(methodLine[2].replace("\t", "").toUpperCase().trim()) : null;
+        let protein = ProteinValue(lines[5].replace("\t", "").toUpperCase().trim());
 
         // Arrays
         let subRecipes = [];
@@ -581,6 +581,10 @@ class UploadPage extends React.Component
         }
 
         console.log("\nEnqueueing items...");
+        console.log(ingredients);
+        console.log(recipes);
+        console.log(failedItems);
+
         this.setState({ filename: "", freetext: "", ingredientQueue: ingredients, recipeQueue: recipes, errorsQueue: failedItems });
     }
 

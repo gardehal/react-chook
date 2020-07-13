@@ -50,7 +50,8 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Finish Upload for Launch
 - [ ] Cost/calories.. etc. calculation in Recipe
 - - [x] Fix Enum Displays 
-- - [ ] Implement update for async values and reupload
+- - [x] Implement update for async values and reupload (ingredients)
+- - [ ] Implement update for async values and reupload (subrecipes)
 - 
 - [ ] "Launch"
 - 
@@ -85,6 +86,7 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Improved style for mobile (width, footer escpecially)
 - [ ] Unauthorized upload recipe/ingredient error handleing
 - [ ] Convert all ingredients in recipes to gram or ml (keep original, default display original, option in settings to use metric only)
+- [ ] Display more values like nutrients in recipe details, rememebr to add warning ("partial or estimated amount ... some ingredients do not have nutritional information"...)
 
 ## Known issues
 - Things are not looking good. Not figuratively but literally, style is not my strong suit.

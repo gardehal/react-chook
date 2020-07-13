@@ -11,7 +11,7 @@ import { callToast } from "../actions/SettingsActions";
 import { Spinner } from "../components/common/Spinner";
 import { Ingredient } from "../models/Ingredient";
 import { IngredientType } from "../models/enums/IngredientType";
-import { QuantityUnit } from "../models/enums/QuantityUnit";
+import { QuantityUnit, QuantityUnitValue } from "../models/enums/QuantityUnit";
 
 // Database basic functions
 
@@ -439,7 +439,7 @@ export const toCamelCase = (s, delim = " ") =>
     for (var item of a)
         res += delim.toString() + item.slice(0, 1).toUpperCase() + item.slice(1, item.length).toLowerCase();
     
-    return res;
+    return res.trim();
 };
 
 export const uppercaseFirst = (s) =>
@@ -650,16 +650,19 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
 };
 
 // Convert quantity (of ex. an ingredient, from cups to gram) though recursion from orignal quantity/unit to quantity/gram to quantity/toUnit
-// Measurements will be rounded to closest integer for water for simplicity. See resources below for conversion sourcees.
+// Measurements will be rounded to closest integer for water for simplicity. Flour, sugar, grains, powders etc. is going to be less, about 10% +/- 10 depending on mass.
 // - quantity, the number of units
 // - quantityUnit, the enum of what measurement unit was used
 // - toUnit, the enum measurement unit to convert to
 export const convertQuantityUnits = (quantity, quantityUnit, toUnit) =>
 {
-
-    if(quantity <= 0 || QuantityUnit[quantityUnit] === undefined || QuantityUnit[toUnit] === undefined)
+    if(quantity <= 0 
+        || quantityUnit === null || QuantityUnit[quantityUnit.toString().toUpperCase()] === undefined 
+        || toUnit === null || QuantityUnit[toUnit.toString().toUpperCase()] === undefined)
         return null;
 
+    quantityUnit = quantityUnit.toString().toUpperCase();
+    toUnit = toUnit.toString().toUpperCase();
 	switch(QuantityUnit[quantityUnit])
 	{
         // Cannot be quantified. If ingredient name contains package size like "1l ..." or "400g ...", maybe.
@@ -678,78 +681,170 @@ export const convertQuantityUnits = (quantity, quantityUnit, toUnit) =>
 
         // General units
         // Kitchen "units"
-        case 1: // TS, 1 teaspoon is 5 gram
-            return convertQuantityUnits(quantity * 4, QuantityUnit.G, toUnit);
-        case 2: // TBS, 1 tablespoon is 15 gram
-            return convertQuantityUnits(quantity * 15, QuantityUnit.G, toUnit);
+        case 1: // TS, 1 teaspoon = 5 gram
+            return convertQuantityUnits(quantity * 5, "G", toUnit);
+        case 2: // TBS, 1 tablespoon = 15 gram
+            return convertQuantityUnits(quantity * 15, "G", toUnit);
         case 3: // CUP, 1 cup = 235 gram
-            return convertQuantityUnits(quantity * 235, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 235, "G", toUnit);
 
         // Partial units
-        case 4: // CLOVE, 1 average clove of garlic is about 6 gram, according to a random YouTube video (https://youtu.be/dqmGplbZPfA)
-            return convertQuantityUnits(quantity * 6, QuantityUnit.G, toUnit);
+        case 4: // CLOVE, 1 average clove of garlic is about 5 gram, according to a random YouTube video (https://youtu.be/dqmGplbZPfA) (about 5 from own experiemnts)
+            return convertQuantityUnits(quantity * 5, "G", toUnit);
         case 5: // PINCH, 1 pinch = 0.5 gram, Wikipedia (https://en.wikipedia.org/wiki/Pinch_(unit)) suggests 1/8th of a teaspoon (0.625 g) to 1/16th (0.3125 g)
-            return convertQuantityUnits(quantity * 0.5, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 0.5, "G", toUnit);
         case 6: // FIST, estimate 1 fist = 200 gram
-            return convertQuantityUnits(quantity * 200, QuantityUnit.G, toUnit);
-        case 7: // LEAF, TODO weigh some bay leaves
-            return convertQuantityUnits(quantity * 1, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 200, "G", toUnit);
+        case 7: // LEAF, estimate 1 leaf = 1/15th, 1/20th of a gram 1 leaf = 0.06 gram
+            return convertQuantityUnits(quantity * 0.06, "G", toUnit);
         
         // SI units
         // SI weight
         case 18: // MG, 1 milligram = 0.001 gram
-            return convertQuantityUnits(quantity * 1000, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 1000, "G", toUnit);
         case 19: // G,
-            return null;
+            // Reverse propperties in parent switch
             switch(QuantityUnit[toUnit])
             {
-                //TODO
+                // Cannot be quantified. If ingredient name contains package size like "1l ..." or "400g ...", maybe.
+                case 0: // OTHER, unknown
+                case 8: // QUBE,
+                case 9: // PORTION,
+                case 10: // SLICE,
+                case 11: // WHOLE, 
+                case 12: // PACK,
+                case 13: // BOTTLE,
+                case 14: // CAN,
+                case 15: // UNIT,
+                case 16: // SOME,
+                case 17: // ALOT,
+                    return null;
+        
+                // General units
+                // Kitchen "units"
+                case 1: // TS, 1 teaspoon = 5 gram
+                    return quantity * (1/5);
+                case 2: // TBS, 1 tablespoon = 15 gram
+                    return quantity * (1/15);
+                case 3: // CUP, 1 cup = 235 gram
+                return quantity * (1/235);
+        
+                // Partial units
+                case 4: // CLOVE, 1 clove = 5 gram
+                    return quantity * (1/5);
+                case 5: // PINCH, 1 pinch = 0.5 gram
+                    return quantity * (1/0.5);
+                case 6: // FIST, estimate 1 fist = 200 gram
+                    return quantity * (1/200);
+                case 7: // LEAF, estimate 1 leaf = 1/15th, 1/20th of a gram 1 leaf = 0.06 gram
+                    return quantity * (1/0.06);
+                
+                // SI units
+                // SI weight
+                case 18: // MG, 1 milligram = 0.001 gram
+                    return quantity * (1/0.001);
+                case 19: // G,
+                    return quantity;
+                case 20: // DAG, 1 dekagram = 10 gram
+                    return quantity * (1/10);
+                case 21: // HG, 1 hektogram = 100 gram
+                    return quantity * (1/100);
+                case 22: // KG, 1 kilogram = 1000 gram
+                    return quantity * (1/1000);
+        
+                // SI length
+                case 23: // MM, 1 millimeter = 1 gram
+                    return quantity * (1/1);
+                case 24: // CM, estimate 1 centimeter = 10 gram
+                    return quantity * (1/10);
+                case 25: // M, 1 meter = 1000 gram
+                    return quantity * (1/1000);
+        
+                // SI volume
+                case 26: // ML, 1 milliliter = 1 gram 
+                    return quantity * (1/1);
+                case 27: // CL, 1 centiliter = 10 gram
+                    return quantity * (1/10);
+                case 28: // DL, 1 deciliter = 100 gram
+                    return quantity * (1/100);
+                case 29: // L, 1 liter = 1000 gram
+                    return quantity * (1/1000);
+                
+                // Imperial units
+                // Imperial weight
+                case 30: // GR, 1 grain = 0.065 gram
+                    return quantity * (1/0.065);
+                case 31: // IB, 1 pound = 450 gram
+                    return quantity * (1/450);
+                case 32: // ST, 1 stone = 6350 gram
+                    return quantity * (1/6350);
+        
+                // Imperial length adapted from cm measurements
+                case 33: // INCH, 1 inch = 2.5 gram
+                    return quantity * (1/2.5);
+                case 34: // FOOT, 1 foot = 300 gram
+                    return quantity * (1/300);
+        
+                // Imperial volume
+                case 35: // OZ, 1 fluid ounce = 28 gram
+                    return quantity * (1/28);
+                case 36: // PT, 1 pint = 470 gram
+                    return quantity * (1/470);
+                case 37: // QT, 1 quart = 945 gram
+                    return quantity * (1/945);
+                case 38: // GAL, 1 gallon = 3785 gram
+                    return quantity * (1/3785);
             }
         case 20: // DAG, 1 dekagram = 10 gram
-            return convertQuantityUnits(quantity * 10, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 10, "G", toUnit);
         case 21: // HG, 1 hektogram = 100 gram
-            return convertQuantityUnits(quantity * 100, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 100, "G", toUnit);
         case 22: // KG, 1 kilogram = 1000 gram
-            return convertQuantityUnits(quantity * 1000, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 1000, "G", toUnit);
 
-        // SI length // TODO test on ginger
-        case 23: // MM,
-        case 24: // CM,
-        case 25: // M,
-            return null;
+        // SI length
+        case 23: // MM, 1 millimeter = 1 gram
+            return convertQuantityUnits(quantity * 1, "G", toUnit);
+        case 24: // CM, estimate 1 centimeter (thicker) ginger is 12 gram, round average thickness down to 10
+            return convertQuantityUnits(quantity * 10, "G", toUnit);
+        case 25: // M, 1 meter = 1000 gram
+            return convertQuantityUnits(quantity * 1000, "G", toUnit);
 
         // SI volume
         case 26: // ML, 1 milliliter = 1 gram 
-            return convertQuantityUnits(quantity, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity, "G", toUnit);
         case 27: // CL, 1 centiliter = 10 gram
-            return convertQuantityUnits(quantity * 10, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 10, "G", toUnit);
         case 28: // DL, 1 deciliter = 100 gram
-            return convertQuantityUnits(quantity * 100, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 100, "G", toUnit);
         case 29: // L, 1 liter = 1000 gram
-            return convertQuantityUnits(quantity * 1000, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 1000, "G", toUnit);
         
         // Imperial units
         // Imperial weight
         case 30: // GR, 1 grain = 0.065 gram
-            return convertQuantityUnits(quantity * 0.065, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 0.065, "G", toUnit);
         case 31: // IB, 1 pound = 450 gram
-            return convertQuantityUnits(quantity * 450, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 450, "G", toUnit);
         case 32: // ST, 1 stone = 6350 gram
-            return convertQuantityUnits(quantity * 6350, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 6350, "G", toUnit);
 
-        // Imperial length
-        case 33: // INCH,
-        case 34: // FOOT,
-            return null;
+        // Imperial length adapted from cm measurements
+        case 33: // INCH, 1 inch = 2.5 gram
+            return convertQuantityUnits(quantity * 2.5, "G", toUnit);
+        case 34: // FOOT, 1 foot = 300 gram
+            return convertQuantityUnits(quantity * 300, "G", toUnit);
 
         // Imperial volume
         case 35: // OZ, 1 fluid ounce = 28 gram
-            return convertQuantityUnits(quantity * 28, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 28, "G", toUnit);
         case 36: // PT, 1 pint = 470 gram
-            return convertQuantityUnits(quantity * 470, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 470, "G", toUnit);
         case 37: // QT, 1 quart = 945 gram
-            return convertQuantityUnits(quantity * 946, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 946, "G", toUnit);
         case 38: // GAL, 1 gallon = 3785 gram
-            return convertQuantityUnits(quantity * 3785, QuantityUnit.G, toUnit);
+            return convertQuantityUnits(quantity * 3785, "G", toUnit);
     }
+
+    return null;
 };

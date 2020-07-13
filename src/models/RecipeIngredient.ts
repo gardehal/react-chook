@@ -23,6 +23,7 @@ export class RecipeIngredient
       this.preparation = preparation;
       this.isRecipe = isRecipe;
 
-      this.quantity_in_gram = convertQuantityUnits(quantity, quantityUnit, QuantityUnit.G) ?? 0;
+      let inGram = convertQuantityUnits(quantity, quantityUnit, "G");
+      this.quantity_in_gram = inGram ? inGram : 0;
     }
   }

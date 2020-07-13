@@ -101,8 +101,6 @@ export class Recipe
     {
       console.log("\nUploading: " + recipe.title);
 
-      recipe = await this.setNutritionalAndCostAndSource(recipe);
-
       if(recipe.title === undefined)
           return null;
 
@@ -115,23 +113,19 @@ export class Recipe
           return null;
       
       console.log("Item ok, will upload async:");
+
+      recipe = await this.setNutritionalAndCostAndSource(recipe);
       console.log(recipe);
       setRecipeData(recipe);
 
       return recipe;
     }
 
-    // TODO
-    // Calculate in grams (ingredietns are values per 100ml/g, convert all units and multiply, ex 400g ground pork -> calories += (400 * ingredient.calories))
-    // More efficient to load all ingredients first rather that fetch for every calc nutrients and cost
     public async setNutritionalAndCostAndSource(recipe: Recipe, source_id: String = "")
-    {
-      recipe.calories = await this.calculateNutrientInfo(recipe, "calories") || 0;
-      recipe.protein = await this.calculateNutrientInfo(recipe, "protein") || 0;
-      recipe.carbohydrates = await this.calculateNutrientInfo(recipe, "carbohydrates") || 0;
-      recipe.sugar = await this.calculateNutrientInfo(recipe, "sugar") || 0;
-      recipe.fat = await this.calculateNutrientInfo(recipe, "fat") || 0;
-      recipe.saturated_fat = await this.calculateNutrientInfo(recipe, "saturated_fat") || 0;
+    { 
+      let nutritionInfo = await this.setNutrientInfo(recipe); 
+      if(nutritionInfo)
+        recipe = nutritionInfo;
 
       recipe.cost = await this.calculateCost(recipe, true); // Exclude common items like flour and salt to get a more accurate one-time purchase price
       recipe.total_cost = await this.calculateCost(recipe);
@@ -141,25 +135,47 @@ export class Recipe
       return recipe;
     }
 
-    private async calculateNutrientInfo(recipe: Recipe, propperty: any)
+    private async setNutrientInfo(recipe: Recipe, propperties: Array<keyof Recipe> = [], keepDefaultPropperties: Boolean = true)
     {
-      let res: number = 0;
-      const ri = recipe.recipe_ingredients;
-      if(ri.length > 0)
-      {
-        for (let i = 0; i < ri.length; i++)
-        {
-          let ingredient = await getIngredientData("id", ri[i].id.toString(), 1);
-          ingredient = ingredient[0];
+      let r: any = recipe; // Needed to be able to use propperty string as key (r[p])
 
-          if(ingredient[propperty])
-            res += Number(ingredient[propperty].match(/\d+/gmi)); // Regex on numbers in case of "123 g"
+      let ingredients = [];
+      let nutritionPropperties: Array<string> = ["calories", "protein", "carbohydrates", "sugar", "fat", "saturated_fat"];
+      
+      if(propperties.length === 0 && !keepDefaultPropperties)
+        return null;
+
+      if(!keepDefaultPropperties)
+        nutritionPropperties = propperties;
+      else if(propperties.length > 0)
+        nutritionPropperties = nutritionPropperties.concat(propperties);
+
+      for (const i in r.recipe_ingredients) 
+      {
+        let dbIngredients = await getIngredientData("id", r.recipe_ingredients[i].id.toString(), 1);
+        ingredients.push(dbIngredients[0]);
+      }
+
+      for (const iIndex in ingredients) 
+      {
+        for (const pindex in nutritionPropperties) 
+        {
+          let i = ingredients[iIndex];
+          let p: string = nutritionPropperties[pindex];
+
+          console.log("Propperty " + iIndex + " " + pindex);
+
+          if(i[p] && i[p].length > 0)
+            if(i.quantity_in_gram && i.quantity_in_gram.length > 0 && i.quantity_in_gram > 0)
+            r[p] += i.quantity_in_gram * (parseFloat(i[p].match(/\d+[.|,]?\d*/gmi)) / 100); // Regex on numbers in case of "123 g". Devide nutri-info by 100 because it is measured per 100ml/g
         }
       }
 
-      return Number(res);
+      return r;
     }
 
+    // TODO
+    // More efficient to load all ingredients first rather that fetch for every calc nutrients and cost
     private async calculateCost(recipe: Recipe, excludeCommon = false)
     {
       let cost: Number = 0;
@@ -176,6 +192,6 @@ export class Recipe
         }
       }
 
-      return Number(cost);
+      return Number(cost.toFixed(2));
     }
   }
