@@ -11,8 +11,6 @@ import { getBackgroundColor, getLightBackgroundColor, getTextColor } from "../re
 import { DB_RECIPE, DB_FETCH_FAILED, NORWEGIAN_KRONER, MINUTES, PREPARATION, TOTAL, PORTIONS } from "../resources/language";
 
 // Component imports
-import { PreparationDisplay } from "../models/enums/Preparation";
-import { QuantityUnitDisplay } from "../models/enums/QuantityUnit";
 import { CookingMethodDisplay, CookingMethodValue, CookingMethod } from "../models/enums/CookingMethod";
 import { TempratureUnitDisplay, TempratureUnitValue, TempratureUnit } from "../models/enums/TempratureUnit";
 import { RecipeTypeDisplay, RecipeType } from "../models/enums/RecipeType";
@@ -70,8 +68,8 @@ class RecipeDetailsPage extends React.Component
         // Recipe
         let id = recipe.id;
         let title = recipe.title;
-        let cost = recipe.cost;
-        let totalCost = recipe.total_cost;
+        let estPrice = recipe.estimated_price;
+        let totalprice = recipe.total_price;
         let type = recipe.type ? RecipeTypeDisplay[RecipeType[recipe.type]] : "";
         let difficulty = recipe.difficulty ? DifficultyDisplay[Difficulty[recipe.difficulty]] : "";
         let rating = recipe.rating;
@@ -130,7 +128,7 @@ class RecipeDetailsPage extends React.Component
                     <p style={{ ...getTextColor(this.props.contrastmode) }}>{portions + " " + PORTIONS
                         + ", " + time_preparation + " " + MINUTES + " " + PREPARATION
                         + ", " + time_total + " " + MINUTES + " " + TOTAL
-                        + ", " + cost + " " + NORWEGIAN_KRONER}</p>
+                        + ", " + estPrice + " " + NORWEGIAN_KRONER}</p>
                 </div>
                 {method ? <hr/> : null}
 
@@ -155,7 +153,7 @@ class RecipeDetailsPage extends React.Component
 
         return (
             <Panel title={"DEV"} contrastmode={this.props.contrastmode}>
-                <Button onClick={() => console.log(new Recipe().setNutritionalAndCostAndSource(recipe))} contrastmode={this.props.contrastmode} text={"test"}/> 
+                <Button onClick={() => console.log(new Recipe().setSecondaryInfo(recipe))} contrastmode={this.props.contrastmode} text={"test"}/> 
             </Panel>
         );
     }
@@ -166,7 +164,7 @@ class RecipeDetailsPage extends React.Component
             <div style={{ ...getBackgroundColor(this.props.contrastmode) }}>
                 <div style={{ ...getBackgroundColor(this.props.contrastmode) }}>
                     <div className="pageRootContainer">
-                        {this.renderDevContent()}
+                        {/* {this.renderDevContent()} */}
                         {this.renderContent()}
                     </div>
                 </div>

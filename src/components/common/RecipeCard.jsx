@@ -71,7 +71,7 @@ export class RecipeCard extends React.Component
         let title = recipe.title;
         let type = recipe.type ? RecipeTypeDisplay[RecipeType[recipe.type]] : "";
         let difficulty = recipe.difficulty ? DifficultyDisplay[Difficulty[recipe.difficulty]] : "";
-        let cost = recipe.cost;
+        let estPrice = recipe.estimated_price;
         let timeTotal = recipe.time_total;
 
         return (
@@ -82,7 +82,7 @@ export class RecipeCard extends React.Component
                 </div>
 
                 <div style={{ ...this.containerStyle, ...this.infoContainerStyle }}>
-                    <p>{difficulty + " " + type + ", " + timeTotal + " " + MINUTES + ", " + cost + " " + NORWEGIAN_KRONER}</p>
+                    <p>{difficulty + " " + type + ", " + timeTotal + " " + MINUTES + ", " + estPrice + " " + NORWEGIAN_KRONER}</p>
                 </div>
             </div>
         );

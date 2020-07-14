@@ -190,7 +190,7 @@ class UploadPage extends React.Component
         let name = lines[0].replace("\t", "").toString().toLowerCase();
         let type = IngredientTypeValue(lines[1].replace("\t", "").toUpperCase());
         let price = lines[2];
-        let common = false;
+        let isCommodity = false;
 
         // name cannot be empty or a just a number
         if((name === null || name.length < 1) && isNaN(parseFloat(name)))
@@ -208,11 +208,11 @@ class UploadPage extends React.Component
         if(price === null)
             return null;
 
-        // common must be "1" or "true" (faux-parse boolean)
+        // isCommodity must be "1" or "true" (faux-parse boolean)
         if(lines[3] != null && (lines[3] === "1" ||  lines[3] === "true"))
-            common = true;
+            isCommodity = true;
 
-        return new Ingredient(getRandomString(), name, type, price, common);
+        return new Ingredient(getRandomString(), name, type, price, isCommodity);
     }
 
     async parseRecipe(lines, i, failedItems)

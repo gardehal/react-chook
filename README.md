@@ -48,16 +48,16 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [x] Footer
 - [x] Recipe/Ingredient comments, modby, moddate, regby, regdate 
 - [x] Finish Upload for Launch
-- [ ] Cost/calories.. etc. calculation in Recipe
+- [x] Cost/calories.. etc. calculation in Recipe
 - - [x] Fix Enum Displays 
 - - [x] Implement update for async values and reupload (ingredients)
-- - [ ] Implement update for async values and reupload (subrecipes)
+- - [x] Implement update for async values and reupload (subrecipes)
 - 
 - [ ] "Launch"
 - 
 - [ ] Improve user feedback
 - [ ] Recipe/Ingredient source
-- [ ] Recipe calories, protein, carbs, sugar, fat, other fat from ingredients
+- [x] Recipe calories, protein, carbs, sugar, fat, other fat from ingredients
 - [ ] Setup buffer table, uploads not from mods/devs/admins go to buffer, must be approved to go into real DB. Uploads are limited to x char length, every 1 minutes?
 - [ ] Test table
 - [ ] Basic API
@@ -84,9 +84,11 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Flavicon (For timer, toasts, notifications etc.)
 - [ ] Expanding all panels in upload white line over footer
 - [ ] Improved style for mobile (width, footer escpecially)
-- [ ] Unauthorized upload recipe/ingredient error handleing
-- [ ] Convert all ingredients in recipes to gram or ml (keep original, default display original, option in settings to use metric only)
-- [ ] Display more values like nutrients in recipe details, rememebr to add warning ("partial or estimated amount ... some ingredients do not have nutritional information"...)
+- [ ] Unauthorized upload recipe/ingredient error handleing, failure to upload etc
+- [x] Convert all ingredients in recipes to gram or ml (keep original, default display original, option in settings to use metric only)
+- [ ] Display more values like nutrients in recipe details, rememeber to add warning ("partial or estimated amount ... some ingredients do not have nutritional information"...), in table left&right of main body?
+- [x] Review table names (isComodity, nutrients as x_gram, y_kcal, z_per100, cost -> price, title -> name || name -> title)
+- [ ] set recipe secondary info in upload page?
 
 ## Known issues
 - Things are not looking good. Not figuratively but literally, style is not my strong suit.

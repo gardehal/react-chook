@@ -9,13 +9,13 @@ export class Ingredient
     type: IngredientType;
     price: Number;
 
-    common: Boolean; // isCommodity
-    calories: Number;
-    protein: Number;
-    carbohydrates: Number;
-    sugar: Number;
-    fat: Number;
-    saturated_fat: Number;
+    is_commodity: Boolean;
+    calories_kcal: Number;
+    protein_gram: Number;
+    carbohydrates_gram: Number;
+    sugar_gram: Number;
+    fat_gram: Number;
+    saturated_fat_gram: Number;
 
     original_name: String;
     source_link: String 
@@ -26,13 +26,13 @@ export class Ingredient
       name: String, 
       type: IngredientType, 
       price: Number, 
-      common: Boolean = false, 
-      calories: Number = 0,
-      protein: Number = 0, 
-      carbohydrates: Number = 0, 
-      sugar: Number = 0, 
-      fat: Number = 0, 
-      saturated_fat: Number = 0,
+      is_commodity: Boolean = false, 
+      calories_kcal: Number = 0,
+      protein_gram: Number = 0, 
+      carbohydrates_gram: Number = 0, 
+      sugar_gram: Number = 0, 
+      fat_gram: Number = 0, 
+      saturated_fat_gram: Number = 0,
       original_name: String = "",
       source_link: String = "") 
     {
@@ -41,13 +41,13 @@ export class Ingredient
       this.type = type;
       this.price = price;
 
-      this.common = common;
-      this.calories = calories;
-      this.protein = protein;
-      this.carbohydrates = carbohydrates;
-      this.sugar = sugar;
-      this.fat = fat;
-      this.saturated_fat = saturated_fat;
+      this.is_commodity = is_commodity;
+      this.calories_kcal = calories_kcal;
+      this.protein_gram = protein_gram;
+      this.carbohydrates_gram = carbohydrates_gram;
+      this.sugar_gram = sugar_gram;
+      this.fat_gram = fat_gram;
+      this.saturated_fat_gram = saturated_fat_gram;
 
       this.original_name = original_name;
       this.source_link = source_link;

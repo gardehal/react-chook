@@ -299,7 +299,7 @@ export const getRandomString = (length = 16) =>
     + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)).substring(0, length);
 };
 
-// Render common items
+// Render commodity items
 
 export const renderLoading = (bigSpinner = false, contrastmode = false) =>
 {
@@ -469,7 +469,7 @@ export const trimString = (s, repalceComma = false, splitIndex = 0, asNumber = f
         res += split[i] + " ";
 
     if(asNumber)
-        return Number(res.trim());
+        return Number(res.trim().match(/\d+[.|,]?\d*/gmi));
 
     return res.trim();
 };
@@ -483,10 +483,10 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
     let cheerio = require("cheerio");
 
     let name = ingredientName;
-    let common = false;
+    let is_commodity = false;
     if(name[name.length - 1] === "*")
     {
-        common = true;
+        is_commodity = true;
         name = name.slice(0, name.length - 1);
     }
 
@@ -544,7 +544,7 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
                     let productInfo = $(".product-detail")[0];
                     console.log(productInfo);
                     
-                    let originalName, brand, currency, price, type, energy, cals, protein, carbs, sugar, fat, satFat, salt = null;
+                    let originalName, brand, currency, price, type, energy_kj, cals_kcal, protein_gram, carbs_gram, sugar_gram, fat_gram, satFat_gram, salt_gram = null;
                     let sourceLink = kolDetails;
                     let id = getRandomString();
                     name = trimString(uppercaseFirst(name)) ?? null;
@@ -597,45 +597,37 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
                             console.log("Setting value - \"" + label + "\": \"" + value + "\"");
                             if(label === "Energi")
                             {
-                                energy = trimString(value, true, 2);
-                                cals = trimString(value.split("/")[1], true, 2);
+                                energy_kj = trimString(value, true, 2, true);
+                                cals_kcal = trimString(value.split("/")[1], true, 2, true);
                             }
                             else if(label === "Fett")
                             {
-                                fat = trimString(value, true);
+                                fat_gram = trimString(value, true, 0, true);
                             }
                             else if(label === "hvorav mettede fettsyrer")
                             {
-                                satFat = trimString(value, true);
+                                satFat_gram = trimString(value, true, 0, true);
                             }
                             else if(label === "Karbohydrater")
                             {
-                                carbs = trimString(value, true);
+                                carbs_gram = trimString(value, true, 0, true);
                             }
                             else if(label === "hvorav sukkerarter")
                             {
-                                sugar = trimString(value, true);
+                                sugar_gram = trimString(value, true, 0, true);
                             }
                             else if(label === "Protein")
                             {
-                                protein = trimString(value, true);
+                                protein_gram = trimString(value, true, 0, true);
                             }
                             else if(label === "Salt")
                             {
-                                salt = trimString(value, true);
+                                salt_gram = trimString(value, true, 0, true);
                             }
                         }
-
-                        // let cals = trimString(neutritionTable.children[1].children[3].children[0].data.toString(), true, 2);
-                        // let protein = trimString(neutritionTable.children[15].children[3].children[0].data.toString(), true, 1, true);
-                        // let carbs = trimString(neutritionTable.children[11].children[3].children[0].data.toString(), true, 1, true);
-                        // let sugar = trimString(neutritionTable.children[13].children[3].children[0].data.toString(), true, 1, true);
-                        // let fat = trimString(neutritionTable.children[3].children[3].children[0].data.toString(), true, 1, true);
-                        // let satFat = trimString(neutritionTable.children[5].children[3].children[0].data.toString(), true, 1, true);
-                        // let salt = neutritionTable.children[17] ? trimString(neutritionTable.children[17].children[3].children[0].data.toString(), true, 1, true) : null;
                     }
 
-                    let ingredient = new Ingredient(id, name, type, price, common, cals, protein, carbs, sugar, fat, satFat, brand + originalName, sourceLink);
+                    let ingredient = new Ingredient(id, name, type, price, is_commodity, cals_kcal, protein_gram, carbs_gram, sugar_gram, fat_gram, satFat_gram, brand + originalName, sourceLink);
                     console.log("Created new ingredient from Kolonial:");
                     console.log(ingredient);
 

@@ -15,15 +15,15 @@ export class Recipe
 {
     id: String;
     source_id: String;
-    calories: number;
-    protein: number;
-    carbohydrates: number;
-    sugar: number;
-    fat: number;
-    saturated_fat: number;
+    calories_kcal: number;
+    protein_gram: number;
+    carbohydrates_gram: number;
+    sugar_gram: number;
+    fat_gram: number;
+    saturated_fat_gram: number;
     title: String;
-    cost: number;
-    total_cost: number;
+    estimated_price: number;
+    total_price: number;
     type: RecipeType;
     // cuisine: Cuisine; // ? cuisine/oregin (mexican, european, asian)
     difficulty: Difficulty; 
@@ -35,10 +35,10 @@ export class Recipe
     cooking_method_temprature: number;
     cooking_method_temprature_unit: TempratureUnit;
     main_protein: Protein;
-    recipe_ingredients:Array<RecipeIngredient>;
-    sub_recipes:Array<Recipe>;
-    instructions:Array<String>;
-    notes:Array<String>;
+    recipe_ingredients: Array<RecipeIngredient>;
+    sub_recipes: Array<Recipe>;
+    instructions: Array<String>;
+    notes: Array<String>;
     comments: String;
     regby: String;
     regtime: String;
@@ -84,14 +84,14 @@ export class Recipe
       this.comments = comments;
 
       this.source_id = "";
-      this.calories = 0;
-      this.protein = 0;
-      this.carbohydrates = 0;
-      this.sugar = 0;
-      this.fat = 0;
-      this.saturated_fat = 0;
-      this.cost = 0;
-      this.total_cost = 0;
+      this.calories_kcal = 0;
+      this.protein_gram = 0;
+      this.carbohydrates_gram = 0;
+      this.sugar_gram = 0;
+      this.fat_gram = 0;
+      this.saturated_fat_gram = 0;
+      this.estimated_price = 0;
+      this.total_price = 0;
 
       this.regby = getUsername();
       this.regtime = getNow(true);
@@ -123,14 +123,14 @@ export class Recipe
       }
       
       console.log("Item ok, will upload async:");
-      recipe = await this.setNutritionalAndCost(recipe);
+      recipe = await this.setNutritionalAndPrice(recipe);
       console.log(recipe);
       setRecipeData(recipe);
 
       return recipe;
     }
 
-    public async setNutritionalAndCost(recipe: Recipe)
+    public async setNutritionalAndPrice(recipe: Recipe)
     { 
       let updated = await this.setSecondaryInfo(recipe); 
       if(updated)
@@ -161,7 +161,7 @@ export class Recipe
 
     async setSecondaryInfo(recipe: Recipe, propperties: Array<keyof Recipe> = [], keepDefaultPropperties: Boolean = true)
     {
-      let props: Array<string> = ["price", "calories", "protein", "carbohydrates", "sugar", "fat", "saturated_fat"];
+      let props: Array<string> = ["price", "calories_kcal", "protein_gram", "carbohydrates_gram", "sugar_gram", "fat_gram", "saturated_fat_gram"];
       
       if(propperties.length === 0 && !keepDefaultPropperties)
         return null;
@@ -180,21 +180,21 @@ export class Recipe
         {
           let i = ingredients[iIndex];
           let p = props[pindex];
+          // console.log(i.name + " " + p + " " + i[p]);
 
-          if(i[p] || i[p].length > 0)
+          if((i[p] !== undefined || i[p] !== null) && i[p].toString().length > 0)
           {
-            if(p === "price")
+            if(p == "price")
             {
-              if(!i.common) // Exclude common items/household commodity (salt, pepper, flour, ...) from price to get a more realistic one-time price
-                r.cost = parseFloat(parseFloat(r.cost + parseFloat(i[p])).toFixed(2));
-
-              r.total_cost = parseFloat(parseFloat(r.total_cost + parseFloat(i[p])).toFixed(2));
+              r.total_price = parseFloat(parseFloat(r.total_price + parseFloat(i[p])).toFixed(2));
+              if(!i.is_commodity) // Exclude is_commodity items/household commodity (salt, pepper, flour, ...) from price to get a more realistic one-time price
+                r.estimated_price = parseFloat(parseFloat(r.estimated_price + parseFloat(i[p])).toFixed(2));
             }
             else
               if(r.recipe_ingredients[iIndex].quantity_in_gram && r.recipe_ingredients[iIndex].quantity_in_gram > 0)
-                r[p] += r.recipe_ingredients[iIndex].quantity_in_gram * (parseFloat(i[p].match(/\d+[.|,]?\d*/gmi)) / 100); // Regex on numbers in case of "123 g". Devide nutri-info by 100 because it is measured per 100ml/g
+                r[p] += r.recipe_ingredients[iIndex].quantity_in_gram * (parseFloat(i[p].toString().match(/\d+[.|,]?\d*/gmi)) / 100); // Regex on numbers in case of "123 g". Devide nutri-info by 100 because it is measured per 100ml/g
               else
-                r[p] += parseFloat(i[p].match(/\d+[.|,]?\d*/gmi));
+                r[p] += parseFloat(i[p].toString().match(/\d+[.|,]?\d*/gmi));
           }
         }
       }
