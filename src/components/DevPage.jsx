@@ -10,7 +10,7 @@ import { login, logout, userCanEditFirebase, getUsername } from "../actions/User
 import { toggleContrastmode, callToast, toggleScraper } from "../actions/SettingsActions";
 
 // Variable imports
-import { TEST_ERROR, DB_META, TOTAL_RECIPES, TOTAL_INGREDIENTS, 
+import { TEST_ERROR, TOTAL_RECIPES, TOTAL_INGREDIENTS, 
     LAST_UPDATED, UPDATE_METADATA, METADATA, CONTRASTMODE, SCRAPERMODE, DEV,
     FUNCTIONALITY_TEST_PANEL, SCRIPT_PANEL, LOG_IN, LOG_OUT, CAN_EDIT_DB, NOT_LOGGED_IN, LOGGED_IN_AS, ERROR, EMOJI_GREEN_CHECK, EMOJI_RED_X } from "../resources/language";
 import { getBackgroundColor, getTextColor } from "../resources/colors";
@@ -282,6 +282,13 @@ class DevPage extends React.Component
         </div>);
     }
 
+    renderRegisterSource()
+    {
+        return (<div>
+            TODO
+        </div>);
+    }
+
     renderContent()
     {
         return (
@@ -306,6 +313,11 @@ class DevPage extends React.Component
                     {/* Testing functionality */}
                     <Panel title={FUNCTIONALITY_TEST_PANEL} contrastmode={this.props.contrastmode}>
                         {this.renderTestPanel()}   
+                    </Panel>
+
+                    {/* Testing functionality */}
+                    <Panel title={"Register Source TODO"} contrastmode={this.props.contrastmode}>
+                        {this.renderRegisterSource()}   
                     </Panel>
                 </div>
             </div>);

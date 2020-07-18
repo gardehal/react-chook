@@ -29,35 +29,13 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 6. The page should now be running on your [localhost:8080](http://localhost:8080)
 
 ## TODO
-- [x] Functioning webpage
-- [x] Frontpage
-- [x] Header
-- [x] Redux
-- [x] Contrastmode
-- [x] Minimal styling
-- [x] Dev page
-- [x] Linking to pages
-- [x] Database connection
-- [x] List of recipes
-- [x] Page for recipe details
-- [x] Search
-- [x] Alert toast
-- [x] Heroku
-- [x] Uploading to temp DB
-- [x] DB security
-- [x] Footer
-- [x] Recipe/Ingredient comments, modby, moddate, regby, regdate 
-- [x] Finish Upload for Launch
-- [x] Cost/calories.. etc. calculation in Recipe
-- - [x] Fix Enum Displays 
-- - [x] Implement update for async values and reupload (ingredients)
-- - [x] Implement update for async values and reupload (subrecipes)
+
+- [Done TODOs](./DONE.md)
 - 
 - [ ] "Launch"
 - 
 - [ ] Improve user feedback
 - [ ] Recipe/Ingredient source
-- [x] Recipe calories, protein, carbs, sugar, fat, other fat from ingredients
 - [ ] Setup buffer table, uploads not from mods/devs/admins go to buffer, must be approved to go into real DB. Uploads are limited to x char length, every 1 minutes?
 - [ ] Test table
 - [ ] Basic API
@@ -85,10 +63,8 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Expanding all panels in upload white line over footer
 - [ ] Improved style for mobile (width, footer escpecially)
 - [ ] Unauthorized upload recipe/ingredient error handleing, failure to upload etc
-- [x] Convert all ingredients in recipes to gram or ml (keep original, default display original, option in settings to use metric only)
-- [ ] Display more values like nutrients in recipe details, rememeber to add warning ("partial or estimated amount ... some ingredients do not have nutritional information"...), in table left&right of main body?
-- [x] Review table names (isComodity, nutrients as x_gram, y_kcal, z_per100, cost -> price, title -> name || name -> title)
-- [ ] set recipe secondary info in upload page?
+- [ ] option in settings to use metric display when available (or "1 cup (235 g) milk...")
+- [ ] Display more values like nutrients in recipe details, rememeber to add warning ("partial or estimated amount ... some ingredients do not have nutritional information"...), in table left/right of main body?
 
 ## Known issues
 - Things are not looking good. Not figuratively but literally, style is not my strong suit.
