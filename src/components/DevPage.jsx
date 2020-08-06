@@ -7,11 +7,11 @@ import { METADATA_LOADING, METADATA_LOADING_COMPLETE, METADATA_TEST_ERROR, METAD
 import { getMetadataData, setMetadataData } from "../actions/MetadataActions";
 import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast, getKolonialItemWithCheerio, searchDatabase } from "../resources/Shared";
 import { login, logout, userCanEditFirebase, getUsername } from "../actions/UserActions";
-import { toggleContrastmode, callToast, toggleScraper } from "../actions/SettingsActions";
+import { toggleContrastMode, toggleMetricMode, callToast, toggleScraper } from "../actions/SettingsActions";
 
 // Variable imports
 import { TEST_ERROR, TOTAL_RECIPES, TOTAL_INGREDIENTS, 
-    LAST_UPDATED, UPDATE_METADATA, METADATA, CONTRASTMODE, SCRAPERMODE, DEV,
+    LAST_UPDATED, UPDATE_METADATA, METADATA, CONTRASTMODE, METRICMODE, SCRAPERMODE, DEV,
     FUNCTIONALITY_TEST_PANEL, SCRIPT_PANEL, LOG_IN, LOG_OUT, CAN_EDIT_DB, NOT_LOGGED_IN, LOGGED_IN_AS, ERROR, EMOJI_GREEN_CHECK, EMOJI_RED_X } from "../resources/language";
 import { getBackgroundColor, getTextColor } from "../resources/colors";
 
@@ -166,12 +166,14 @@ class DevPage extends React.Component
             return null;
         
         let contrastModeText = CONTRASTMODE + (this.props.contrastmode ? " " + EMOJI_GREEN_CHECK : " " + EMOJI_RED_X);
+        let metricModeText = METRICMODE + (this.props.metricmode ? " " + EMOJI_GREEN_CHECK : " " + EMOJI_RED_X);
         let scraperModeText = SCRAPERMODE + (this.props.scraper ? " " + EMOJI_GREEN_CHECK : " " + EMOJI_RED_X);
 
         return (
             <div className="rowStyle">
                 <Button onClick={this.updateMetaData} contrastmode={this.props.contrastmode} text={UPDATE_METADATA}/>   
-                <Button onClick={() => toggleContrastmode(this.props.contrastmode)} contrastmode={this.props.contrastmode} text={contrastModeText}/>  
+                <Button onClick={() => toggleContrastMode()} contrastmode={this.props.contrastmode} text={contrastModeText}/>  
+                <Button onClick={() => toggleMetricMode()} contrastmode={this.props.contrastmode} text={metricModeText}/> 
                 <Button onClick={() => toggleScraper()} contrastmode={this.props.contrastmode} text={scraperModeText}/> 
                 <Button onClick={() => window.open("https://console.firebase.google.com/u/0/")} contrastmode={this.props.contrastmode} text={"Firebase"}/> 
                 <Button onClick={() => window.open("https://kolonial.no")} contrastmode={this.props.contrastmode} text={"Kolonial"}/>            
@@ -339,14 +341,14 @@ class DevPage extends React.Component
 
 const mapStateToProps = state => 
 {
-    const { contrastmode, scraper, toastMessage } = state.settings;
+    const { contrastmode, metricmode, scraper, toastMessage } = state.settings;
     const { metadataError, metadataLoading, metadataResult } = state.meta;
     const { user } = state.user;
-    return { contrastmode, scraper, toastMessage, 
+    return { contrastmode, metricmode, scraper, toastMessage, 
         metadataError, metadataLoading, metadataResult,
         user, };
 };
   
 export default connect(
-    mapStateToProps, { getMetadataData, setMetadataData, toggleContrastmode, callToast }
+    mapStateToProps, { getMetadataData, setMetadataData, toggleContrastMode, toggleMetricMode, callToast }
 )(DevPage);

@@ -1,21 +1,19 @@
 import store from "../store";
 
-import { SETTINGS_TOGGLE_CONTRASTMODE, SHOW_ALERT_TOAST, HIDE_ALERT_TOAST, SETTINGS_TOGGLE_SCRAPER } from "./types";
+import { SETTINGS_TOGGLE_CONTRASTMODE, SETTINGS_TOGGLE_METRIC, SHOW_ALERT_TOAST, HIDE_ALERT_TOAST, SETTINGS_TOGGLE_SCRAPER } from "./types";
 
-export const contrastmodeStorageKey = "contrastmode"; 
-export const ingredientScraperStorageKey = "ingredientScraper"; 
+export const contrastmodeStorageKey = "contrast_mode"; 
+export const metricmodeStorageKey = "metric_ingredient_measurements"; 
+export const ingredientScraperStorageKey = "ingredient_scraper"; 
 
-export const toggleContrastmode = (currentValue) =>
-{
+export const toggleContrastMode = () =>
     store.dispatch({ type: SETTINGS_TOGGLE_CONTRASTMODE });
-    localStorage.setItem(contrastmodeStorageKey, JSON.stringify(currentValue ? false : true));
-}
 
-export const toggleScraper = (currentValue) =>
-{
+export const toggleMetricMode = () =>
+    store.dispatch({ type: SETTINGS_TOGGLE_METRIC });
+
+export const toggleScraper = () =>
     store.dispatch({ type: SETTINGS_TOGGLE_SCRAPER });
-    localStorage.setItem(ingredientScraperStorageKey, JSON.stringify(currentValue ? false : true));
-}
 
 export const callToast = (message, time = 5000) =>
 {

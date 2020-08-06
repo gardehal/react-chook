@@ -65,6 +65,7 @@ export const TOTAL_INGREDIENTS = " ingredienser i databasen";
 export const LAST_UPDATED = "Oppdatert ";
 export const UPDATE_METADATA = "Oppdater metadata";
 export const CONTRASTMODE = "Kontrastmodus";
+export const METRICMODE = "Bruk metersystem";
 export const SCRAPERMODE = "Web-skraper";
 export const ABOUT_US = "Om oss";
 export const CONTRIBUTE_TO_PAGE = "Bidra til siden";

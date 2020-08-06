@@ -5,7 +5,7 @@ import store from "./store";
 import { BrowserRouter, Route } from "react-router-dom";
 
 // Redux imports
-import { SETTINGS_TOGGLE_CONTRASTMODE, USER_LOGIN_SUCCESS, USER_LOGIN_FAIL, SETTINGS_TOGGLE_SCRAPER } from "./actions/types";
+import { SETTINGS_TOGGLE_CONTRASTMODE, SETTINGS_TOGGLE_METRIC, USER_LOGIN_SUCCESS, USER_LOGIN_FAIL, SETTINGS_TOGGLE_SCRAPER } from "./actions/types";
 import { getApiExample } from "./resources/ApiExample";
 
 // Variable imports
@@ -21,7 +21,7 @@ import RecipeDetailsPage from "./components/RecipeDetailsPage";
 import SearchPage from "./components/SearchPage";
 import UploadPage from "./components/UploadPage";
 
-import { contrastmodeStorageKey, ingredientScraperStorageKey } from "./actions/SettingsActions";
+import { contrastmodeStorageKey, metricmodeStorageKey, ingredientScraperStorageKey } from "./actions/SettingsActions";
 import { firebaseUserStorageKey } from "./actions/UserActions";
 
 class App extends React.Component 
@@ -46,6 +46,8 @@ class App extends React.Component
         // Get stored settings from localStorage
         if(localStorage.getItem(contrastmodeStorageKey) === "true")
             store.dispatch({ type: SETTINGS_TOGGLE_CONTRASTMODE });
+        if(localStorage.getItem(metricmodeStorageKey) === "true")
+            store.dispatch({ type: SETTINGS_TOGGLE_METRIC });
         if(localStorage.getItem(ingredientScraperStorageKey) === "true")
             store.dispatch({ type: SETTINGS_TOGGLE_SCRAPER });
         if(localStorage.getItem(firebaseUserStorageKey))
