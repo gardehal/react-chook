@@ -32,7 +32,6 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 
 - [Done TODOs](./DONE.md)
 - 
-- [x] test commit 
 - [ ] "Launch"
 - 
 - [ ] Improve user feedback

@@ -99,7 +99,7 @@ class RecipeDetailsPage extends React.Component
         let ingredientsJsx = [];
         for(let i = 0; i < ingredients.length; i++)
             ingredientsJsx.push(<RecipeIngredientCard key={"ingredient" + i} recipeIngredient={ingredients[i]} history={this.props}
-                contrastmode={this.props.contrastmode}/>);
+                contrastmode={this.props.contrastmode} metricmode={this.props.metricmode}/>);
 
         // Make a JSX array of all the instructions and render this array later
         let instructionsJsx = [];
@@ -175,10 +175,10 @@ class RecipeDetailsPage extends React.Component
 
 const mapStateToProps = state => 
 {
-    const { contrastmode } = state.settings;
+    const { contrastmode, metricmode } = state.settings;
     const { recipeError, recipeLoading, recipeResult } = state.recipe;
     const { ingredientError, ingredientLoading, ingredientResult } = state.ingredient;
-    return { contrastmode, 
+    return { contrastmode, metricmode,
         recipeError, recipeLoading, recipeResult, 
         ingredientError, ingredientLoading, ingredientResult };
 };

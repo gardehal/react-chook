@@ -10,6 +10,7 @@ export class RecipeIngredientCard extends React.Component
 {
     // Props
     // contrastmode: use contrastmode (aka nightmode/darkmode), default false
+    // metricmode: use metric measurements (gram only currently), default false
     // recipeIngredient: the ingredient in the recipe whos data we are displaying: no defaults
     // doLink: allows clicking on the recipe to go to details, default false
     
@@ -51,8 +52,15 @@ export class RecipeIngredientCard extends React.Component
     {
         let ingredient = this.props.recipeIngredient;
         let id = ingredient.id;
+        
         let quantity = ingredient.quantity ? ingredient.quantity.toString() + " " : "";
         let quantityUnit = ingredient.quantity_unit ? QuantityUnitDisplay[QuantityUnit[ingredient.quantity_unit]] + " " : "";
+        if(this.props.metricmode && ingredient.quantity_in_gram)
+        {
+            quantity = ingredient.quantity ? ingredient.quantity_in_gram.toString() + " " : "";
+            quantityUnit = QuantityUnitDisplay[QuantityUnit["G"]] + " ";
+        }
+
         let name = ingredient.name;
         let prep = ingredient.preparation ? ", " + PreparationDisplay[Preparation[ingredient.preparation]] : "";
         let isRecipe = ingredient.isRecipe;
