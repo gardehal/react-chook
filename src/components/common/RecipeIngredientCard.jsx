@@ -55,10 +55,13 @@ export class RecipeIngredientCard extends React.Component
         
         let quantity = ingredient.quantity ? ingredient.quantity.toString() + " " : "";
         let quantityUnit = ingredient.quantity_unit ? QuantityUnitDisplay[QuantityUnit[ingredient.quantity_unit]] + " " : "";
-        if(this.props.metricmode && ingredient.quantity_in_gram)
+
+        let metricsString = "";
+        if(this.props.metricmode && ingredient.quantity_in_gram && ingredient.quantity_unit !== QuantityUnit[QuantityUnit.G])
         {
-            quantity = ingredient.quantity ? ingredient.quantity_in_gram.toString() + " " : "";
-            quantityUnit = QuantityUnitDisplay[QuantityUnit["G"]] + " ";
+            let quantityGram = ingredient.quantity_in_gram.toString();
+            let quantityUnitGram = QuantityUnitDisplay[QuantityUnit["G"]];
+            metricsString = "(" + quantityGram + " " + quantityUnitGram + ") "; 
         }
 
         let name = ingredient.name;
@@ -75,7 +78,7 @@ export class RecipeIngredientCard extends React.Component
         return (
             <div className="rowStyle" style={{ ...this.containerStyle, ...getLightBackgroundColor(this.props.contrastmode) }} onClick={link}>
                 <p key={"recipeIngredient" + id} style={{ ...getTextColor(this.props.contrastmode) }}>
-                    { " - " + quantity + quantityUnit + name + prep}
+                    { " - " + quantity + quantityUnit + metricsString + name + prep}
                 </p>
             </div>);
     }
