@@ -8,7 +8,8 @@ import { renderLoading, renderError, setTitle } from "../resources/Shared";
 
 // Variable imports
 import { getBackgroundColor, getLightBackgroundColor, getTextColor } from "../resources/colors";
-import { DB_RECIPE, DB_FETCH_FAILED, NORWEGIAN_KRONER, MINUTES, PREPARATION, TOTAL, PORTIONS } from "../resources/language";
+import { DB_RECIPE, DB_FETCH_FAILED, NORWEGIAN_KRONER, MINUTES, PREPARATION, TOTAL, PORTIONS,
+    NUTRIENTS_PER_100_ML_G, NB_MAY_BE_PARTIAL_INFORMATION } from "../resources/language";
 
 // Component imports
 import { CookingMethodDisplay, CookingMethodValue, CookingMethod } from "../models/enums/CookingMethod";
@@ -65,6 +66,19 @@ class RecipeDetailsPage extends React.Component
         if(this.props.recipeResult.length !== 1 || this.props.recipeError)
             return renderError(DB_FETCH_FAILED, true, this.props.contrastmode);
 
+        setTitle(title);
+
+        // TODO source
+        // this.source_id = "";
+        
+        // Nutritional values (NB: per 100 ml/g)
+        let cals = recipe.calories_kcal;
+        let protein = recipe.protein_gram;
+        let carbs = recipe.carbohydrates_gram;
+        let sugar = recipe.sugar_gram;
+        let fat = recipe.fat_gram;
+        let satFat = recipe.saturated_fat_gram;
+
         // Recipe
         let id = recipe.id;
         let title = recipe.title;
@@ -84,10 +98,17 @@ class RecipeDetailsPage extends React.Component
         let sub_recipes = recipe.sub_recipes;
         let instructions = recipe.instructions;
         let notes = recipe.notes;
-        // TODO nutrition
 
-        setTitle(title);
-                
+        // Make a label for nutritional values
+        let nutrientsText = NUTRIENTS_PER_100_ML_G + "\n" 
+            + NB_MAY_BE_PARTIAL_INFORMATION + "\n"
+            + "Calories: " +  cals + "\n"
+            + protein + "\n"
+            + carbs + "\n"
+            + sugar + "\n"
+            + fat + "\n"
+            + satFat;
+
         // Make a JSX array of all the sub recipes (if any) and render this array later
         let subRecipeJsx = [];
         if(sub_recipes)
@@ -144,6 +165,8 @@ class RecipeDetailsPage extends React.Component
                 {notes ? <hr/> : null}
 
                 {recipeNotesJsx}
+
+                {nutrientsText}
             </div>);
     }
 

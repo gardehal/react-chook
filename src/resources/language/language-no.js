@@ -89,6 +89,15 @@ export const LOGGED_IN_AS = "Logget inn som:";
 export const SCROLL_TO_TOP = "Toppen av siden";
 export const MADE_WITH_TECH = "Laget med React, Firebase, og litt Kolonial";
 export const WAS = "var";
+export const NUTRIENTS_PER_100_ML_G = "Næringsinnhold per 100 ml/g";
+export const NB_MAY_BE_PARTIAL_INFORMATION = "NB!: Deler av denne informasjonen kan være ufullstendig";
+export const CALORIES = "Kalorier";
+export const PROTEIN = "Protein";
+export const CARBOHYDRATES = "Karbohydrater";
+export const SUGAR = "Sukker";
+export const FAT = "Fett";
+export const SATUEATED_FAT = "Mettet fett";
+
 
 // Upload
 export const GENERAL_UPLOAD_INFORMATION = "På denne siden kan du laste opp ingredienser og oppskrifter til databasen. Alle ingredienser og oppskrifter har noen krav som må oppfylles før de godkjennes. Det finnes mer informasjon i panelene under.";

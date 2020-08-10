@@ -34,6 +34,8 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - 
 - [ ] "Launch"
 - 
+- [ ] Dinner planning features (save as cookies, date + id, summarize prices, nutrients, allow view of recipes in minimalist printable page, allow minimalist print(+ copy) of ingredients list) (API not needed?)
+- [ ] Cookie storage information (settings, meal plans, link to more info)
 - [ ] Improve user feedback
 - [ ] Recipe/Ingredient source
 - [ ] Setup buffer table, uploads not from mods/devs/admins go to buffer, must be approved to go into real DB. Uploads are limited to x char length, every 1 minutes?
@@ -41,7 +43,6 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Basic API
 - [ ] Transfer data to API DB
 - [ ] Editing DB data
-- [ ] API Dinner planning features
 - [ ] Settings
 - [ ] Built in moderation tools
 - [ ] Users
