@@ -112,6 +112,25 @@ input[type=text]:focus
 
 /* Removeing items on small screens */
 
+@media (min-width: 900px) 
+{
+    .offset-top-left
+    { 
+      position: fixed;
+      width: 15%;
+      left: 2.5%;
+      top: 10%;
+    }
+}
+
+@media (max-width: 900px) 
+{
+    .hide-900
+    {
+        display: none;
+    }
+}
+
 @media (max-width: 650px) 
 {
     .hide-650

@@ -7,9 +7,9 @@ import { getIngredientData } from "../actions/IngredientActions";
 import { renderLoading, renderError, setTitle } from "../resources/Shared";
 
 // Variable imports
-import { getBackgroundColor, getLightBackgroundColor, getTextColor } from "../resources/colors";
+import { getBackgroundColor, getLightBackgroundColor, getTextColor, getAccentColor } from "../resources/colors";
 import { DB_RECIPE, DB_FETCH_FAILED, NORWEGIAN_KRONER, MINUTES, PREPARATION, TOTAL, PORTIONS,
-    NUTRIENTS_PER_100_ML_G, NB_MAY_BE_PARTIAL_INFORMATION } from "../resources/language";
+    NUTRIENTS_PER_100_ML_G, NB_MAY_BE_PARTIAL_INFORMATION, CALORIES, PROTEIN, CARBOHYDRATES, SUGAR, FAT, SATUEATED_FAT } from "../resources/language";
 
 // Component imports
 import { CookingMethodDisplay, CookingMethodValue, CookingMethod } from "../models/enums/CookingMethod";
@@ -100,14 +100,16 @@ class RecipeDetailsPage extends React.Component
         let notes = recipe.notes;
 
         // Make a label for nutritional values
-        let nutrientsText = NUTRIENTS_PER_100_ML_G + "\n" 
-            + NB_MAY_BE_PARTIAL_INFORMATION + "\n"
-            + "Calories: " +  cals + "\n"
-            + protein + "\n"
-            + carbs + "\n"
-            + sugar + "\n"
-            + fat + "\n"
-            + satFat;
+        let nutrientsTable = (<div className="offset-top-left" style={{ ...getAccentColor(this.props.contrastmode) }}>
+            <p style={{ ...getTextColor(this.props.contrastmode) }}>{NUTRIENTS_PER_100_ML_G}</p>
+            <p style={{ ...getTextColor(this.props.contrastmode) }}>{NB_MAY_BE_PARTIAL_INFORMATION}</p>
+            <p style={{ ...getTextColor(this.props.contrastmode) }}>{CALORIES}: {cals} kcal</p>
+            <p style={{ ...getTextColor(this.props.contrastmode) }}>{PROTEIN}: {protein} g</p>
+            <p style={{ ...getTextColor(this.props.contrastmode) }}>{CARBOHYDRATES}: {carbs} g</p>
+            <p style={{ ...getTextColor(this.props.contrastmode) }}>{SUGAR}: {sugar} g</p>
+            <p style={{ ...getTextColor(this.props.contrastmode) }}>{FAT}: {fat} g</p>
+            <p style={{ ...getTextColor(this.props.contrastmode) }}>{SATUEATED_FAT}: {satFat} g</p>
+            </div>);
 
         // Make a JSX array of all the sub recipes (if any) and render this array later
         let subRecipeJsx = [];
@@ -166,7 +168,7 @@ class RecipeDetailsPage extends React.Component
 
                 {recipeNotesJsx}
 
-                {nutrientsText}
+                {nutrientsTable}
             </div>);
     }
 
