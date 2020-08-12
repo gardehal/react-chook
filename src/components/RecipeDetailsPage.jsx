@@ -9,7 +9,7 @@ import { renderLoading, renderError, setTitle } from "../resources/Shared";
 // Variable imports
 import { getBackgroundColor, getLightBackgroundColor, getTextColor, getAccentColor } from "../resources/colors";
 import { DB_RECIPE, DB_FETCH_FAILED, NORWEGIAN_KRONER, MINUTES, PREPARATION, TOTAL, PORTIONS,
-    NUTRIENTS_PER_100_ML_G, NB_MAY_BE_PARTIAL_INFORMATION, CALORIES, PROTEIN, CARBOHYDRATES, SUGAR, FAT, SATUEATED_FAT } from "../resources/language";
+    NUTRIENTS_PER_100_ML_G, NB_MAY_BE_PARTIAL_INFORMATION, CALORIES, PROTEIN, CARBOHYDRATES, SUGAR, FAT, SATURATED_FAT, SALT } from "../resources/language";
 
 // Component imports
 import { CookingMethodDisplay, CookingMethodValue, CookingMethod } from "../models/enums/CookingMethod";
@@ -72,12 +72,13 @@ class RecipeDetailsPage extends React.Component
         // this.source_id = "";
         
         // Nutritional values (NB: per 100 ml/g)
-        let cals = recipe.calories_kcal;
-        let protein = recipe.protein_gram;
-        let carbs = recipe.carbohydrates_gram;
-        let sugar = recipe.sugar_gram;
-        let fat = recipe.fat_gram;
-        let satFat = recipe.saturated_fat_gram;
+        let cals = recipe.calories_kcal || "0";
+        let protein = recipe.protein_gram || "0";
+        let carbs = recipe.carbohydrates_gram || "0";
+        let sugar = recipe.sugar_gram || "0";
+        let fat = recipe.fat_gram || "0";
+        let satFat = recipe.saturated_fat_gram || "0";
+        let salt = recipe.salt_gram || "0";
 
         // Recipe
         let id = recipe.id;
@@ -101,14 +102,15 @@ class RecipeDetailsPage extends React.Component
 
         // Make a label for nutritional values
         let nutrientsTable = (<div className="offset-top-left" style={{ ...getAccentColor(this.props.contrastmode) }}>
-            <p style={{ ...getTextColor(this.props.contrastmode) }}>{NUTRIENTS_PER_100_ML_G}</p>
+            <h4 style={{ ...getTextColor(this.props.contrastmode) }}>{NUTRIENTS_PER_100_ML_G}</h4>
             <p style={{ ...getTextColor(this.props.contrastmode) }}>{NB_MAY_BE_PARTIAL_INFORMATION}</p>
             <p style={{ ...getTextColor(this.props.contrastmode) }}>{CALORIES}: {cals} kcal</p>
             <p style={{ ...getTextColor(this.props.contrastmode) }}>{PROTEIN}: {protein} g</p>
             <p style={{ ...getTextColor(this.props.contrastmode) }}>{CARBOHYDRATES}: {carbs} g</p>
             <p style={{ ...getTextColor(this.props.contrastmode) }}>{SUGAR}: {sugar} g</p>
             <p style={{ ...getTextColor(this.props.contrastmode) }}>{FAT}: {fat} g</p>
-            <p style={{ ...getTextColor(this.props.contrastmode) }}>{SATUEATED_FAT}: {satFat} g</p>
+            <p style={{ ...getTextColor(this.props.contrastmode) }}>{SATURATED_FAT}: {satFat} g</p>
+            <p style={{ ...getTextColor(this.props.contrastmode) }}>{SALT}: {salt} g</p>
             </div>);
 
         // Make a JSX array of all the sub recipes (if any) and render this array later

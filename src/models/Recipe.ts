@@ -21,6 +21,7 @@ export class Recipe
     sugar_gram: number;
     fat_gram: number;
     saturated_fat_gram: number;
+    salt_gram: number;
     title: String;
     estimated_price: number;
     total_price: number;
@@ -90,6 +91,7 @@ export class Recipe
       this.sugar_gram = 0;
       this.fat_gram = 0;
       this.saturated_fat_gram = 0;
+      this.salt_gram = 0;
       this.estimated_price = 0;
       this.total_price = 0;
 
@@ -161,7 +163,7 @@ export class Recipe
 
     async setSecondaryInfo(recipe: Recipe, propperties: Array<keyof Recipe> = [], keepDefaultPropperties: Boolean = true)
     {
-      let props: Array<string> = ["price", "calories_kcal", "protein_gram", "carbohydrates_gram", "sugar_gram", "fat_gram", "saturated_fat_gram"];
+      let props: Array<string> = ["price", "calories_kcal", "protein_gram", "carbohydrates_gram", "sugar_gram", "fat_gram", "saturated_fat_gram", "salt_gram"];
       
       if(propperties.length === 0 && !keepDefaultPropperties)
         return null;

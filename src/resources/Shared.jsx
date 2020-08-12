@@ -627,7 +627,7 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
                         }
                     }
 
-                    let ingredient = new Ingredient(id, name, type, price, is_commodity, cals_kcal, protein_gram, carbs_gram, sugar_gram, fat_gram, satFat_gram, brand + originalName, sourceLink);
+                    let ingredient = new Ingredient(id, name, type, price, is_commodity, cals_kcal, protein_gram, carbs_gram, sugar_gram, fat_gram, satFat_gram, salt_gram, brand + originalName, sourceLink);
                     console.log("Created new ingredient from Kolonial:");
                     console.log(ingredient);
 

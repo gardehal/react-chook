@@ -96,8 +96,8 @@ export const PROTEIN = "Protein";
 export const CARBOHYDRATES = "Karbohydrater";
 export const SUGAR = "Sukker";
 export const FAT = "Fett";
-export const SATUEATED_FAT = "Mettet fett";
-
+export const SATURATED_FAT = "Mettet fett";
+export const SALT = "Salt";
 
 // Upload
 export const GENERAL_UPLOAD_INFORMATION = "På denne siden kan du laste opp ingredienser og oppskrifter til databasen. Alle ingredienser og oppskrifter har noen krav som må oppfylles før de godkjennes. Det finnes mer informasjon i panelene under.";

@@ -16,6 +16,7 @@ export class Ingredient
     sugar_gram: Number;
     fat_gram: Number;
     saturated_fat_gram: Number;
+    salt_gram: Number;
 
     original_name: String;
     source_link: String 
@@ -33,6 +34,8 @@ export class Ingredient
       sugar_gram: Number = 0, 
       fat_gram: Number = 0, 
       saturated_fat_gram: Number = 0,
+      salt_gram: Number = 0,
+
       original_name: String = "",
       source_link: String = "") 
     {
@@ -48,6 +51,7 @@ export class Ingredient
       this.sugar_gram = sugar_gram;
       this.fat_gram = fat_gram;
       this.saturated_fat_gram = saturated_fat_gram;
+      this.salt_gram = salt_gram;
 
       this.original_name = original_name;
       this.source_link = source_link;
