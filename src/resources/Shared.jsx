@@ -474,6 +474,49 @@ export const trimString = (s, repalceComma = false, splitIndex = 0, asNumber = f
     return res.trim();
 };
 
+// Get recipe data from websites and return recipe as freetext
+export const getRecipeFromWebsite = async (url) =>
+{
+    store.dispatch({ type: RECIPE_LOADING });
+    console.log("getRecipeFromWebsite: Starting ASYNC call go get recipe...");
+    let cheerio = require("cheerio");
+
+    // https://github.com/Rob--W/cors-anywhere Local library?
+    // Using cors-anywhere (Github: https://github.com/Rob--W/cors-anywhere/ ) as a proxy to circumvent CORS issues
+    let corsAnywhere = "https://cors-anywhere.herokuapp.com/";
+    let corsUrl = corsAnywhere + url;
+
+    let domain = url.match(/(?:www.)?(...)\..+/)[1];
+    console.log("getRecipeFromWebsite: domain: " + domain);
+
+    if(domain === "nrk")
+        return fetch(corsUrl)
+            .then(response => response.text())
+            .then(data =>
+            {
+                let $ = cheerio.load(data);
+
+                // Get metadata
+                let metadata = $(".recipe-list-meta");
+                let time = metadata.find($(".recipe-icon-time"))[0].children[0].data.match(/(\d+)/)[0] || "0";
+
+                let iconDiff = metadata.find($(".recipe-icon-difficulty"));
+                let difficulty = iconDiff.find($(".nrk-sr"))[0].children[0].data || "UNKNOWN";
+
+                let recipeType = "UNKNOWN"; // search string directly after "Karakteristika:". Won't be recipe type, but will tell user what to change to
+
+                // Get ingredients
+
+                // Get instructions and notes
+
+
+                console.log("getRecipeFromWebsite result");
+                console.log(time);
+                console.log(difficulty);
+                return null;
+            });
+};
+
 // As Kolonial has responded with an automated response that boils down to "you're probably not getting API access", just use Cheerio to do basically the same thing.
 // Function should use Kolonial to search for ingredientName, get data for the first item , create and return an Ingredient.
 export const getKolonialItemWithCheerio = async (ingredientName) =>

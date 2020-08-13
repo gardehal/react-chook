@@ -22,3 +22,5 @@
 - [x] Finish Upload for Launch
 - [x] Cost/calories.. etc. calculation in Recipe
 - [x] Recipe calories, protein, carbs, sugar, fat, other fat from ingredients
+- [x] option in settings to use metric display when available (or "1 cup (235 g) milk...")
+- [x] Display nutrients information in recipe 

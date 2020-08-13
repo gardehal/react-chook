@@ -59,13 +59,10 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 
 ## MISC TODOs
 - [ ] Internet crawler or fentch from API for recipes
-- [ ] Adaptive style for mobile
 - [ ] Flavicon (For timer, toasts, notifications etc.)
 - [ ] Expanding all panels in upload white line over footer
 - [ ] Improved style for mobile (width, footer escpecially)
 - [ ] Unauthorized upload recipe/ingredient error handleing, failure to upload etc
-- [x] option in settings to use metric display when available (or "1 cup (235 g) milk...")
-- [x] Display more values like nutrients in recipe details, rememeber to add warning ("partial or estimated amount ... some ingredients do not have nutritional information"...), in table left/right of main body?
 
 ## Known issues
 - Things are not looking good. Not figuratively but literally, style is not my strong suit.

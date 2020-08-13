@@ -5,7 +5,7 @@ import store from "../store";
 // Redux imports
 import { METADATA_LOADING, METADATA_LOADING_COMPLETE, METADATA_TEST_ERROR, METADATA_ERROR_RESOLVED } from "../actions/types";
 import { getMetadataData, setMetadataData } from "../actions/MetadataActions";
-import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast, getKolonialItemWithCheerio, searchDatabase } from "../resources/Shared";
+import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast, getKolonialItemWithCheerio, searchDatabase, getRecipeFromWebsite } from "../resources/Shared";
 import { login, logout, userCanEditFirebase, getUsername } from "../actions/UserActions";
 import { toggleContrastMode, toggleMetricMode, callToast, toggleScraper } from "../actions/SettingsActions";
 
@@ -175,6 +175,7 @@ class DevPage extends React.Component
                 <Button onClick={() => toggleContrastMode()} contrastmode={this.props.contrastmode} text={contrastModeText}/>  
                 <Button onClick={() => toggleMetricMode()} contrastmode={this.props.contrastmode} text={metricModeText}/> 
                 <Button onClick={() => toggleScraper()} contrastmode={this.props.contrastmode} text={scraperModeText}/> 
+                <Button onClick={() => getRecipeFromWebsite("https://www.nrk.no/mat/brownies-1.15048335")} contrastmode={this.props.contrastmode} text={"Test getRecipe NRK"}/> 
                 <Button onClick={() => window.open("https://console.firebase.google.com/u/0/")} contrastmode={this.props.contrastmode} text={"Firebase"}/> 
                 <Button onClick={() => window.open("https://kolonial.no")} contrastmode={this.props.contrastmode} text={"Kolonial"}/>            
             </div> );
