@@ -497,23 +497,37 @@ export const getRecipeFromWebsite = async (url) =>
                 let $ = cheerio.load(data);
 
                 // Get metadata
-                let metadata = $(".recipe-list-meta");
-                let time = metadata.find($(".recipe-icon-time"))[0].children[0].data.match(/(\d+)/)[0] || "0";
+                let title = $(".title-large")[0].children[0].data;
+                let sidebar = $(".recipe-sidebar");
+                let metadata = sidebar[0].children[1].children[3].children;
+                console.log(metadata);
+                console.log(sidebar);
 
-                let iconDiff = metadata.find($(".recipe-icon-difficulty"));
-                let difficulty = iconDiff.find($(".nrk-sr"))[0].children[0].data || "UNKNOWN";
-
-                let recipeType = "UNKNOWN"; // search string directly after "Karakteristika:". Won't be recipe type, but will tell user what to change to
+                let time = metadata[1].children[0].data.match(/(\d+)/)[0] || "UNKNOWN";
+                let difficulty = metadata[3].children[1].children[0].data || "UNKNOWN";
+                let recipeType = metadata[7].children[1].data || "UNKNOWN";
+                let portions = sidebar[0].children[3].children[3].children[1].children[0].data.match(/(\d+)/)[0] || "UNKNOWN";
 
                 // Get ingredients
+                let ingredientsJquery = sidebar[0].children[3].children[5].children;
+                let ingredients = [];
 
-                // Get instructions and notes
+                // // Get instructions and notes
+                let instructionsJquery = $(".article-content")[0].children[3].children;
+                let instructions = [];
 
+                console.log("Assembleing freetext...");
+                let freetext = "";
 
                 console.log("getRecipeFromWebsite result");
+                console.log(title);
                 console.log(time);
                 console.log(difficulty);
-                return null;
+                console.log(recipeType);
+                console.log(portions);
+                console.log(ingredients);
+                console.log(instructions);
+                return freetext;
             });
 };
 
