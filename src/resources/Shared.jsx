@@ -497,36 +497,83 @@ export const getRecipeFromWebsite = async (url) =>
                 let $ = cheerio.load(data);
 
                 // Get metadata
-                let title = $(".title-large")[0].children[0].data;
+                let titleRaw = $(".title-large")[0].children[0].data;
                 let sidebar = $(".recipe-sidebar");
                 let metadata = sidebar[0].children[1].children[3].children;
-                console.log(metadata);
-                console.log(sidebar);
 
-                let time = metadata[1].children[0].data.match(/(\d+)/)[0] || "UNKNOWN";
-                let difficulty = metadata[3].children[1].children[0].data || "UNKNOWN";
-                let recipeType = metadata[7].children[1].data || "UNKNOWN";
-                let portions = sidebar[0].children[3].children[3].children[1].children[0].data.match(/(\d+)/)[0] || "UNKNOWN";
+                let timeRaw = metadata[1].children[0].data;
+                let difficultyRaw = metadata[3].children[1].children[0].data;
+                let recipeTypeRaw = metadata[7].children[1].data;
+                let portionsRaw = sidebar[0].children[3].children[3].children[1].children[0].data;
 
                 // Get ingredients
-                let ingredientsJquery = sidebar[0].children[3].children[5].children;
+                let ingredientsRaw = sidebar[0].children[3].children[5].children;
                 let ingredients = [];
 
-                // // Get instructions and notes
-                let instructionsJquery = $(".article-content")[0].children[3].children;
+                for(let i = 1; i < ingredientsRaw.length; i += 2)
+                    ingredients.push(trimString(ingredientsRaw[i].children[0].data, true))
+
+                // Get instructions
+                let instructionsRaw = $(".article-content")[0].children[3].children;
                 let instructions = [];
 
+                for(let i = 1; i < instructionsRaw.length; i += 2)
+                    instructions.push(trimString(instructionsRaw[i].children[0].data))
+                    
+                // Get notes/tips
+                let articleTips = $(".recipe-article__tips");
+                console.log("articleTips");
+                console.log(articleTips);
+                let tips = [];
+
+                if(articleTips)
+                {
+                    let tipsRaw = articleTips.find((".text-body"))[0].children[1].children[1].children;
+                    console.log(tipsRaw);
+                    for(let i = 0; i < tipsRaw.length; i++)
+                        tips.push(trimString(tipsRaw[i].data))
+                }
+
+                let title = trimString(titleRaw) || "UNKNOWN";
+                let time = trimString(timeRaw, false, null, true) || "UNKNOWN";
+                let difficulty = trimString(difficultyRaw) || "UNKNOWN";
+                let recipeType = trimString(recipeTypeRaw) || "UNKNOWN";
+                let portions = trimString(portionsRaw, false, null, true) || "UNKNOWN";
+
                 console.log("Assembleing freetext...");
-                let freetext = "";
+                let freetext = "!\n";
+                freetext += title + "\n";
+                freetext += portions + "\n";
+                freetext += "? " + time + "\n";
+                freetext += recipeType + " " + difficulty + " 5\n"; // Start recipe on 5/10 rating
+                freetext += "? ? ?" + "\n"; // TODO scan instructions for "grader", "ovn", "C" ...
+                freetext += "?\n";
+
+                freetext += "+\n";
+                for(let i in ingredients)
+                    freetext += ingredients[i] + "\n";
+
+                freetext += "+\n";
+                for(let i in instructions)
+                    freetext += instructions[i] + "\n";
+
+                if(tips)
+                {
+                    freetext += "+\n";
+                    for(let i in tips)
+                        freetext += tips[i] + "\n";
+                }
 
                 console.log("getRecipeFromWebsite result");
-                console.log(title);
-                console.log(time);
-                console.log(difficulty);
-                console.log(recipeType);
-                console.log(portions);
-                console.log(ingredients);
-                console.log(instructions);
+                console.log(freetext);
+                // console.log("Title: " + title);
+                // console.log("Time: " + time);
+                // console.log("Diff: " + difficulty);
+                // console.log("RT: " + recipeType);
+                // console.log("Portions: " + portions);
+                // console.log(ingredients);
+                // console.log(instructions);
+                // console.log(tips);
                 return freetext;
             });
 };
