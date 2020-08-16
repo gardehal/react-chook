@@ -6,7 +6,7 @@ import store from "../store";
 import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC, MAIN_TITLE, DB_RECIPE, DB_FETCH_FAILED, DB_INGREDIENT } from "./language";
 import { getTextColor } from "./colors";
 import { Toast } from "../components/common/Toast";
-import { USER_LOADING, USER_LOADING_COMPLETE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING, GET_INGREDIENT_DATA_SUCCESS, GET_INGREDIENT_DATA_FAIL, INGREDIENT_LOADING, INGREDIENT_LOADING_COMPLETE } from "../actions/types";
+import { USER_LOADING, USER_LOADING_COMPLETE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING, GET_INGREDIENT_DATA_SUCCESS, GET_INGREDIENT_DATA_FAIL, INGREDIENT_LOADING, INGREDIENT_LOADING_COMPLETE, RECIPE_LOADING_COMPLETE } from "../actions/types";
 import { callToast } from "../actions/SettingsActions";
 import { Spinner } from "../components/common/Spinner";
 import { Ingredient } from "../models/Ingredient";
@@ -486,11 +486,12 @@ export const getRecipeFromWebsite = async (url) =>
     let corsAnywhere = "https://cors-anywhere.herokuapp.com/";
     let corsUrl = corsAnywhere + url;
 
+    let freetext = "";
     let domain = url.match(/(?:www.)?(...)\..+/)[1];
     console.log("getRecipeFromWebsite: domain: " + domain);
 
     if(domain === "nrk")
-        return fetch(corsUrl)
+        await fetch(corsUrl)
             .then(response => response.text())
             .then(data =>
             {
@@ -522,14 +523,11 @@ export const getRecipeFromWebsite = async (url) =>
                     
                 // Get notes/tips
                 let articleTips = $(".recipe-article__tips");
-                console.log("articleTips");
-                console.log(articleTips);
                 let tips = [];
 
                 if(articleTips)
                 {
                     let tipsRaw = articleTips.find((".text-body"))[0].children[1].children[1].children;
-                    console.log(tipsRaw);
                     for(let i = 0; i < tipsRaw.length; i++)
                         tips.push(trimString(tipsRaw[i].data))
                 }
@@ -540,8 +538,8 @@ export const getRecipeFromWebsite = async (url) =>
                 let recipeType = trimString(recipeTypeRaw) || "UNKNOWN";
                 let portions = trimString(portionsRaw, false, null, true) || "UNKNOWN";
 
-                console.log("Assembleing freetext...");
-                let freetext = "!\n";
+                console.log("Assembleing freetext..."); // TODO set empty defaults, assempble freetext right before return, each web get only sets values
+                freetext += "!\n";
                 freetext += title + "\n";
                 freetext += portions + "\n";
                 freetext += "? " + time + "\n";
@@ -566,16 +564,23 @@ export const getRecipeFromWebsite = async (url) =>
 
                 console.log("getRecipeFromWebsite result");
                 console.log(freetext);
-                // console.log("Title: " + title);
-                // console.log("Time: " + time);
-                // console.log("Diff: " + difficulty);
-                // console.log("RT: " + recipeType);
-                // console.log("Portions: " + portions);
-                // console.log(ingredients);
-                // console.log(instructions);
-                // console.log(tips);
-                return freetext;
+                console.log("Source: " + url);
             });
+    else if(domain === "?")
+    {
+        console.log("getRecipeFromWebsite: Not implemented");
+        store.dispatch({ type: RECIPE_LOADING_COMPLETE });
+        return null;
+    }
+    else
+    {
+        console.log("getRecipeFromWebsite: No domain found.");
+        store.dispatch({ type: RECIPE_LOADING_COMPLETE });
+        return null;
+    }
+    
+    store.dispatch({ type: RECIPE_LOADING_COMPLETE });
+    return freetext;
 };
 
 // As Kolonial has responded with an automated response that boils down to "you're probably not getting API access", just use Cheerio to do basically the same thing.

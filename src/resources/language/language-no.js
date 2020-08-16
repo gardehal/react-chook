@@ -103,6 +103,7 @@ export const SALT = "Salt";
 export const GENERAL_UPLOAD_INFORMATION = "På denne siden kan du laste opp ingredienser og oppskrifter til databasen. Alle ingredienser og oppskrifter har noen krav som må oppfylles før de godkjennes. Det finnes mer informasjon i panelene under.";
 export const UPLOAD_FORM = "Last opp via skjema";
 export const UPLOAD_FILE = "Last opp via fil";
+export const UPLOAD_FROM_URL = "Last opp fra nettside";
 export const UPLOAD_CHOOSE_FILE = "Velg en fil som skal lastes opp";
 export const OVERVIEW = "Oversikt";
 export const UPLOAD_QUEUE = "Opplastningskø";

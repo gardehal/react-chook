@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 // Redux imports
 import { getRecipeData, setRecipeError, setRecipeData } from "../actions/RecipeActions";
 import { getIngredientData, setIngredientData } from "../actions/IngredientActions";
-import { renderLoading, renderError, setTitle, getRandomString, toCamelCase, getKolonialItemWithCheerio, searchDatabase } from "../resources/Shared";
+import { renderLoading, renderError, setTitle, getRandomString, toCamelCase, getKolonialItemWithCheerio, searchDatabase, getRecipeFromWebsite } from "../resources/Shared";
 
 // Variable imports
 import { UPLOAD, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, 
@@ -21,7 +21,8 @@ import { UPLOAD, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QU
     FREETEXT_SYNTAX_PROTEIN, FREETEXT_SYNTAX_SECTION_DELIM, FREETEXT_SYNTAX_INSTRUCTIONS, EXAMPLE_RECIPE_TITLE, EXAMPLE_RECIPE_PORTIONS, EXAMPLE_RECIPE_TIME, 
     EXAMPLE_RECIPE_TYPE_DIFF_RATE, EXAMPLE_RECIPE_METHOD_TEMP_UNIT, EXAMPLE_RECIPE_PROTEIN, EXAMPLE_RECIPE_RECIPE_INGREDIENT1, EXAMPLE_RECIPE_RECIPE_INGREDIENT2, 
     EXAMPLE_RECIPE_RECIPE_INGREDIENT3, EXAMPLE_RECIPE_RECIPE_INGREDIENT4, EXAMPLE_RECIPE_RECIPE_INGREDIENT5, EXAMPLE_RECIPE_RECIPE_INGREDIENT6, EXAMPLE_RECIPE_INSTRUCTION1, 
-    EXAMPLE_RECIPE_INSTRUCTION2, EXAMPLE_RECIPE_NOTE1, FREETEXT_SYNTAX_EXAMPLE_START_RECIPE, FREETEXT_SYNTAX_TITLE, FREETEXT_SYNTAX_PORTIONS, FREETEXT_SYNTAX_INGREDIENTS, FREETEXT_SYNTAX_RECIPE_INGREDIENT, FREETEXT_SYNTAX_NOTES 
+    EXAMPLE_RECIPE_INSTRUCTION2, EXAMPLE_RECIPE_NOTE1, FREETEXT_SYNTAX_EXAMPLE_START_RECIPE, FREETEXT_SYNTAX_TITLE, FREETEXT_SYNTAX_PORTIONS, FREETEXT_SYNTAX_INGREDIENTS, 
+    FREETEXT_SYNTAX_RECIPE_INGREDIENT, FREETEXT_SYNTAX_NOTES, UPLOAD_FROM_URL 
 } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
@@ -129,17 +130,36 @@ class UploadPage extends React.Component
                 </p>
             </div>
         );
-    }    
+    }  
+
+    renderUploadFromWebsite()
+    {
+        return (
+            <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
+                <input id="getFreetextUrl" ref="getFreetextUrl" type="text" />
+                <Button onClick={() => this.getFreetextFromWebsite()} contrastmode={this.props.contrastmode} text={UPLOAD_FROM_URL}/>
+            </div>
+        );
+    }  
+
+    async getFreetextFromWebsite()
+    {
+        let url = this.refs.getFreetextUrl.value.replace("%3A", ":").replace("%2F", "/"); // Replace escaped : and /
+        let text = await getRecipeFromWebsite(url);
+        this.setState({ freetext: text });
+    }
     
     renderUploadFreetextArea()
     {
+        console.log("Render freetext");
+        console.log("len " + this.state.freetext.length);
         let textAreaStyle = { resize: "vertical", width: "calc(100% - 0.8em)", paddingLeft: "0.5em" };
         return (
             <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}> 
                 <textarea style={textAreaStyle} onChange={e => {this.setState({ freetext: e.target.value })}} 
-                    id="freetextAreaId" ref="freetextArea" cols='60' rows='8'></textarea>
-            </div>
-        );
+                    id="freetextAreaId" ref="freetextArea" cols='60' rows='8' value={this.state.freetext}>
+                    </textarea>
+            </div>);
     }
 
     selectFile()
@@ -181,7 +201,6 @@ class UploadPage extends React.Component
             // Execute file reader
             r.readAsText(file);
         });
-
     }
 
     parseIngredient(lines, i, failedItems)
@@ -887,6 +906,7 @@ class UploadPage extends React.Component
                 {/* Upload ingredients though freetext
                     -> Submit files buttons/ drag+drop area */}
                 <Panel title={FREETEXT} contrastmode={this.props.contrastmode}>  {/* Should be freetext not file */}
+                    {this.renderUploadFromWebsite()}
                     {this.renderUploadFreetextArea()}
                     {this.renderUploadFile()}
                 </Panel>

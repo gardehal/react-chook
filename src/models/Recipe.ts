@@ -184,7 +184,7 @@ export class Recipe
           let p = props[pindex];
           // console.log(i.name + " " + p + " " + i[p]);
 
-          if((i[p] !== undefined || i[p] !== null) && i[p].toString().length > 0)
+          if((i[p] != undefined || i[p] != null) && i[p].toString().length > 0)
           {
             if(p == "price")
             {
