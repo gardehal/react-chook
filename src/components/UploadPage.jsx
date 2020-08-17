@@ -151,8 +151,6 @@ class UploadPage extends React.Component
     
     renderUploadFreetextArea()
     {
-        console.log("Render freetext");
-        console.log("len " + this.state.freetext.length);
         let textAreaStyle = { resize: "vertical", width: "calc(100% - 0.8em)", paddingLeft: "0.5em" };
         return (
             <div style={{ ...getLightBackgroundColor(this.props.contrastmode) }}> 
@@ -652,9 +650,13 @@ class UploadPage extends React.Component
             i.name = customIngredientName;
         this.uploadItem(i);
 
-        let spliceOn = this.state.errorsQueue.map(e => { return e.id; }).indexOf(i.id);
-        let newErrorsQueue = this.state.errorsQueue.splice(spliceOn, 1);
-        this.setState({ ingredientQueue: [], recipeQueue: [], errorsQueue: newErrorsQueue });
+        // Remove newly uploaded ingredient from state along with error.
+        let errorSpliceOn = this.state.errorsQueue.map(e => { return e.id; }).indexOf(i.id);
+        let newErrorsQueue = this.state.errorsQueue.splice(errorSpliceOn, 1);
+        let ingredientSpliceOn = this.state.ingredientQueue.map(e => { return e.id; }).indexOf(i.id);
+        let newIngredientsQueue = this.state.ingredientQueue.splice(ingredientSpliceOn, 1);
+
+        this.setState({ ingredientQueue: newIngredientsQueue, recipeQueue: [], errorsQueue: newErrorsQueue });
     }
 
     async uploadItem(i, itemName = INGREDIENT)
