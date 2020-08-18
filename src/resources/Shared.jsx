@@ -449,6 +449,9 @@ export const uppercaseFirst = (s) =>
 
 export const trimString = (s, repalceComma = false, splitIndex = 0, asNumber = false) =>
 {
+    if(s === null || s === undefined)
+        return null;
+
     let emptyRegex = new RegExp("\\s+", "gm");
     let split = [];
     let res = "";
@@ -486,9 +489,26 @@ export const getRecipeFromWebsite = async (url) =>
     let corsAnywhere = "https://cors-anywhere.herokuapp.com/";
     let corsUrl = corsAnywhere + url;
 
-    let freetext = "";
     let domain = url.match(/(?:www.)?(...)\..+/)[1];
     console.log("getRecipeFromWebsite: domain: " + domain);
+    
+    var title = "__TITLE__"; 
+    let portions = "__PORTIONS__";
+    let prepTime = "__PREPTIME__";
+    let time = "__TIME__";
+    let recipeType = "__RECIPETYPE__";
+    let difficulty = "__DIFFICULTY__";
+    let cookingMethod = "__COOKINGMETHOD__";
+    let cookingMethodTemp = "__COOKINGMETHODTEMP__";
+    let cookingMethodTempUnit = "__COOKINGMETHODTEMPUNIT__";
+    let protein = "__PROTEIN__";
+    var ingredients = [];
+    let instructions = [];
+    let tips = [];
+    var titleRaw, portionsRaw, prepTimeRaw, timeRaw, recipeTypeRaw, difficultyRaw, proteinRaw;
+    let ingredientsRaw = [];
+    let instructionsRaw = [];
+    let tipsRaw = [];
 
     if(domain === "nrk")
         await fetch(corsUrl)
@@ -498,73 +518,97 @@ export const getRecipeFromWebsite = async (url) =>
                 let $ = cheerio.load(data);
 
                 // Get metadata
-                let titleRaw = $(".title-large")[0].children[0].data;
                 let sidebar = $(".recipe-sidebar");
-                let metadata = sidebar[0].children[1].children[3].children;
+                let metadata = sidebar.find("li");
+                console.log(metadata);
 
-                let timeRaw = metadata[1].children[0].data;
-                let difficultyRaw = metadata[3].children[1].children[0].data;
-                let recipeTypeRaw = metadata[7].children[1].data;
-                let portionsRaw = sidebar[0].children[3].children[3].children[1].children[0].data;
+                titleRaw = $(".title-large")[0].children[0].data;
+                // let difficultyRaw = $(".recipe-icon-difficulty") ? $(".recipe-icon-difficulty")[0].children[1].children[0].data : null;
+
+                let timePostfix = " min";
+                let portionPostfix = " porsjon";
+                let typePrefix = "Type: ";
+                let difficultyPrefix = "↵↵";
+                let proteinPrefix = "Hovedingrediens: ";
+
+                let metadataItems = []
+                metadata.each((i, el) => metadataItems.push($(el).text()));
+                metadataItems.forEach(e => 
+                {
+                    if(e.includes(portionPostfix))
+                        portionsRaw = e.split(portionPostfix)[0];
+                    else if(e.includes(timePostfix))
+                        timeRaw = e.split(timePostfix)[0];
+                    else if(e.includes(typePrefix))
+                        recipeTypeRaw = e.split(typePrefix)[0];
+                    else if(e.includes(difficultyPrefix))
+                        difficultyRaw = e.split(difficultyPrefix)[0];
+                    else if(e.includes(proteinPrefix))
+                        proteinRaw = e.split(proteinPrefix)[0];
+                });
 
                 // Get ingredients
-                let ingredientsRaw = sidebar[0].children[3].children[5].children;
-                let ingredients = [];
+                ingredientsRaw = sidebar[0].children[3].children[5].children;
 
                 for(let i = 1; i < ingredientsRaw.length; i += 2)
-                    ingredients.push(trimString(ingredientsRaw[i].children[0].data, true))
+                    ingredients.push(trimString(ingredientsRaw[i].children[0].data, true));
 
                 // Get instructions
-                let instructionsRaw = $(".article-content")[0].children[3].children;
-                let instructions = [];
+                instructionsRaw = $(".article-content")[0].children[3].children;
 
                 for(let i = 1; i < instructionsRaw.length; i += 2)
-                    instructions.push(trimString(instructionsRaw[i].children[0].data))
+                    instructions.push(trimString(instructionsRaw[i].children[0].data));
                     
                 // Get notes/tips
                 let articleTips = $(".recipe-article__tips");
-                let tips = [];
-
                 if(articleTips)
                 {
-                    let tipsRaw = articleTips.find((".text-body"))[0].children[1].children[1].children;
+                    console.log(articleTips);
+                    tipsRaw = articleTips.find(".text-body")[0].children[1].children;
+                    // [0].children[1].children[1].children;
                     for(let i = 0; i < tipsRaw.length; i++)
-                        tips.push(trimString(tipsRaw[i].data))
+                        tips.push(trimString(tipsRaw[i].data));
                 }
 
-                let title = trimString(titleRaw) || "UNKNOWN";
-                let time = trimString(timeRaw, false, null, true) || "UNKNOWN";
-                let difficulty = trimString(difficultyRaw) || "UNKNOWN";
-                let recipeType = trimString(recipeTypeRaw) || "UNKNOWN";
-                let portions = trimString(portionsRaw, false, null, true) || "UNKNOWN";
-
-                console.log("Assembleing freetext..."); // TODO set empty defaults, assempble freetext right before return, each web get only sets values
-                freetext += "!\n";
-                freetext += title + "\n";
-                freetext += portions + "\n";
-                freetext += "? " + time + "\n";
-                freetext += recipeType + " " + difficulty + " 5\n"; // Start recipe on 5/10 rating
-                freetext += "? ? ?" + "\n"; // TODO scan instructions for "grader", "ovn", "C" ...
-                freetext += "?\n";
-
-                freetext += "+\n";
-                for(let i in ingredients)
-                    freetext += ingredients[i] + "\n";
-
-                freetext += "+\n";
+                // Look though instructions for mention of degrees or similar (NRK is norwegian, degrees = "grader"). Take max degrees and use in recipe, as celcius
+                let degreesString = "grader";
+                let possibleDegrees = [];
                 for(let i in instructions)
-                    freetext += instructions[i] + "\n";
-
-                if(tips)
                 {
-                    freetext += "+\n";
-                    for(let i in tips)
-                        freetext += tips[i] + "\n";
+                    let split = instructions[i].toLowerCase().split(" ");
+                    let index = split.indexOf(degreesString);
+                    if(index > 0)
+                    {
+                        let beforeMax = index > 3 ? 3 : index; // If index is larger than 3, only use 3 words before index, else take max words before index before start of instruction string 
+                        for(let j = index; j < beforeMax; j++)
+                            possibleDegrees.push(split[index - j]);
+                    }
                 }
+                if(possibleDegrees.length > 0)
+                {
+                    let top = 0;
+                    for(let i in possibleDegrees)
+                    {
+                        let n = trimString(possibleDegrees[i], true, 0, true);
+                        if(n > top)
+                            top = n;
+                    }
 
-                console.log("getRecipeFromWebsite result");
-                console.log(freetext);
-                console.log("Source: " + url);
+                    if(top > 0)
+                    {
+                        cookingMethodTempUnit = "C";
+                        cookingMethodTemp = top;
+                    }
+                }
+                
+                //TODO some recipes have more than one item to make (aka. subrecipes)
+
+                title = trimString(titleRaw) || "__TITLE__";
+                portions = trimString(portionsRaw, false, null, true) || "__PORTIONS__";                
+                time = trimString(timeRaw, false, null, true) || "__TIME__";
+                recipeType = trimString(recipeTypeRaw) || "__RECIPETYPE__";
+                difficulty = trimString(difficultyRaw) || "__DIFFICULTY__";
+                protein = trimString(proteinRaw, false, null, true) || "__PROTEIN__";
             });
     else if(domain === "?")
     {
@@ -579,6 +623,29 @@ export const getRecipeFromWebsite = async (url) =>
         return null;
     }
     
+    console.log("Assembleing freetext...");
+    let freetext = "!\n";
+    freetext += title + "\n";
+    freetext += portions + "\n";
+    freetext += prepTime + " " + time + "\n";
+    freetext += recipeType + " " + difficulty + " 5\n"; // Start recipe on 5/10 rating
+    freetext += cookingMethod + " " + cookingMethodTemp + " " + cookingMethodTempUnit + "\n";
+    freetext += protein + "\n";
+
+    freetext += "+\n";
+    for(let i in ingredients)
+        freetext += ingredients[i] + "\n";
+
+    freetext += "+\n";
+    for(let i in instructions)
+        freetext += instructions[i] + "\n";
+
+    freetext += "+\n";
+    for(let i in tips)
+        freetext += tips[i] + "\n";
+
+    freetext += "Source: " + url
+
     store.dispatch({ type: RECIPE_LOADING_COMPLETE });
     return freetext;
 };
