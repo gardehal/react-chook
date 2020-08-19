@@ -520,7 +520,6 @@ export const getRecipeFromWebsite = async (url) =>
                 // Get metadata
                 let sidebar = $(".recipe-sidebar");
                 let metadata = sidebar.find("li");
-                console.log(metadata);
 
                 titleRaw = $(".title-large")[0].children[0].data;
                 // let difficultyRaw = $(".recipe-icon-difficulty") ? $(".recipe-icon-difficulty")[0].children[1].children[0].data : null;
@@ -528,7 +527,7 @@ export const getRecipeFromWebsite = async (url) =>
                 let timePostfix = " min";
                 let portionPostfix = " porsjon";
                 let typePrefix = "Type: ";
-                let difficultyPrefix = "↵↵";
+                let difficultyPrefix = "\n\n";
                 let proteinPrefix = "Hovedingrediens: ";
 
                 let metadataItems = []
@@ -540,9 +539,9 @@ export const getRecipeFromWebsite = async (url) =>
                     else if(e.includes(timePostfix))
                         timeRaw = e.split(timePostfix)[0];
                     else if(e.includes(typePrefix))
-                        recipeTypeRaw = e.split(typePrefix)[0];
+                        recipeTypeRaw = e.split(typePrefix)[1];
                     else if(e.includes(difficultyPrefix))
-                        difficultyRaw = e.split(difficultyPrefix)[0];
+                        difficultyRaw = e.split(difficultyPrefix)[1];
                     else if(e.includes(proteinPrefix))
                         proteinRaw = e.split(proteinPrefix)[0];
                 });
@@ -563,25 +562,26 @@ export const getRecipeFromWebsite = async (url) =>
                 let articleTips = $(".recipe-article__tips");
                 if(articleTips)
                 {
-                    console.log(articleTips);
-                    tipsRaw = articleTips.find(".text-body")[0].children[1].children;
-                    // [0].children[1].children[1].children;
-                    for(let i = 0; i < tipsRaw.length; i++)
-                        tips.push(trimString(tipsRaw[i].data));
+                    tipsRaw = articleTips.find(".text-body").find("li"); // Tips may be list or not for some reason TODO if null else x
+                    console.log(tipsRaw);
+                    tipsRaw.each((i, el) => tips.push($(el).text()));
                 }
-
+                
                 // Look though instructions for mention of degrees or similar (NRK is norwegian, degrees = "grader"). Take max degrees and use in recipe, as celcius
                 let degreesString = "grader";
                 let possibleDegrees = [];
                 for(let i in instructions)
                 {
-                    let split = instructions[i].toLowerCase().split(" ");
-                    let index = split.indexOf(degreesString);
-                    if(index > 0)
+                    let split = instructions[i].toLowerCase().split(degreesString);
+                    
+                    if(split.length > 1)
                     {
-                        let beforeMax = index > 3 ? 3 : index; // If index is larger than 3, only use 3 words before index, else take max words before index before start of instruction string 
-                        for(let j = index; j < beforeMax; j++)
-                            possibleDegrees.push(split[index - j]);
+                        // If index is larger than 3, only use 3 words before index, else take max words before index before start of instruction string 
+                        let wordsBeforeSplit = split[0].split(" ");
+                        let beforeMax = wordsBeforeSplit.length > 3 ? 3 : wordsBeforeSplit.length; 
+                        
+                        for(let j = beforeMax - 1; j < wordsBeforeSplit.length - 1; j++)
+                            possibleDegrees.push(wordsBeforeSplit[j]);
                     }
                 }
                 if(possibleDegrees.length > 0)
@@ -609,6 +609,17 @@ export const getRecipeFromWebsite = async (url) =>
                 recipeType = trimString(recipeTypeRaw) || "__RECIPETYPE__";
                 difficulty = trimString(difficultyRaw) || "__DIFFICULTY__";
                 protein = trimString(proteinRaw, false, null, true) || "__PROTEIN__";
+
+                // If the recipe does not have a metadata field for main ingredient (proteinPrefix) but contains x, x is most likely protein
+                if(!trimString(proteinRaw, false, null, true))
+                    ingredients.forEach(e => 
+                        {
+                            if(e.includes("egg"))
+                                protein = "egg";
+                            else if(e.includes("kylling"))
+                                protein = "fugl";
+                        });
+
             });
     else if(domain === "?")
     {
