@@ -40,7 +40,7 @@ export class Ingredient
       source_link: String = "") 
     {
       this.id = id;
-      this.name = name;
+      this.name = name.toLowerCase();
       this.type = type;
       this.price = price;
 

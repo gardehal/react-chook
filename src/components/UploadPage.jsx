@@ -414,9 +414,7 @@ class UploadPage extends React.Component
                         continue;
                     }
                     
-                    // Would be nice to have a small list saying "added this (INPUTFIELD: name) (Accept button)" where user can change name in inputfield and upload ingredient with accept
-                    // TODO Add specially rendered input field and button, should include original name from Kolonial, button triggers function to upload single ingredient
-                    let createdNewIngredientHtml = (<div>
+                    let createdNewIngredientHtml = (<div id={ingredient.id}>
                             <div className="rowStyle">{RECIPE + " " + i + " (" + ingredientName + "): " + INGREDIENT_NOT_FOUND_DB}</div>
                             <div>
                                 { SET_NAME + " (" + WAS + " \"" + ingredient.original_name + "\"):" } 
@@ -651,12 +649,12 @@ class UploadPage extends React.Component
         this.uploadItem(i);
 
         // Remove newly uploaded ingredient from state along with error.
-        let errorSpliceOn = this.state.errorsQueue.map(e => { return e.id; }).indexOf(i.id);
-        let newErrorsQueue = this.state.errorsQueue.splice(errorSpliceOn, 1);
-        let ingredientSpliceOn = this.state.ingredientQueue.map(e => { return e.id; }).indexOf(i.id);
-        let newIngredientsQueue = this.state.ingredientQueue.splice(ingredientSpliceOn, 1);
+        let temp = this.state.errorsQueue.map(e => { return e.props.id || null; });
+        let errorsQueue = this.state.errorsQueue;
+        let errorSpliceOn = errorsQueue.map(e => { return e.props.id || null; }).indexOf(i.id);
+        errorsQueue.splice(errorSpliceOn, 1);        
 
-        this.setState({ ingredientQueue: newIngredientsQueue, recipeQueue: [], errorsQueue: newErrorsQueue });
+        this.setState({ ingredientQueue: [], recipeQueue: [], errorsQueue: errorsQueue });
     }
 
     async uploadItem(i, itemName = INGREDIENT)

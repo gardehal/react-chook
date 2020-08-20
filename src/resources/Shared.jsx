@@ -499,8 +499,8 @@ export const getRecipeFromWebsite = async (url) =>
     let recipeType = "__RECIPETYPE__";
     let difficulty = "__DIFFICULTY__";
     let cookingMethod = "__COOKINGMETHOD__";
-    let cookingMethodTemp = "__COOKINGMETHODTEMP__";
-    let cookingMethodTempUnit = "__COOKINGMETHODTEMPUNIT__";
+    let cookingMethodTemp = ""; //"__COOKINGMETHODTEMP__";
+    let cookingMethodTempUnit = ""; //"__COOKINGMETHODTEMPUNIT__";
     let protein = "__PROTEIN__";
     var ingredients = [];
     let instructions = [];
@@ -562,9 +562,14 @@ export const getRecipeFromWebsite = async (url) =>
                 let articleTips = $(".recipe-article__tips");
                 if(articleTips)
                 {
-                    tipsRaw = articleTips.find(".text-body").find("li"); // Tips may be list or not for some reason TODO if null else x
-                    console.log(tipsRaw);
-                    tipsRaw.each((i, el) => tips.push($(el).text()));
+                    tipsRaw = articleTips.find(".text-body").find("li");
+                    tipsRaw.each((i, el) => tips.push(trimString($(el).text())));
+
+                    if(tips.length === 0)
+                    {
+                        let singleTip = articleTips[0].children[3].children[1].children[0].data;
+                        tips.push(trimString(singleTip));
+                    }
                 }
                 
                 // Look though instructions for mention of degrees or similar (NRK is norwegian, degrees = "grader"). Take max degrees and use in recipe, as celcius
@@ -701,6 +706,9 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
             }
 
             let detailsPath = searchRes[0].children[1].attribs.href;
+            if(!detailsPath || detailsPath.length === 0)
+                return null;
+
             let kolonialId = detailsPath.match(/\/(\d+)-/)[1];
             let kolDetails = "https://kolonial.no" + detailsPath;
             let detailsUrl = corsAnywhere + kolDetails;
@@ -745,12 +753,15 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
                     // console.log(brand);
 
                     let priceDiv = $(".price ")[0];
-                    currency = priceDiv ? " " + trimString(priceDiv.children[1].children[0].data) : "";
-                    let intPrice = priceDiv ? trimString(priceDiv.children[2].data) : 0;
-                    let decPrice = priceDiv ? trimString(priceDiv.children[4].children[0].data) : 0;
-                    price = Number(intPrice + "." + decPrice);
-                    // console.log(price);
-                    // console.log("(" + currency + ") " + price.toString());
+                    if(priceDiv)
+                    {
+                        currency = priceDiv.children[1] ? " " + trimString(priceDiv.children[1].children[0].data) : "";
+                        let intPrice = priceDiv.children[2] ? trimString(priceDiv.children[2].data) : 0;
+                        let decPrice = priceDiv.children[4] ? trimString(priceDiv.children[4].children[0].data) : 0;
+                        price = Number(intPrice + "." + decPrice);
+                        // console.log(price);
+                        // console.log("(" + currency + ") " + price.toString());
+                    }
 
                     // TODO adapt/pasre/translate productInfo.children[1].children[5].children[1].children[1].children[0].data.toString().trim()
                     let typeDiv = $(".breadcrum")[0];
