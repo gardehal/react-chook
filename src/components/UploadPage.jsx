@@ -205,7 +205,8 @@ class UploadPage extends React.Component
     {
         // let nLines = lines.length;
         let name = lines[0].replace("\t", "").toString().toLowerCase();
-        let type = IngredientTypeValue(lines[1].replace("\t", "").toUpperCase());
+        let typeRaw = lines[1].replace("\t", "").toUpperCase().trim();
+        let type = IngredientTypeValue(typeRaw);
         let price = lines[2];
         let isCommodity = false;
 
@@ -217,11 +218,11 @@ class UploadPage extends React.Component
         }
 
         // type must be parsable to IngredientType
-        if(!this.parseEnum(failedItems, type, IngredientType, INGREDIENT, i, name))
+        if(!this.parseEnum(failedItems, type, IngredientType, name, typeRaw))
             return null;
 
         // price must be a number, 0 or more
-        price = this.parseNumberFloat(failedItems, price, PRICE, INGREDIENT, i, name, 0, 9999);
+        price = this.parseNumber(failedItems, price, PRICE, name, 0, 9999, true);
         if(price === null)
             return null;
 
@@ -252,16 +253,21 @@ class UploadPage extends React.Component
         
         // type, difficulty, rating line. type is required, diff and rate is optional
         let typeDiffRate = lines[3].toString().trim().split(" ");
-        let type = RecipeTypeValue(typeDiffRate[0].replace("\t", "").toUpperCase().trim());
-        let difficulty = typeDiffRate.length > 1 ? DifficultyValue(typeDiffRate[1].replace("\t", "").toUpperCase().trim()) : null;
+        let typeRaw = typeDiffRate[0].replace("\t", "").toUpperCase().trim();
+        let type = RecipeTypeValue(typeRaw);
+        let difficultyRaw = typeDiffRate.length > 1 ? typeDiffRate[1].replace("\t", "").toUpperCase().trim() : null;
+        let difficulty = DifficultyValue(difficultyRaw);
         let rating = typeDiffRate.length > 2 ? typeDiffRate[2].trim() : null;
         
         // method++ line
         let methodLine = lines[4].toString().trim().split(" ");
-        let cookingMethod = CookingMethodValue(methodLine[0].replace("\t", "").toUpperCase().trim());
+        let cookingMethodRaw = methodLine[0].replace("\t", "").toUpperCase().trim();
+        let cookingMethod = CookingMethodValue(cookingMethodRaw);
         let cookingMethodTemp = methodLine.length > 2 ? methodLine[1].trim() : null;
-        let cookingMethodTempUnit = methodLine.length > 1 ? TempratureUnitValue(methodLine[2].replace("\t", "").toUpperCase().trim()) : null;
-        let protein = ProteinValue(lines[5].replace("\t", "").toUpperCase().trim());
+        let cookingMethodTempUnitRaw = methodLine.length > 3 ? methodLine[2].replace("\t", "").toUpperCase().trim() : null;
+        let cookingMethodTempUnit = TempratureUnitValue(cookingMethodTempUnitRaw);
+        let proteinRaw = lines[5].replace("\t", "").toUpperCase().trim();
+        let protein = ProteinValue(proteinRaw);
 
         // Arrays
         let subRecipes = [];
@@ -284,46 +290,49 @@ class UploadPage extends React.Component
         {
             console.log("Checking numbers...");
 
-            portions = this.parseNumberFloat(failedItems, portions, RECIPE, i, PORTIONS, title, 0, 32);
+            portions = this.parseNumber(failedItems, portions, PORTIONS, title, 0, 32);
             if(portions === null)
                 return null;
 
-            timePrep = this.parseNumber(failedItems, timePrep, RECIPE, i, PREP_TIME, title, 0, 9999);
+            timePrep = this.parseNumber(failedItems, timePrep, PREP_TIME, title, 0, 9999);
             if(timePrep === null)
                 return null;
 
-            timeTotal = this.parseNumber(failedItems, timeTotal, RECIPE, i, TOTAL_TIME, title, timePrep, 9999);
+            timeTotal = this.parseNumber(failedItems, timeTotal, TOTAL_TIME, title, timePrep, 9999);
             if(timeTotal === null)
                 return null;
                 
-            rating = this.parseNumberFloat(failedItems, rating, RECIPE, i, RATING, title, 0, 10);
+            rating = this.parseNumber(failedItems, rating, RATING, title, 0, 10, true);
             if(rating === null)
                 return null;
                 
-            cookingMethodTemp = this.parseNumber(failedItems, cookingMethodTemp, RECIPE, i, COOKING_METHOD_TEMPERATURE, title, 0, 500);
-            if(cookingMethodTemp === null)
-                return null;
+            cookingMethodTemp = this.parseNumber(failedItems, cookingMethodTemp, COOKING_METHOD_TEMPERATURE, title, -10, 666);
         } // Recipe metadata parse numbers (the extra parentheses are so this section can be collapsed and make code more readable)
            
         {
             console.log("Checking enums...");
+            // parseEnum(messageArray, value, enumCollection, itemName, rawValue)
 
-            if(!this.parseEnum(failedItems, type, RecipeType, RECIPE, i, title))
+            if(!this.parseEnum(failedItems, type, RecipeType, title, typeRaw))
                 return null;
 
-            if(!this.parseEnum(failedItems, difficulty, Difficulty, RECIPE, i, title))
+            if(!this.parseEnum(failedItems, difficulty, Difficulty, title, difficultyRaw))
                 return null;
 
-            if(!this.parseEnum(failedItems, cookingMethod, CookingMethod, RECIPE, i, title))
+            if(!this.parseEnum(failedItems, cookingMethod, CookingMethod, title, cookingMethodRaw))
                 return null;
 
-            if(!this.parseEnum(failedItems, cookingMethodTempUnit, TempratureUnit, RECIPE, i, title))
+            if(cookingMethodTempUnit && !this.parseEnum(failedItems, cookingMethodTempUnit, TempratureUnit, title, cookingMethodTempUnitRaw))
                 return null;
 
-            if(!this.parseEnum(failedItems, protein, Protein, RECIPE, i, title))
+            if(!this.parseEnum(failedItems, protein, Protein, title, proteinRaw))
                 return null;
         } // Recipe metadata parse enums (the extra parentheses are so this section can be collapsed and make code more readable)
         
+        // If degrees are set but not degree unit, default to Celcius
+        if(cookingMethodTemp && !cookingMethodTempUnit)
+            cookingMethodTempUnit = TempratureUnit.C;
+
         console.log("Preparing ingredients...");
         // Line after metadata should have a + that ends metadata section and starts ingredient section
         let j = (metaLinesMax - 3);
@@ -417,7 +426,8 @@ class UploadPage extends React.Component
                     let createdNewIngredientHtml = (<div id={ingredient.id}>
                             <div className="rowStyle">{RECIPE + " " + i + " (" + ingredientName + "): " + INGREDIENT_NOT_FOUND_DB}</div>
                             <div>
-                                { SET_NAME + " (" + WAS + " \"" + ingredient.original_name + "\"):" } 
+                                { SET_NAME + " (" + WAS} "<a style={{ ...getTextColor(this.props.contrastmode) }} href={ingredient.source_link} target="_blank">
+                                    <em>{ingredient.original_name}</em></a>" {"):" } 
                                 <div className="rowStyle">
                                     <input style={{ width: "50%", height: "1.5em", padding: "auto" }} id="kolonial-upload-ingredient-name" 
                                         onChange={e => customIngredientName = e.target.value} defaultValue={ingredientName}/>
@@ -496,43 +506,35 @@ class UploadPage extends React.Component
         notes);
     }
 
-    parseNumber(messageArray, n, valueName, parentType, index, itemName, min, max)
+    parseNumber(messageArray, n, valueName, itemName, min, max, isFloat = false)
     {
-        if(isNaN(Number(n)))
+        if(isNaN(Number(n)) || isFloat && isNaN(parseFloat(n)))
         {
-            messageArray.push(parentType + " " + index + " (" + itemName + "): " + NOT_A_NUMBER + ": " + valueName);
+            messageArray.push(itemName + ": " + NOT_A_NUMBER + ": " + valueName);
             return null;
         }
-        else if(Number(n) < min || Number(n) > max)
+        else if(!isFloat && Number(n) < min || Number(n) > max)
         {
-            messageArray.push(parentType + " " + index + " (" + itemName + "): " + OUT_OF_BOUNDS + ": " + valueName);
+            messageArray.push(itemName + ": " + OUT_OF_BOUNDS + ": " + valueName);
+            return null;
+        }
+        else if(isFloat && parseFloat(n) < min || parseFloat(n) > max)
+        {
+            messageArray.push(itemName + ": " + OUT_OF_BOUNDS + ": " + valueName);
             return null;
         }
         
-        return Number(n);
+        if(isFloat)
+            return parseFloat(n);
+        else
+            return Number(n);
     }
 
-    parseNumberFloat(messageArray, n, valueName, parentType, index, itemName, min, max)
-    {
-        if(isNaN(parseFloat(n)))
-        {
-            messageArray.push(parentType + " " + index + " (" + itemName + "): " + NOT_A_NUMBER + ": " + valueName);
-            return null;
-        }
-        else if(parseFloat(n) < min || parseFloat(n) > max)
-        {
-            messageArray.push(parentType + " " + index + " (" + itemName + "): " + OUT_OF_BOUNDS + ": " + valueName);
-            return null;
-        }
-        
-        return parseFloat(n);
-    }
-
-    parseEnum(messageArray, value, enumCollection, parentType, index, itemName)
+    parseEnum(messageArray, value, enumCollection, itemName, rawValue)
     {
         if(!isNaN(value) || enumCollection[value] === undefined)
         {
-            messageArray.push(parentType + " " + index + " (" + itemName + "): " + INVALID_TYPE + ": \"" + value + "\"");
+            messageArray.push(itemName + ": " + INVALID_TYPE + ": \"" + rawValue + "\"");
             return false;
         }
         
@@ -649,9 +651,8 @@ class UploadPage extends React.Component
         this.uploadItem(i);
 
         // Remove newly uploaded ingredient from state along with error.
-        let temp = this.state.errorsQueue.map(e => { return e.props.id || null; });
         let errorsQueue = this.state.errorsQueue;
-        let errorSpliceOn = errorsQueue.map(e => { return e.props.id || null; }).indexOf(i.id);
+        let errorSpliceOn = errorsQueue.map(e => { return e.props ? e.props.id : null; }).indexOf(i.id);
         errorsQueue.splice(errorSpliceOn, 1);        
 
         this.setState({ ingredientQueue: [], recipeQueue: [], errorsQueue: errorsQueue });

@@ -114,6 +114,7 @@ export const NUMBER_BELOW_ZERO = "Tallet er mindre enn null (0)";
 export const NOT_AN_INGREDIENTTYPE = "Ikke en ingrediens-type";
 export const NOT_VALID_NAME = "Ikke gyldig navn";
 export const FAILED_ITEMS = "Feilmeldinger";
+export const INGREDIENT_NAME = "Navn på ingrediens";
 
 // Freetext ingredient information
 export const FREETEXT = "Fri-tekst";
@@ -143,7 +144,7 @@ export const FREETEXT_SYNTAX_TITLE = "<tittel på oppskrift>";
 export const FREETEXT_SYNTAX_PORTIONS = "<prosjoner>";
 export const FREETEXT_SYNTAX_TIME = "<tid for forberedelse> <tid totalt>";
 export const FREETEXT_SYNTAX_TYPE_DIFF_RATE = "<typen oppskrift (ENUM: R1)> <vanskelighetsgrad (ENUM: R2)> <gradering 0-10>";
-export const FREETEXT_SYNTAX_METHOD_TEMP_UNIT = "<tilbredingsmetode (ENUM: R3)> <antall grader> <temperaturenhet (ENUM: R4)>";
+export const FREETEXT_SYNTAX_METHOD_TEMP_UNIT = "<tilbredingsmetode (ENUM: R3)> <antall grader> (VALGFRITT) <temperaturenhet (ENUM: R4, VALGFRITT)>";
 export const FREETEXT_SYNTAX_PROTEIN = "<protein (ENUM: R5)>";
 export const FREETEXT_SYNTAX_SECTION_DELIM = "+";
 export const FREETEXT_SYNTAX_RECIPE_INGREDIENT = "<antall (VALGFRITT)> <måle enhet (ENUM: R6, VALGFRITT)> <ingrediens navn> <forberedning (ENUM: R7, VALGFRITT)>";
