@@ -115,7 +115,6 @@ export const NOT_AN_INGREDIENTTYPE = "Ikke en ingrediens-type";
 export const NOT_VALID_NAME = "Ikke gyldig navn";
 export const FAILED_ITEMS = "Feilmeldinger";
 export const INGREDIENT_NAME = "Navn på ingrediens";
-export const SELECT_TYPE = "Velg type";
 
 // Freetext ingredient information
 export const FREETEXT = "Fri-tekst";

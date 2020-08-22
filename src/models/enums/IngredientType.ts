@@ -169,15 +169,3 @@ export const IngredientTypeList = (translated: Boolean = false, join: Boolean = 
 
 	return res; 
 };
-
-export const IngredientTypeIndexed = (translated: Boolean = true) =>
-{
-	let types = IngredientTypeList(translated, false) as Array<String>;
-	
-	let res = types.map((e, i)=> { return { "key": i, "value": IngredientType[i], "text": e }});
-console.log(
-	res
-);
-
-	return res;
-};

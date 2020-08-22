@@ -1,6 +1,5 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Dropdown } from "semantic-ui-react";
 
 // Redux imports
 import { getRecipeData, setRecipeError, setRecipeData } from "../actions/RecipeActions";
@@ -23,7 +22,7 @@ import { UPLOAD, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QU
     EXAMPLE_RECIPE_TYPE_DIFF_RATE, EXAMPLE_RECIPE_METHOD_TEMP_UNIT, EXAMPLE_RECIPE_PROTEIN, EXAMPLE_RECIPE_RECIPE_INGREDIENT1, EXAMPLE_RECIPE_RECIPE_INGREDIENT2, 
     EXAMPLE_RECIPE_RECIPE_INGREDIENT3, EXAMPLE_RECIPE_RECIPE_INGREDIENT4, EXAMPLE_RECIPE_RECIPE_INGREDIENT5, EXAMPLE_RECIPE_RECIPE_INGREDIENT6, EXAMPLE_RECIPE_INSTRUCTION1, 
     EXAMPLE_RECIPE_INSTRUCTION2, EXAMPLE_RECIPE_NOTE1, FREETEXT_SYNTAX_EXAMPLE_START_RECIPE, FREETEXT_SYNTAX_TITLE, FREETEXT_SYNTAX_PORTIONS, FREETEXT_SYNTAX_INGREDIENTS, 
-    FREETEXT_SYNTAX_RECIPE_INGREDIENT, FREETEXT_SYNTAX_NOTES, UPLOAD_FROM_URL, SELECT_TYPE
+    FREETEXT_SYNTAX_RECIPE_INGREDIENT, FREETEXT_SYNTAX_NOTES, UPLOAD_FROM_URL 
 } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
@@ -31,7 +30,7 @@ import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "
 import { Button } from "./common/Button";
 import { Panel } from "./common/Panel";
 import { Ingredient } from "../models/Ingredient";
-import { IngredientType, IngredientTypeValue, IngredientTypeList, IngredientTypeIndexed } from "../models/enums/IngredientType";
+import { IngredientType, IngredientTypeValue, IngredientTypeList } from "../models/enums/IngredientType";
 import { Recipe } from "../models/Recipe";
 import { RecipeIngredient } from "../models/RecipeIngredient";
 import { RecipeType, RecipeTypeValue, RecipeTypeList } from "../models/enums/RecipeType";
@@ -407,16 +406,15 @@ class UploadPage extends React.Component
             }
             else
             {
+                // let searchResult = await getIngredientData("name", ingredientName, 1);
                 let searchResult = await searchDatabase(ingredientName, 2, ["name"], DB_INGREDIENT);
                 let ingredient = null;
 
                 if(searchResult.length === 0 && this.props.scraper)
                 {
                     canUpload = false;
-                    // Todo move to function
                     ingredient = await getKolonialItemWithCheerio(ingredientName);
                     let customIngredientName = "";
-                    let customIngredientType = null;
 
                     if(!ingredient)
                     {
@@ -431,13 +429,9 @@ class UploadPage extends React.Component
                                 { SET_NAME + " (" + WAS} "<a style={{ ...getTextColor(this.props.contrastmode) }} href={ingredient.source_link} target="_blank">
                                     <em>{ingredient.original_name}</em></a>" {"):" } 
                                 <div className="rowStyle">
-                                    <input style={{ width: "33%", height: "3wem", padding: "auto" }} id="kolonial-upload-ingredient-name" 
-                                            onChange={e => customIngredientName = e.target.value} defaultValue={ingredientName}/>
-
-                                    <Dropdown style={{ width: "33%", marginLeft: "5px" }} onChange={e => customIngredientType = e.target.value}
-                                        placeholder={SELECT_TYPE} fluid search selection options={IngredientTypeIndexed()} />
-
-                                    <Button onClick={(customIngredientType === null ? null : () => this.uploadScraperIngredient(ingredient, customIngredientName, customIngredientType))} 
+                                    <input style={{ width: "50%", height: "1.5em", padding: "auto" }} id="kolonial-upload-ingredient-name" 
+                                        onChange={e => customIngredientName = e.target.value} defaultValue={ingredientName}/>
+                                    <Button onClick={() => this.uploadScraperIngredient(ingredient, customIngredientName)} 
                                         contrastmode={this.props.contrastmode} text={UPLOAD + " " + INGREDIENT}/>
                                 </div>
                             </div>
@@ -650,11 +644,10 @@ class UploadPage extends React.Component
         }
     }
 
-    async uploadScraperIngredient(i, customIngredientName, customIngredientType)
+    async uploadScraperIngredient(i, customIngredientName)
     {
         if(customIngredientName)
             i.name = customIngredientName;
-        i.type = customIngredientType;
         this.uploadItem(i);
 
         // Remove newly uploaded ingredient from state along with error.
