@@ -687,156 +687,164 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
     let corsAnywhere = "https://cors-anywhere.herokuapp.com/";
     let url = corsAnywhere + "https://kolonial.no/sok/?q=" + name;
 
-    return await fetch(url)
-        .then(response => response.text())
-        .then(data =>
-        {
-            console.log("getKolonialItemWithCheerio: Started ASYNC call 1");
-            // console.log(data); 
-                
-            let $ = cheerio.load(data);
-            let searchRes = $(".product-list-item ");
-            // console.log(searchRes); 
-
-            if(!searchRes[0])
+    try
+    {
+        return await fetch(url)
+            .then(response => response.text())
+            .then(data =>
             {
-                console.log("First fetch failed: searchRes was empty");
-                store.dispatch({ type: INGREDIENT_LOADING_COMPLETE }); // TODO should fail with redux type, use error type to tell user no item found
-                return null;
-            }
+                console.log("getKolonialItemWithCheerio: Started ASYNC call 1");
+                // console.log(data); 
+                    
+                let $ = cheerio.load(data);
+                let searchRes = $(".product-list-item ");
+                // console.log(searchRes); 
 
-            let detailsPath = searchRes[0].children[1].attribs.href;
-            if(!detailsPath || detailsPath.length === 0)
-                return null;
-
-            let kolonialId = detailsPath.match(/\/(\d+)-/)[1];
-            let kolDetails = "https://kolonial.no" + detailsPath;
-            let detailsUrl = corsAnywhere + kolDetails;
-            console.log(kolDetails);
-
-            if(!detailsUrl)
-            {
-                console.log("First fetch failed: detailsUrl was null");
-                store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
-                return null;
-            }
-
-            return fetch(detailsUrl)
-                .then(response => response.text())
-                .then(data =>
+                if(!searchRes[0])
                 {
-                    console.log("getKolonialItemWithCheerio: Started ASYNC call 2");
-                    // console.log(data); 
+                    console.log("First fetch failed: searchRes was empty");
+                    store.dispatch({ type: INGREDIENT_LOADING_COMPLETE }); // TODO should fail with redux type, use error type to tell user no item found
+                    return null;
+                }
 
-                    if(!data)
+                let detailsPath = searchRes[0].children[1].attribs.href;
+                if(!detailsPath || detailsPath.length === 0)
+                    return null;
+
+                let kolonialId = detailsPath.match(/\/(\d+)-/)[1];
+                let kolDetails = "https://kolonial.no" + detailsPath;
+                let detailsUrl = corsAnywhere + kolDetails;
+                console.log(kolDetails);
+
+                if(!detailsUrl)
+                {
+                    console.log("First fetch failed: detailsUrl was null");
+                    store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
+                    return null;
+                }
+
+                return fetch(detailsUrl)
+                    .then(response => response.text())
+                    .then(data =>
                     {
-                        console.log("Second fetch failed: data was null");
-                        store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
-                        return null;
-                    }
-                    
-                    let $ = cheerio.load(data);
-                    let productInfo = $(".product-detail")[0];
-                    console.log(productInfo);
-                    
-                    let originalName, brand, currency, price, type, energy_kj, cals_kcal, protein_gram, carbs_gram, sugar_gram, fat_gram, satFat_gram, salt_gram = null;
-                    let sourceLink = kolDetails;
-                    let id = getRandomString();
-                    name = trimString(uppercaseFirst(name)) ?? null;
-                    
-                    let nameDiv = $(".name-extra")[0].parent;
-                    originalName = trimString(nameDiv.children[0].data);
-                    // console.log(originalName);
-                    
-                    let brandDiv = $(".brand-name")[0];
-                    brand = brandDiv ? trimString(brandDiv.children[1].children[1].children[0].data) + " " : "";
-                    // console.log(brand);
+                        console.log("getKolonialItemWithCheerio: Started ASYNC call 2");
+                        // console.log(data); 
 
-                    let priceDiv = $(".price ")[0];
-                    if(priceDiv)
-                    {
-                        currency = priceDiv.children[1] ? " " + trimString(priceDiv.children[1].children[0].data) : "";
-                        let intPrice = priceDiv.children[2] ? trimString(priceDiv.children[2].data) : 0;
-                        let decPrice = priceDiv.children[4] ? trimString(priceDiv.children[4].children[0].data) : 0;
-                        price = Number(intPrice + "." + decPrice);
-                        // console.log(price);
-                        // console.log("(" + currency + ") " + price.toString());
-                    }
-
-                    // TODO adapt/pasre/translate productInfo.children[1].children[5].children[1].children[1].children[0].data.toString().trim()
-                    let typeDiv = $(".breadcrum")[0];
-                    type = IngredientType[0];
-                    // console.log(typeDiv);
-                    
-                    let nutritionDivId = "#nutrition-" + kolonialId;
-                    let nutritionDiv = $(nutritionDivId);
-                    // console.log(nutritionDiv);
-
-                    // NB: Values per 100g/ml 
-                    if(nutritionDiv.length === 0)
-                        console.log("No nutrition-tab found.");
-                    else
-                    {
-                        let nutritionTable = nutritionDiv.find(".table-striped")[0];
-                        let nutritionArray = nutritionTable.children[3].children;
-                        console.log(nutritionArray);
-
-                        let nutritionArrayDestilled = [];
-                        for (let i = 0; i < nutritionArray.length; i++) 
-                            if(nutritionArray[i].children)
-                                nutritionArrayDestilled.push(nutritionArray[i]);
-
-                        console.log(nutritionArrayDestilled);
-                        for (let i = 0; i < nutritionArrayDestilled.length; i++) 
+                        if(!data)
                         {
-                            let label = trimString(nutritionArrayDestilled[i].children[1].children[0].data);
-                            let value = nutritionArrayDestilled[i].children[3].children[0].data;
+                            console.log("Second fetch failed: data was null");
+                            store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
+                            return null;
+                        }
+                        
+                        let $ = cheerio.load(data);
+                        let productInfo = $(".product-detail")[0];
+                        console.log(productInfo);
+                        
+                        let originalName, brand, currency, price, type, energy_kj, cals_kcal, protein_gram, carbs_gram, sugar_gram, fat_gram, satFat_gram, salt_gram = null;
+                        let sourceLink = kolDetails;
+                        let id = getRandomString();
+                        name = trimString(uppercaseFirst(name)) ?? null;
+                        
+                        let nameDiv = $(".name-extra")[0].parent;
+                        originalName = trimString(nameDiv.children[0].data);
+                        // console.log(originalName);
+                        
+                        let brandDiv = $(".brand-name")[0];
+                        brand = brandDiv ? trimString(brandDiv.children[1].children[1].children[0].data) + " " : "";
+                        // console.log(brand);
 
-                            console.log("Setting value - \"" + label + "\": \"" + value + "\"");
-                            if(label === "Energi")
+                        let priceDiv = $(".price ")[0];
+                        if(priceDiv)
+                        {
+                            currency = priceDiv.children[1] ? " " + trimString(priceDiv.children[1].children[0].data) : "";
+                            let intPrice = priceDiv.children[2] ? trimString(priceDiv.children[2].data) : 0;
+                            let decPrice = priceDiv.children[4] ? trimString(priceDiv.children[4].children[0].data) : 0;
+                            price = Number(intPrice + "." + decPrice);
+                            // console.log(price);
+                            // console.log("(" + currency + ") " + price.toString());
+                        }
+
+                        // TODO adapt/pasre/translate productInfo.children[1].children[5].children[1].children[1].children[0].data.toString().trim()
+                        let typeDiv = $(".breadcrum")[0];
+                        type = IngredientType[0];
+                        // console.log(typeDiv);
+                        
+                        let nutritionDivId = "#nutrition-" + kolonialId;
+                        let nutritionDiv = $(nutritionDivId);
+                        // console.log(nutritionDiv);
+
+                        // NB: Values per 100g/ml 
+                        if(nutritionDiv.length === 0)
+                            console.log("No nutrition-tab found.");
+                        else
+                        {
+                            let nutritionTable = nutritionDiv.find(".table-striped")[0];
+                            let nutritionArray = nutritionTable.children[3].children;
+                            console.log(nutritionArray);
+
+                            let nutritionArrayDestilled = [];
+                            for (let i = 0; i < nutritionArray.length; i++) 
+                                if(nutritionArray[i].children)
+                                    nutritionArrayDestilled.push(nutritionArray[i]);
+
+                            console.log(nutritionArrayDestilled);
+                            for (let i = 0; i < nutritionArrayDestilled.length; i++) 
                             {
-                                energy_kj = trimString(value, true, 2, true);
-                                cals_kcal = trimString(value.split("/")[1], true, 2, true);
-                            }
-                            else if(label === "Fett")
-                            {
-                                fat_gram = trimString(value, true, 0, true);
-                            }
-                            else if(label === "hvorav mettede fettsyrer")
-                            {
-                                satFat_gram = trimString(value, true, 0, true);
-                            }
-                            else if(label === "Karbohydrater")
-                            {
-                                carbs_gram = trimString(value, true, 0, true);
-                            }
-                            else if(label === "hvorav sukkerarter")
-                            {
-                                sugar_gram = trimString(value, true, 0, true);
-                            }
-                            else if(label === "Protein")
-                            {
-                                protein_gram = trimString(value, true, 0, true);
-                            }
-                            else if(label === "Salt")
-                            {
-                                salt_gram = trimString(value, true, 0, true);
+                                let label = trimString(nutritionArrayDestilled[i].children[1].children[0].data);
+                                let value = nutritionArrayDestilled[i].children[3].children[0].data;
+
+                                console.log("Setting value - \"" + label + "\": \"" + value + "\"");
+                                if(label === "Energi")
+                                {
+                                    energy_kj = trimString(value, true, 2, true);
+                                    cals_kcal = trimString(value.split("/")[1], true, 2, true);
+                                }
+                                else if(label === "Fett")
+                                {
+                                    fat_gram = trimString(value, true, 0, true);
+                                }
+                                else if(label === "hvorav mettede fettsyrer")
+                                {
+                                    satFat_gram = trimString(value, true, 0, true);
+                                }
+                                else if(label === "Karbohydrater")
+                                {
+                                    carbs_gram = trimString(value, true, 0, true);
+                                }
+                                else if(label === "hvorav sukkerarter")
+                                {
+                                    sugar_gram = trimString(value, true, 0, true);
+                                }
+                                else if(label === "Protein")
+                                {
+                                    protein_gram = trimString(value, true, 0, true);
+                                }
+                                else if(label === "Salt")
+                                {
+                                    salt_gram = trimString(value, true, 0, true);
+                                }
                             }
                         }
-                    }
 
-                    let ingredient = new Ingredient(id, name, type, price, is_commodity, cals_kcal, protein_gram, carbs_gram, sugar_gram, fat_gram, satFat_gram, salt_gram, brand + originalName, sourceLink);
-                    console.log("Created new ingredient from Kolonial:");
-                    console.log(ingredient);
+                        let ingredient = new Ingredient(id, name, type, price, is_commodity, cals_kcal, protein_gram, carbs_gram, sugar_gram, fat_gram, satFat_gram, salt_gram, brand + originalName, sourceLink);
+                        console.log("Created new ingredient from Kolonial:");
+                        console.log(ingredient);
 
-                    store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
-                    console.log("getKolonialItemWithCheerio: Finished ASYNC call 2");
-                    return ingredient;
-                });
+                        store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
+                        console.log("getKolonialItemWithCheerio: Finished ASYNC call 2");
+                        return ingredient;
+                    });
 
-            console.log("getKolonialItemWithCheerio: Finished ASYNC call 1");
-        });
-    console.log("getKolonialItemWithCheerio end");
+                console.log("getKolonialItemWithCheerio: Finished ASYNC call 1");
+            });
+    }
+    catch
+    {
+        store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
+        console.log("Failed to fetch from Kolonial.");
+        return;
+    }
 };
 
 // Convert quantity (of ex. an ingredient, from cups to gram) though recursion from orignal quantity/unit to quantity/gram to quantity/toUnit
