@@ -59,7 +59,8 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 
 ## MISC TODOs
 - [ ] Internet crawler or fentch from API for recipes
-- [ ] Upload: when uploading ingredient from kolonial fix names stuck at index, before uploading, choose type from dropdown
+- [ ] Upload: when uploading ingredient from kolonial fix names stuck at index, upload scraper ingredient disabled if no type set
+- [ ] Toast (callToast) should be visible when caleld form shared
 - [ ] Flavicon (For timer, toasts, notifications etc.)
 - [ ] Expanding all panels in upload white line over footer
 - [ ] Improved style for mobile (width, footer escpecially)

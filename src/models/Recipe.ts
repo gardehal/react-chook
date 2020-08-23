@@ -197,6 +197,8 @@ export class Recipe
                 r[p] += r.recipe_ingredients[iIndex].quantity_in_gram * (parseFloat(i[p].toString().match(/\d+[.|,]?\d*/gmi)) / 100); // Regex on numbers in case of "123 g". Devide nutri-info by 100 because it is measured per 100ml/g
               else
                 r[p] += parseFloat(i[p].toString().match(/\d+[.|,]?\d*/gmi));
+
+            r[p] = r[p].toFixed(2);
           }
         }
       }

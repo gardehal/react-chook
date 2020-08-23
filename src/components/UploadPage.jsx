@@ -22,7 +22,7 @@ import { UPLOAD, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QU
     EXAMPLE_RECIPE_TYPE_DIFF_RATE, EXAMPLE_RECIPE_METHOD_TEMP_UNIT, EXAMPLE_RECIPE_PROTEIN, EXAMPLE_RECIPE_RECIPE_INGREDIENT1, EXAMPLE_RECIPE_RECIPE_INGREDIENT2, 
     EXAMPLE_RECIPE_RECIPE_INGREDIENT3, EXAMPLE_RECIPE_RECIPE_INGREDIENT4, EXAMPLE_RECIPE_RECIPE_INGREDIENT5, EXAMPLE_RECIPE_RECIPE_INGREDIENT6, EXAMPLE_RECIPE_INSTRUCTION1, 
     EXAMPLE_RECIPE_INSTRUCTION2, EXAMPLE_RECIPE_NOTE1, FREETEXT_SYNTAX_EXAMPLE_START_RECIPE, FREETEXT_SYNTAX_TITLE, FREETEXT_SYNTAX_PORTIONS, FREETEXT_SYNTAX_INGREDIENTS, 
-    FREETEXT_SYNTAX_RECIPE_INGREDIENT, FREETEXT_SYNTAX_NOTES, UPLOAD_FROM_URL 
+    FREETEXT_SYNTAX_RECIPE_INGREDIENT, FREETEXT_SYNTAX_NOTES, UPLOAD_FROM_URL, SELECT_TYPE
 } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
@@ -30,7 +30,7 @@ import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "
 import { Button } from "./common/Button";
 import { Panel } from "./common/Panel";
 import { Ingredient } from "../models/Ingredient";
-import { IngredientType, IngredientTypeValue, IngredientTypeList } from "../models/enums/IngredientType";
+import { IngredientType, IngredientTypeValue, IngredientTypeList, IngredientTypeIndexed } from "../models/enums/IngredientType";
 import { Recipe } from "../models/Recipe";
 import { RecipeIngredient } from "../models/RecipeIngredient";
 import { RecipeType, RecipeTypeValue, RecipeTypeList } from "../models/enums/RecipeType";
@@ -55,7 +55,7 @@ class UploadPage extends React.Component
 
     initState()
     {
-        return { freetext: "", filename: "", ingredientQueue: [], recipeQueue: [], errorsQueue: [] };
+        return { freetext: "", filename: "", ingredientQueue: [], recipeQueue: [], errorsQueue: [], reRender: false };
     }
 
     componentWillMount()
@@ -413,31 +413,8 @@ class UploadPage extends React.Component
                 if(searchResult.length === 0 && this.props.scraper)
                 {
                     canUpload = false;
-                    ingredient = await getKolonialItemWithCheerio(ingredientName);
-                    let customIngredientName = "";
+                    ingredient = this.downloadAndRenderScraperingredient(ingredientName);
 
-                    if(!ingredient)
-                    {
-                        failedItems.push(RECIPE + " " + i + " (" + ingredientName + "): " + CHEERIO_KOLONIAL_ERROR);
-                        l++;
-                        continue;
-                    }
-                    
-                    let createdNewIngredientHtml = (<div id={ingredient.id}>
-                            <div className="rowStyle">{RECIPE + " " + i + " (" + ingredientName + "): " + INGREDIENT_NOT_FOUND_DB}</div>
-                            <div>
-                                { SET_NAME + " (" + WAS} "<a style={{ ...getTextColor(this.props.contrastmode) }} href={ingredient.source_link} target="_blank">
-                                    <em>{ingredient.original_name}</em></a>" {"):" } 
-                                <div className="rowStyle">
-                                    <input style={{ width: "50%", height: "1.5em", padding: "auto" }} id="kolonial-upload-ingredient-name" 
-                                        onChange={e => customIngredientName = e.target.value} defaultValue={ingredientName}/>
-                                    <Button onClick={() => this.uploadScraperIngredient(ingredient, customIngredientName)} 
-                                        contrastmode={this.props.contrastmode} text={UPLOAD + " " + INGREDIENT}/>
-                                </div>
-                            </div>
-                        </div>);
-                    failedItems.push(createdNewIngredientHtml);
-                    
                     l++;
                     continue;
                 }
@@ -504,6 +481,53 @@ class UploadPage extends React.Component
         subRecipes,
         instructions, 
         notes);
+    }
+
+    async downloadAndRenderScraperingredient(ingredientName)
+    {
+        let ingredient = await getKolonialItemWithCheerio(ingredientName);
+        let customIngredientName = "";
+        let customIngredientType = null;
+        let typeSelectHtml = [];
+        let failedItems = this.state.errorsQueue;
+
+        if(!ingredient)
+        {
+            failedItems.push(ingredientName + ": " + CHEERIO_KOLONIAL_ERROR);
+            this.setState({ failedItems: failedItems });
+            return;
+        }
+
+        IngredientTypeIndexed().forEach(e => 
+        { 
+            typeSelectHtml.push(<option value={e.value}>{e.text}</option>);
+        });
+
+        let buttonNull = (<Button onClick={(null)} contrastmode={this.props.contrastmode} text={UPLOAD + " " + INGREDIENT}/>);
+        let buttonUpload = (<Button onClick={() => this.uploadScraperIngredient(ingredient, customIngredientName, customIngredientType)} contrastmode={this.props.contrastmode} text={UPLOAD + " " + INGREDIENT}/>);
+
+        let createdNewIngredientHtml = (<div id={ingredient.id}>
+                <div className="rowStyle">{ingredientName + ": " + INGREDIENT_NOT_FOUND_DB}</div>
+                <div>
+                    { SET_NAME + " (" + WAS} "<a style={{ ...getTextColor(this.props.contrastmode) }} href={ingredient.source_link} target="_blank">
+                        <em>{ingredient.original_name}</em></a>"{"):"} 
+                    <div className="rowStyle">
+                        <input style={{ width: "30%", height: "1.5em", margin: "auto 0" }} id="kolonial-upload-ingredient-name" 
+                            onChange={e => customIngredientName = e.target.value} defaultValue={ingredientName}/>
+
+                        <select style={{ width: "20%", height: "1.5em", margin: "auto 0" }} onChange={e => { customIngredientType = e.target.value; this.setState({ reRender: true }); }}>
+                            {typeSelectHtml}
+                        </select>
+
+                        {/* TODO if customIngredientType is null disable button */}
+                        {console.log("before " + customIngredientType) }
+                        {customIngredientType ? buttonUpload : buttonNull}
+                    </div>
+                </div>
+            </div>);
+
+        failedItems.push(createdNewIngredientHtml);
+        this.setState({ errorsQueue: failedItems });
     }
 
     parseNumber(messageArray, n, valueName, itemName, min, max, isFloat = false)
@@ -644,10 +668,12 @@ class UploadPage extends React.Component
         }
     }
 
-    async uploadScraperIngredient(i, customIngredientName)
+    async uploadScraperIngredient(i, customIngredientName, customIngredientType)
     {
         if(customIngredientName)
-            i.name = customIngredientName;
+            i.name = customIngredientName.toLowerCase();
+        
+        i.type = customIngredientType || IngredientType[0];
         this.uploadItem(i);
 
         // Remove newly uploaded ingredient from state along with error.
@@ -726,7 +752,7 @@ class UploadPage extends React.Component
                     <Button key={"validateButton" + ms} onClick={this.parseFreetext} contrastmode={this.props.contrastmode} text={VALIDATE_UPLOAD_DATA}/> 
                     
                     <Button key={"uploadButton" + ms} onClick={(this.state.ingredientQueue.length > 0 || this.state.recipeQueue.length > 0 ? this.upload : (null))} 
-                    contrastmode={this.props.contrastmode} text={UPLOAD}/> 
+                        contrastmode={this.props.contrastmode} text={UPLOAD}/> 
                 </div>
             </div>
         );
