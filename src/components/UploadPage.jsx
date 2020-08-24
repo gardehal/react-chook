@@ -22,7 +22,7 @@ import { UPLOAD, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QU
     EXAMPLE_RECIPE_TYPE_DIFF_RATE, EXAMPLE_RECIPE_METHOD_TEMP_UNIT, EXAMPLE_RECIPE_PROTEIN, EXAMPLE_RECIPE_RECIPE_INGREDIENT1, EXAMPLE_RECIPE_RECIPE_INGREDIENT2, 
     EXAMPLE_RECIPE_RECIPE_INGREDIENT3, EXAMPLE_RECIPE_RECIPE_INGREDIENT4, EXAMPLE_RECIPE_RECIPE_INGREDIENT5, EXAMPLE_RECIPE_RECIPE_INGREDIENT6, EXAMPLE_RECIPE_INSTRUCTION1, 
     EXAMPLE_RECIPE_INSTRUCTION2, EXAMPLE_RECIPE_NOTE1, FREETEXT_SYNTAX_EXAMPLE_START_RECIPE, FREETEXT_SYNTAX_TITLE, FREETEXT_SYNTAX_PORTIONS, FREETEXT_SYNTAX_INGREDIENTS, 
-    FREETEXT_SYNTAX_RECIPE_INGREDIENT, FREETEXT_SYNTAX_NOTES, UPLOAD_FROM_URL, SELECT_TYPE
+    FREETEXT_SYNTAX_RECIPE_INGREDIENT, FREETEXT_SYNTAX_NOTES, UPLOAD_FROM_URL, INGREDIENT_MISSING_TYPE
 } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
@@ -55,7 +55,7 @@ class UploadPage extends React.Component
 
     initState()
     {
-        return { freetext: "", filename: "", ingredientQueue: [], recipeQueue: [], errorsQueue: [], reRender: false };
+        return { freetext: "", filename: "", ingredientQueue: [], recipeQueue: [], errorsQueue: [], temp: "" };
     }
 
     componentWillMount()
@@ -413,7 +413,7 @@ class UploadPage extends React.Component
                 if(searchResult.length === 0 && this.props.scraper)
                 {
                     canUpload = false;
-                    ingredient = this.downloadAndRenderScraperingredient(ingredientName);
+                    this.downloadAndRenderScraperingredient(ingredientName);
 
                     l++;
                     continue;
@@ -466,28 +466,27 @@ class UploadPage extends React.Component
             return null;
 
         return new Recipe(getRandomString(), 
-        toCamelCase(title), 
-        type, 
-        difficulty,
-        rating, 
-        portions, 
-        timePrep, 
-        timeTotal, 
-        cookingMethod, 
-        cookingMethodTemp, 
-        cookingMethodTempUnit, 
-        protein,
-        recipeIngredients, 
-        subRecipes,
-        instructions, 
-        notes);
+            toCamelCase(title), 
+            type, 
+            difficulty,
+            rating, 
+            portions, 
+            timePrep, 
+            timeTotal, 
+            cookingMethod, 
+            cookingMethodTemp, 
+            cookingMethodTempUnit, 
+            protein,
+            recipeIngredients, 
+            subRecipes,
+            instructions, 
+            notes);
     }
 
     async downloadAndRenderScraperingredient(ingredientName)
     {
         let ingredient = await getKolonialItemWithCheerio(ingredientName);
         let customIngredientName = "";
-        let customIngredientType = null;
         let typeSelectHtml = [];
         let failedItems = this.state.errorsQueue;
 
@@ -503,9 +502,6 @@ class UploadPage extends React.Component
             typeSelectHtml.push(<option value={e.value}>{e.text}</option>);
         });
 
-        let buttonNull = (<Button onClick={(null)} contrastmode={this.props.contrastmode} text={UPLOAD + " " + INGREDIENT}/>);
-        let buttonUpload = (<Button onClick={() => this.uploadScraperIngredient(ingredient, customIngredientName, customIngredientType)} contrastmode={this.props.contrastmode} text={UPLOAD + " " + INGREDIENT}/>);
-
         let createdNewIngredientHtml = (<div id={ingredient.id}>
                 <div className="rowStyle">{ingredientName + ": " + INGREDIENT_NOT_FOUND_DB}</div>
                 <div>
@@ -515,13 +511,12 @@ class UploadPage extends React.Component
                         <input style={{ width: "30%", height: "1.5em", margin: "auto 0" }} id="kolonial-upload-ingredient-name" 
                             onChange={e => customIngredientName = e.target.value} defaultValue={ingredientName}/>
 
-                        <select style={{ width: "20%", height: "1.5em", margin: "auto 0" }} onChange={e => { customIngredientType = e.target.value; this.setState({ reRender: true }); }}>
+                        <select style={{ width: "20%", height: "1.5em", margin: "auto 0" }} onChange={e => { ingredient.type = e.target.value; this.setState({ temp: e.target.value }); }}>
                             {typeSelectHtml}
                         </select>
 
-                        {/* TODO if customIngredientType is null disable button */}
-                        {console.log("before " + customIngredientType) }
-                        {customIngredientType ? buttonUpload : buttonNull}
+                        <Button onClick={() => this.uploadScraperIngredient(ingredient, customIngredientName)} contrastmode={this.props.contrastmode}   
+                            text={UPLOAD + " " + INGREDIENT}/>
                     </div>
                 </div>
             </div>);
@@ -529,6 +524,8 @@ class UploadPage extends React.Component
         failedItems.push(createdNewIngredientHtml);
         this.setState({ errorsQueue: failedItems });
     }
+
+
 
     parseNumber(messageArray, n, valueName, itemName, min, max, isFloat = false)
     {
@@ -626,7 +623,7 @@ class UploadPage extends React.Component
         console.log(recipes);
         console.log(failedItems);
 
-        this.setState({ filename: "", freetext: "", ingredientQueue: ingredients, recipeQueue: recipes, errorsQueue: failedItems });
+        this.setState({ filename: "", ingredientQueue: ingredients, recipeQueue: recipes, errorsQueue: failedItems });
     }
 
     async upload()
@@ -668,20 +665,45 @@ class UploadPage extends React.Component
         }
     }
 
-    async uploadScraperIngredient(i, customIngredientName, customIngredientType)
+    async uploadScraperIngredient(i, customIngredientName)
     {
+        let errorsQueue = this.state.errorsQueue;
+        
         if(customIngredientName)
             i.name = customIngredientName.toLowerCase();
+
+        if(i.type === null)
+        {
+            errorsQueue.push(<span id={i.id}>{INGREDIENT_MISSING_TYPE + " " + i.original_name}</span>);
+            this.setState({ errorsQueue: errorsQueue });
+            return;
+        }
         
-        i.type = customIngredientType || IngredientType[0];
         this.uploadItem(i);
-
+        let spliceIndexes = [];
         // Remove newly uploaded ingredient from state along with error.
-        let errorsQueue = this.state.errorsQueue;
-        let errorSpliceOn = errorsQueue.map(e => { return e.props ? e.props.id : null; }).indexOf(i.id);
-        errorsQueue.splice(errorSpliceOn, 1);        
+        // Simplyfy
+        // let indexes = errorsQueue.map((e, index) => { if(e.props && e.props.id == i.id) return index; }).reverse();
+        // console.log("test");
+        // console.log(indexes);
+        // indexes.forEach(e => errorsQueue.splice(e, 1));      
+        //     // .forEach(e => errorsQueue.splice(e, 1));  
 
-        this.setState({ ingredientQueue: [], recipeQueue: [], errorsQueue: errorsQueue });
+        //     console.log("test");
+        //     console.log(indexes);
+        
+        
+        errorsQueue.forEach((e, index) => 
+        {
+            if(e.props && e.props.id == i.id)
+                spliceIndexes.push(index);  
+        });  
+        spliceIndexes.reverse().forEach(e => 
+        {
+            errorsQueue.splice(e, 1);  
+        });      
+
+        this.setState({ errorsQueue: errorsQueue });
     }
 
     async uploadItem(i, itemName = INGREDIENT)

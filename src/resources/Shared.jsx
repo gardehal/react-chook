@@ -709,7 +709,11 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
 
                 let detailsPath = searchRes[0].children[1].attribs.href;
                 if(!detailsPath || detailsPath.length === 0)
+                {
+                    console.log("First fetch failed: detailsPath was empty");
+                    store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
                     return null;
+                }
 
                 let kolonialId = detailsPath.match(/\/(\d+)-/)[1];
                 let kolDetails = "https://kolonial.no" + detailsPath;
@@ -733,7 +737,7 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
                         {
                             console.log("Second fetch failed: data was null");
                             store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
-                            return null;
+                            return;
                         }
                         
                         let $ = cheerio.load(data);
@@ -766,7 +770,7 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
 
                         // TODO adapt/pasre/translate productInfo.children[1].children[5].children[1].children[1].children[0].data.toString().trim()
                         let typeDiv = $(".breadcrum")[0];
-                        type = IngredientType[0];
+                        type = null;
                         // console.log(typeDiv);
                         
                         let nutritionDivId = "#nutrition-" + kolonialId;
