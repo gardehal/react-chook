@@ -435,7 +435,9 @@ class UploadPage extends React.Component
         // Gather instructions
         console.log("Gathering instructions...");
         let m = l + 1;
-        while(lines[m].trim() !== sectionDelim && m < nLines)
+        console.log(lines[m]);
+        
+        while(lines[m].toString().trim() !== sectionDelim && m < nLines)
         {
             instructions.push(lines[m].toString());
 
@@ -683,25 +685,8 @@ class UploadPage extends React.Component
         let spliceIndexes = [];
         // Remove newly uploaded ingredient from state along with error.
         // Simplyfy
-        // let indexes = errorsQueue.map((e, index) => { if(e.props && e.props.id == i.id) return index; }).reverse();
-        // console.log("test");
-        // console.log(indexes);
-        // indexes.forEach(e => errorsQueue.splice(e, 1));      
-        //     // .forEach(e => errorsQueue.splice(e, 1));  
-
-        //     console.log("test");
-        //     console.log(indexes);
-        
-        
-        errorsQueue.forEach((e, index) => 
-        {
-            if(e.props && e.props.id == i.id)
-                spliceIndexes.push(index);  
-        });  
-        spliceIndexes.reverse().forEach(e => 
-        {
-            errorsQueue.splice(e, 1);  
-        });      
+        let indexes = errorsQueue.map((e, index) => { return e.props && e.props.id == i.id ? index : null }).filter(e => e !== null).reverse();
+        indexes.forEach(e => errorsQueue.splice(e, 1));        
 
         this.setState({ errorsQueue: errorsQueue });
     }

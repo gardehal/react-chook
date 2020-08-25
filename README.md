@@ -55,7 +55,7 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Find, try, and upload recipes
 - [ ] Testing
 - [ ] Use EM
-- [ ] Style
+- [ ] Style - Bootstrap
 
 ## MISC TODOs
 - [ ] Internet crawler or fentch from API for recipes
