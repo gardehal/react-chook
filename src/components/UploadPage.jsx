@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 // Redux imports
 import { getRecipeData, setRecipeError, setRecipeData } from "../actions/RecipeActions";
 import { getIngredientData, setIngredientData } from "../actions/IngredientActions";
-import { renderLoading, renderError, setTitle, getRandomString, toCamelCase, getKolonialItemWithCheerio, searchDatabase, getRecipeFromWebsite } from "../resources/Shared";
+import { renderLoading, renderError, setTitle, renderToast, getRandomString, toCamelCase, getKolonialItemWithCheerio, searchDatabase, getRecipeFromWebsite } from "../resources/Shared";
 
 // Variable imports
 import { UPLOAD, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QUEUE, OVERVIEW, UPLOAD_CHOOSE_FILE, TITLE, TYPE, 
@@ -349,7 +349,8 @@ class UploadPage extends React.Component
         // Gather ingredients for recipe
         console.log("Gathering ingredients...");
         let l = j + 1;
-        while(lines[l].trim() !== sectionDelim)
+        
+        while(lines[l] && lines[l].toString().trim() !== sectionDelim)
         {
             if(l > maxArrayItems)
             {
@@ -435,9 +436,7 @@ class UploadPage extends React.Component
         // Gather instructions
         console.log("Gathering instructions...");
         let m = l + 1;
-        console.log(lines[m]);
-        
-        while(lines[m].toString().trim() !== sectionDelim && m < nLines)
+        while(lines[m] && lines[m].toString().trim() !== sectionDelim && m < nLines)
         {
             instructions.push(lines[m].toString());
 
@@ -965,6 +964,7 @@ class UploadPage extends React.Component
             <div style={getBackgroundColor(this.props.contrastmode)}>
                 <div className="pageRootContainer">
                     <div style={{ ...getBackgroundColor(this.props.contrastmode) }}>
+                        {renderToast(this.props.toastMessage, 5000, this.props.contrastmode)}   
                         {this.renderContent()}
                     </div>
                 </div>
@@ -975,10 +975,10 @@ class UploadPage extends React.Component
 
 const mapStateToProps = state => 
 {
-    const { contrastmode, scraper } = state.settings;
+    const { contrastmode, scraper, toastMessage } = state.settings;
     const { recipeError, recipeLoading, recipeResult } = state.recipe;
     const { ingredientError, ingredientLoading, ingredientResult } = state.ingredient;
-    return { contrastmode, scraper,
+    return { contrastmode, scraper, toastMessage,
         recipeError, recipeLoading, recipeResult, 
         ingredientError, ingredientLoading, ingredientResult };
 };

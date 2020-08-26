@@ -3,7 +3,8 @@ import * as firebase from "firebase";
 import store from "../store";
 
 import { UNKNOWN_ERROR, LOADING, SUN, MON, TUE, WED, THU, FRI, SAT, JAN, FEB, MAR, APR, MAY, JUNE, JULY, AUG, SEPT, OCT, NOV, DEC, 
-    MAIN_TITLE, DB_RECIPE, DB_FETCH_FAILED, DB_INGREDIENT, TOAST_SCRAPER_START, TOAST_SCRAPER_DETAILS, TOAST_SCRAPER_PREPARING } from "./language";
+    MAIN_TITLE, DB_RECIPE, DB_FETCH_FAILED, DB_INGREDIENT, TOAST_SCRAPER_START, TOAST_SCRAPER_DETAILS, TOAST_SCRAPER_PREPARING,
+    ERROR_SCRAPER_GET, ERROR_SCRAPER_SEARCH_EMPTY, ERROR_SCRAPER_NO_CONTENT, ERROR_SCRAPER_FETCH_FAILED, } from "./language";
 import { getTextColor } from "./colors";
 import { Toast } from "../components/common/Toast";
 import { USER_LOADING, USER_LOADING_COMPLETE, GET_RECIPE_DATA_SUCCESS, GET_RECIPE_DATA_FAIL, RECIPE_LOADING, GET_INGREDIENT_DATA_SUCCESS, GET_INGREDIENT_DATA_FAIL, 
@@ -11,7 +12,6 @@ import { USER_LOADING, USER_LOADING_COMPLETE, GET_RECIPE_DATA_SUCCESS, GET_RECIP
 import { callToast } from "../actions/SettingsActions";
 import { Spinner } from "../components/common/Spinner";
 import { Ingredient } from "../models/Ingredient";
-import { IngredientType } from "../models/enums/IngredientType";
 import { QuantityUnit } from "../models/enums/QuantityUnit";
 
 // Database basic functions
@@ -711,6 +711,7 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
                 if(!detailsPath || detailsPath.length === 0)
                 {
                     console.log("First fetch failed: detailsPath was empty");
+                    callToast(ERROR_SCRAPER_GET + ingredientName + ERROR_SCRAPER_SEARCH_EMPTY, 3000);
                     store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
                     return null;
                 }
@@ -723,6 +724,7 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
                 if(!detailsUrl)
                 {
                     console.log("First fetch failed: detailsUrl was null");
+                    callToast(ERROR_SCRAPER_GET + ingredientName + ERROR_SCRAPER_SEARCH_EMPTY, 3000);
                     store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
                     return null;
                 }
@@ -736,6 +738,7 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
                         if(!data)
                         {
                             console.log("Second fetch failed: data was null");
+                            callToast(ERROR_SCRAPER_GET + ingredientName + ERROR_SCRAPER_NO_CONTENT, 3000);
                             store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
                             return;
                         }
@@ -844,6 +847,7 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
     }
     catch
     {
+        callToast(ERROR_SCRAPER_GET + ingredientName + ERROR_SCRAPER_FETCH_FAILED, 3000);
         store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
         console.log("Failed to fetch from Kolonial.");
         return;

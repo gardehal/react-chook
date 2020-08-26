@@ -300,8 +300,6 @@ class DevPage extends React.Component
                     coverText={true} cursor="cursor" contrastmode={this.props.contrastmode}/>
 
                 <div>
-                    {renderToast(this.props.toastMessage, 5000, this.props.contrastmode)}
-
                     {/* Call functions */}
                     {this.renderFunctionButtons()} 
 
@@ -332,6 +330,7 @@ class DevPage extends React.Component
             <div style={{ ...getBackgroundColor(this.props.contrastmode) }}>
                 <div className="pageRootContainer">
                     <div style={{ ...getBackgroundColor(this.props.contrastmode) }}>
+                        {renderToast(this.props.toastMessage, 5000, this.props.contrastmode)}
                         {this.renderContent()}
                     </div>
                 </div>

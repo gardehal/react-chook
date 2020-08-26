@@ -118,7 +118,7 @@ export const INGREDIENT_NAME = "Navn på ingrediens";
 export const SELECT_TYPE = "Velg type";
 export const INGREDIENT_MISSING_TYPE= "Ingrediens mangler type:";
 export const TOAST_SCRAPER_START = "Henter ingrediens på nettet...";
-export const TOAST_SCRAPER_DETAILS = "Henter detlajene...";
+export const TOAST_SCRAPER_DETAILS = "Henter detaljer...";
 export const TOAST_SCRAPER_PREPARING= "Gjør klar...";
 
 // Freetext ingredient information
@@ -246,6 +246,10 @@ export const UNDEFINED = "Udefinert";
 export const CHEERIO_KOLONIAL_ERROR = "Feil i Kolonial (Cheerio)";
 export const UNKNOWN_VALUE = "Ukjent verdi";
 export const INVALID_TYPE = "Ikke en gyldig type";
+export const ERROR_SCRAPER_GET = "Feil ved henting ingredients: ";
+export const ERROR_SCRAPER_SEARCH_EMPTY = ", søk ga ingen resultater.";
+export const ERROR_SCRAPER_NO_CONTENT = ", tomt innhold.";
+export const ERROR_SCRAPER_FETCH_FAILED = ", kunne ikke laste nettsiden.";
 
 // Enums
 export const ENUM_OTHER = "Annet";
