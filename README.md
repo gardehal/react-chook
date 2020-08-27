@@ -58,8 +58,9 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Style - Bootstrap
 
 ## MISC TODOs
-- [ ] Internet crawler or fentch from API for recipes
-- [ ] Upload: when uploading ingredient from kolonial fix names stuck at index, remove * for common items, add check box, loading state (scraper uploading two, first is successful but scond fails before first returns causes render with no errors until first call returns)
+- [ ] Internet crawler or fentch from API for recipes - finalize NRK with sub recipes
+- [ ] Ingredient "commodity" should be "essential"
+- [ ] Upload: when uploading ingredient from kolonial fix names stuck at index
 - [ ] Flavicon (For timer, toasts, notifications etc.)
 - [ ] Expanding all panels in upload white line over footer
 - [ ] Improved style for mobile (width, footer escpecially)

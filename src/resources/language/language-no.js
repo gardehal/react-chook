@@ -120,6 +120,7 @@ export const INGREDIENT_MISSING_TYPE= "Ingrediens mangler type:";
 export const TOAST_SCRAPER_START = "Henter ingrediens på nettet...";
 export const TOAST_SCRAPER_DETAILS = "Henter detaljer...";
 export const TOAST_SCRAPER_PREPARING= "Gjør klar...";
+export const ESSENTIAL = "Essensiell";
 
 // Freetext ingredient information
 export const FREETEXT = "Fri-tekst";
@@ -146,22 +147,20 @@ export const FREETEXT_SYNTAX_INFO_OVERVIEW = "- Alle feilmeldinger kommer opp un
 
 // Freetext recipe information
 export const FREETEXT_SYNTAX_TITLE = "<tittel på oppskrift>";
-export const FREETEXT_SYNTAX_PORTIONS = "<prosjoner>";
+export const FREETEXT_SYNTAX_PORTIONS_PROTEIN = "<prosjoner> <protein (ENUM: R5)>";
 export const FREETEXT_SYNTAX_TIME = "<tid for forberedelse> <tid totalt>";
 export const FREETEXT_SYNTAX_TYPE_DIFF_RATE = "<typen oppskrift (ENUM: R1)> <vanskelighetsgrad (ENUM: R2)> <gradering 0-10>";
 export const FREETEXT_SYNTAX_METHOD_TEMP_UNIT = "<tilbredingsmetode (ENUM: R3)> <antall grader> (VALGFRITT) <temperaturenhet (ENUM: R4, VALGFRITT)>";
-export const FREETEXT_SYNTAX_PROTEIN = "<protein (ENUM: R5)>";
 export const FREETEXT_SYNTAX_SECTION_DELIM = "+";
 export const FREETEXT_SYNTAX_RECIPE_INGREDIENT = "<antall (VALGFRITT)> <måle enhet (ENUM: R6, VALGFRITT)> <ingrediens navn> <forberedning (ENUM: R7, VALGFRITT)>";
 export const FREETEXT_SYNTAX_INGREDIENTS = "<liste med ingredienser>";
 export const FREETEXT_SYNTAX_INSTRUCTIONS = "<liste med instrukser>";
 export const FREETEXT_SYNTAX_NOTES = "<liste med notater>";
 export const EXAMPLE_RECIPE_TITLE = "Dim Sum";
-export const EXAMPLE_RECIPE_PORTIONS = "4";
+export const EXAMPLE_RECIPE_PORTIONS_PROTEIN = "4 svin";
 export const EXAMPLE_RECIPE_TIME = "15 90";
 export const EXAMPLE_RECIPE_TYPE_DIFF_RATE = "tilbehør enkel 7";
 export const EXAMPLE_RECIPE_METHOD_TEMP_UNIT = "dampet 200 c";
-export const EXAMPLE_RECIPE_PROTEIN = "svin";
 export const EXAMPLE_RECIPE_RECIPE_INGREDIENT1 = "400 g svinekjøttdeig";
 export const EXAMPLE_RECIPE_RECIPE_INGREDIENT2 = "1 neve fersk koriander finhakket";
 export const EXAMPLE_RECIPE_RECIPE_INGREDIENT3 = "2 rød chili finhakket";

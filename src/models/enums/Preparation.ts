@@ -21,7 +21,7 @@ export enum Preparation
     MASHED,
     CRUSHED,
 	PRESSED,
-	// TODO Juiced, peeled
+	// TODO Juiced, peeled, fresh 
 };
 
 export const PreparationDisplay: { [index: number]: string } = {};

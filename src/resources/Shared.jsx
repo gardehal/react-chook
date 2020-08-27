@@ -678,11 +678,6 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
 
     let name = ingredientName;
     let is_commodity = false;
-    if(name[name.length - 1] === "*")
-    {
-        is_commodity = true;
-        name = name.slice(0, name.length - 1);
-    }
 
     // https://github.com/Rob--W/cors-anywhere Local library?
     // Using cors-anywhere (Github: https://github.com/Rob--W/cors-anywhere/ ) as a proxy to circumvent CORS issues
@@ -696,6 +691,7 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
             .then(data =>
             {
                 callToast(TOAST_SCRAPER_DETAILS, 3000);
+                store.dispatch({ type: INGREDIENT_LOADING });
                     
                 let $ = cheerio.load(data);
                 let searchRes = $(".product-list-item ");
@@ -711,7 +707,7 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
                 if(!detailsPath || detailsPath.length === 0)
                 {
                     console.log("First fetch failed: detailsPath was empty");
-                    callToast(ERROR_SCRAPER_GET + ingredientName + ERROR_SCRAPER_SEARCH_EMPTY, 3000);
+                    callToast((ERROR_SCRAPER_GET + ingredientName + ERROR_SCRAPER_SEARCH_EMPTY), 3000);
                     store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
                     return null;
                 }
@@ -724,7 +720,7 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
                 if(!detailsUrl)
                 {
                     console.log("First fetch failed: detailsUrl was null");
-                    callToast(ERROR_SCRAPER_GET + ingredientName + ERROR_SCRAPER_SEARCH_EMPTY, 3000);
+                    callToast((ERROR_SCRAPER_GET + ingredientName + ERROR_SCRAPER_SEARCH_EMPTY), 3000);
                     store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
                     return null;
                 }
@@ -734,11 +730,12 @@ export const getKolonialItemWithCheerio = async (ingredientName) =>
                     .then(data =>
                     {
                         callToast(TOAST_SCRAPER_PREPARING, 3000);
+                        store.dispatch({ type: INGREDIENT_LOADING });
 
                         if(!data)
                         {
                             console.log("Second fetch failed: data was null");
-                            callToast(ERROR_SCRAPER_GET + ingredientName + ERROR_SCRAPER_NO_CONTENT, 3000);
+                            callToast((ERROR_SCRAPER_GET + ingredientName + ERROR_SCRAPER_NO_CONTENT), 3000);
                             store.dispatch({ type: INGREDIENT_LOADING_COMPLETE });
                             return;
                         }

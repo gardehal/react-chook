@@ -18,11 +18,11 @@ import { UPLOAD, GENERAL_UPLOAD_INFORMATION, UPLOAD_FORM, UPLOAD_FILE, UPLOAD_QU
     INGREDIENT_NOT_FOUND_FILE, INGREDIENT_NOT_FOUND_DB, RECIPE_NOT_FOUND_DB, OUT_OF_BOUNDS, SET_NAME, WAS, UNDEFINED, DB_INGREDIENT, CHEERIO_KOLONIAL_ERROR, 
     VALID_ENUM_VALUES, INGREDIENT_TYPE_ENUMS, RECIPE_TYPE_ENUMS, DIFFICULTY_ENUMS, COOKING_METHOD_ENUMS, TEMPRATURE_UNIT_ENUMS, PROTEIN_ENUMS, QUANTITY_UNIT_ENUMS, 
     PREPARATION_ENUMS, MORE_INFORMATION_RECIPE, MORE_INFORMATION_INGREDIENT, FREETEXT_SYNTAX_TIME, FREETEXT_SYNTAX_TYPE_DIFF_RATE, FREETEXT_SYNTAX_METHOD_TEMP_UNIT, 
-    FREETEXT_SYNTAX_PROTEIN, FREETEXT_SYNTAX_SECTION_DELIM, FREETEXT_SYNTAX_INSTRUCTIONS, EXAMPLE_RECIPE_TITLE, EXAMPLE_RECIPE_PORTIONS, EXAMPLE_RECIPE_TIME, 
-    EXAMPLE_RECIPE_TYPE_DIFF_RATE, EXAMPLE_RECIPE_METHOD_TEMP_UNIT, EXAMPLE_RECIPE_PROTEIN, EXAMPLE_RECIPE_RECIPE_INGREDIENT1, EXAMPLE_RECIPE_RECIPE_INGREDIENT2, 
+    FREETEXT_SYNTAX_SECTION_DELIM, FREETEXT_SYNTAX_INSTRUCTIONS, EXAMPLE_RECIPE_TITLE, EXAMPLE_RECIPE_PORTIONS_PROTEIN, EXAMPLE_RECIPE_TIME, 
+    EXAMPLE_RECIPE_TYPE_DIFF_RATE, EXAMPLE_RECIPE_METHOD_TEMP_UNIT, EXAMPLE_RECIPE_RECIPE_INGREDIENT1, EXAMPLE_RECIPE_RECIPE_INGREDIENT2, 
     EXAMPLE_RECIPE_RECIPE_INGREDIENT3, EXAMPLE_RECIPE_RECIPE_INGREDIENT4, EXAMPLE_RECIPE_RECIPE_INGREDIENT5, EXAMPLE_RECIPE_RECIPE_INGREDIENT6, EXAMPLE_RECIPE_INSTRUCTION1, 
-    EXAMPLE_RECIPE_INSTRUCTION2, EXAMPLE_RECIPE_NOTE1, FREETEXT_SYNTAX_EXAMPLE_START_RECIPE, FREETEXT_SYNTAX_TITLE, FREETEXT_SYNTAX_PORTIONS, FREETEXT_SYNTAX_INGREDIENTS, 
-    FREETEXT_SYNTAX_RECIPE_INGREDIENT, FREETEXT_SYNTAX_NOTES, UPLOAD_FROM_URL, INGREDIENT_MISSING_TYPE
+    EXAMPLE_RECIPE_INSTRUCTION2, EXAMPLE_RECIPE_NOTE1, FREETEXT_SYNTAX_EXAMPLE_START_RECIPE, FREETEXT_SYNTAX_TITLE, FREETEXT_SYNTAX_PORTIONS_PROTEIN, FREETEXT_SYNTAX_INGREDIENTS, 
+    FREETEXT_SYNTAX_RECIPE_INGREDIENT, FREETEXT_SYNTAX_NOTES, UPLOAD_FROM_URL, INGREDIENT_MISSING_TYPE, ESSENTIAL
 } from "../resources/language";
 import { getBackgroundColor, getTextColor, getLightBackgroundColor, RED } from "../resources/colors";
 
@@ -243,7 +243,10 @@ class UploadPage extends React.Component
 
         // Metadata
         let title = lines[0].replace("\t", "").trim();
-        let portions = lines[1].trim();
+        let portionsProteinLine = lines[1].toString().trim().split(" ");
+        let portions = portionsProteinLine[0];
+        let proteinRaw = portionsProteinLine[1].replace("\t", "").toUpperCase().trim();
+        let protein = ProteinValue(proteinRaw);
         // let cuisine = lines[1];
         
         // time
@@ -266,8 +269,6 @@ class UploadPage extends React.Component
         let cookingMethodTemp = methodLine.length > 2 ? methodLine[1].trim() : null;
         let cookingMethodTempUnitRaw = methodLine.length > 3 ? methodLine[2].replace("\t", "").toUpperCase().trim() : null;
         let cookingMethodTempUnit = TempratureUnitValue(cookingMethodTempUnitRaw);
-        let proteinRaw = lines[5].replace("\t", "").toUpperCase().trim();
-        let protein = ProteinValue(proteinRaw);
 
         // Arrays
         let subRecipes = [];
@@ -313,19 +314,19 @@ class UploadPage extends React.Component
             console.log("Checking enums...");
             // parseEnum(messageArray, value, enumCollection, itemName, rawValue)
 
+            if(!this.parseEnum(failedItems, protein, Protein, title, proteinRaw))
+                return null;
+
             if(!this.parseEnum(failedItems, type, RecipeType, title, typeRaw))
                 return null;
 
             if(!this.parseEnum(failedItems, difficulty, Difficulty, title, difficultyRaw))
                 return null;
 
-            if(!this.parseEnum(failedItems, cookingMethod, CookingMethod, title, cookingMethodRaw))
+            if(cookingMethod && !this.parseEnum(failedItems, cookingMethod, CookingMethod, title, cookingMethodRaw))
                 return null;
 
             if(cookingMethodTempUnit && !this.parseEnum(failedItems, cookingMethodTempUnit, TempratureUnit, title, cookingMethodTempUnitRaw))
-                return null;
-
-            if(!this.parseEnum(failedItems, protein, Protein, title, proteinRaw))
                 return null;
         } // Recipe metadata parse enums (the extra parentheses are so this section can be collapsed and make code more readable)
         
@@ -515,6 +516,8 @@ class UploadPage extends React.Component
                         <select style={{ width: "20%", height: "1.5em", margin: "auto 0" }} onChange={e => { ingredient.type = e.target.value; this.setState({ temp: e.target.value }); }}>
                             {typeSelectHtml}
                         </select>
+
+                        {ESSENTIAL}: <input type="checkbox" onChange={e => { ingredient.is_commodity = !ingredient.is_commodity; this.setState({ temp: e.target.value }); }} />
 
                         <Button onClick={() => this.uploadScraperIngredient(ingredient, customIngredientName)} contrastmode={this.props.contrastmode}   
                             text={UPLOAD + " " + INGREDIENT}/>
@@ -850,11 +853,10 @@ class UploadPage extends React.Component
                 <hr/>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_DELIM}</p>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_TITLE}</p>
-                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_PORTIONS}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_PORTIONS_PROTEIN}</p>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_TIME}</p>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_TYPE_DIFF_RATE}</p>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_METHOD_TEMP_UNIT}</p>
-                <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_PROTEIN}</p>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_SECTION_DELIM}</p>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_INGREDIENTS}</p>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_RECIPE_INGREDIENT}</p>
@@ -867,11 +869,10 @@ class UploadPage extends React.Component
                 <hr/>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_DELIM}</p>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_TITLE}</p>
-                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_PORTIONS}</p>
+                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_PORTIONS_PROTEIN}</p>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_TIME}</p>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_TYPE_DIFF_RATE}</p>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_METHOD_TEMP_UNIT}</p>
-                <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_PROTEIN}</p>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{FREETEXT_SYNTAX_SECTION_DELIM}</p>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_RECIPE_INGREDIENT1}</p>
                 <p style={{ ...getTextColor(this.props.contrastmode) }}>{EXAMPLE_RECIPE_RECIPE_INGREDIENT2}</p>
