@@ -64,7 +64,8 @@ Considering the double O's, the name has a chance of becoming a famous internet 
 - [ ] Flavicon (For timer, toasts, notifications etc.)
 - [ ] Expanding all panels in upload white line over footer
 - [ ] Improved style for mobile (width, footer escpecially)
-- [ ] Unauthorized upload recipe/ingredient error handleing, failure to upload etc
+- [x] Unauthorized upload recipe/ingredient error handleing, failure to upload etc
+- [ ] Modal with login
 
 ## Known issues
 - Things are not looking good. Not figuratively but literally, style is not my strong suit.

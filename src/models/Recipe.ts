@@ -10,6 +10,7 @@ import { getUsername } from "../actions/UserActions";
 import { getRecipeData, setRecipeData } from "../actions/RecipeActions";
 import store from "../store";
 import { RECIPE_ERROR } from "../actions/types";
+import { SIMILAR_IN_DB } from "../resources/language";
 
 export class Recipe 
 {
@@ -106,22 +107,20 @@ export class Recipe
       console.log("\nUploading: " + recipe.title);
 
       if(recipe.title === undefined)
-          return null;
+          return;
 
       let byNameData = await getRecipeData("title", recipe.title.toString());
       if(byNameData.length !== 0)
       {
-        store.dispatch({ type: RECIPE_ERROR})
-        console.log("Similar found in DB by title: " + recipe.title);
-        return null;
+        store.dispatch({ type: RECIPE_ERROR, payload: SIMILAR_IN_DB + " (" + recipe.title + ")" });
+        return;
       }
 
       let byIdData = await getRecipeData("id", recipe.id.toString());
       if(byIdData.length !== 0)
       {
-        store.dispatch({ type: RECIPE_ERROR})
-        console.log("Similar found in DB by id: " + recipe.title + " " + recipe.id);
-        return null;
+        store.dispatch({ type: RECIPE_ERROR, payload: SIMILAR_IN_DB + " (ID: " + recipe.id + ", " + recipe.title + ")" });
+        return;
       }
       
       console.log("Item ok, will upload async:");

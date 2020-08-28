@@ -249,6 +249,7 @@ export const ERROR_SCRAPER_GET = "Feil ved henting ingredients: ";
 export const ERROR_SCRAPER_SEARCH_EMPTY = ", søk ga ingen resultater.";
 export const ERROR_SCRAPER_NO_CONTENT = ", tomt innhold.";
 export const ERROR_SCRAPER_FETCH_FAILED = ", kunne ikke laste nettsiden.";
+export const USER_NOT_LOGGED_IN = "Ingen bruker logget inn.";
 
 // Enums
 export const ENUM_OTHER = "Annet";

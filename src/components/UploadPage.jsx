@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 // Redux imports
 import { getRecipeData, setRecipeError, setRecipeData } from "../actions/RecipeActions";
 import { getIngredientData, setIngredientData } from "../actions/IngredientActions";
+import { isFirebaseUserLoggedIn } from "../actions/UserActions";
 import { renderLoading, renderError, setTitle, renderToast, getRandomString, toCamelCase, getKolonialItemWithCheerio, searchDatabase, getRecipeFromWebsite } from "../resources/Shared";
 
 // Variable imports
@@ -529,8 +530,6 @@ class UploadPage extends React.Component
         this.setState({ errorsQueue: failedItems });
     }
 
-
-
     parseNumber(messageArray, n, valueName, itemName, min, max, isFloat = false)
     {
         if(isNaN(Number(n)) || isFloat && isNaN(parseFloat(n)))
@@ -662,7 +661,6 @@ class UploadPage extends React.Component
                 var rQueue = this.state.recipeQueue;
                 for (var j = 0; j < rQueue.length; j++) 
                     rQueue[j].upload(rQueue[j]);
-                    // this.uploadItem(rQueue[j], RECIPE);
 
                 this.setState({ recipeQueue: [] });
             }
@@ -920,6 +918,28 @@ class UploadPage extends React.Component
 
     renderContent()
     {
+        let uploadContent = null;
+        
+        if(isFirebaseUserLoggedIn())
+            uploadContent = (<span>
+                    <Panel title={FREETEXT} contrastmode={this.props.contrastmode}>  {/* Should be freetext not file */}
+                        {this.renderUploadFromWebsite()}
+                        {this.renderUploadFreetextArea()}
+                        {this.renderUploadFile()}
+                    </Panel>
+
+                    <hr/>
+                    <Panel title={OVERVIEW} contrastmode={this.props.contrastmode} startExpanded>
+                        {/* Buttons to validate input
+                        Specific info about what's about to be uploaded (number of items, name/title of items)
+                        Upload buttons (if validation successful) */}
+                        {this.renderUploadButtons()}
+
+                        {/* Render a log or summary for uplodaing queues. */}
+                        {this.renderUploadSummary()}
+                    </Panel>
+                </span>);
+
         return (
             <div>
                 {this.renderGeneralInformation()}
@@ -937,30 +957,13 @@ class UploadPage extends React.Component
                     {this.renderUploadForm()}
                 </Panel> */}
 
-                {/* Upload ingredients though freetext
-                    -> Submit files buttons/ drag+drop area */}
-                <Panel title={FREETEXT} contrastmode={this.props.contrastmode}>  {/* Should be freetext not file */}
-                    {this.renderUploadFromWebsite()}
-                    {this.renderUploadFreetextArea()}
-                    {this.renderUploadFile()}
-                </Panel>
-
-                <hr/>
-                <Panel title={OVERVIEW} contrastmode={this.props.contrastmode} startExpanded>
-                    {/* Buttons to validate input
-                    Specific info about what's about to be uploaded (number of items, name/title of items)
-                    Upload buttons (if validation successful) */}
-                    {this.renderUploadButtons()}
-
-                    {/* Render a log or summary for uplodaing queues. */}
-                    {this.renderUploadSummary()}
-                </Panel>
+                {uploadContent}
 
             </div>);
     }
 
     render()
-    {
+    {            
         return (
             <div style={getBackgroundColor(this.props.contrastmode)}>
                 <div className="pageRootContainer">

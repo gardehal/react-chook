@@ -6,7 +6,7 @@ import store from "../store";
 import { METADATA_LOADING, METADATA_LOADING_COMPLETE, METADATA_TEST_ERROR, METADATA_ERROR_RESOLVED } from "../actions/types";
 import { getMetadataData, setMetadataData } from "../actions/MetadataActions";
 import { renderLoading, renderError, getLongFormatDate, addLeadingZeros, setTitle, renderToast, getKolonialItemWithCheerio, searchDatabase, getRecipeFromWebsite } from "../resources/Shared";
-import { login, logout, userCanEditFirebase, getUsername } from "../actions/UserActions";
+import { login, logout, userCanEditFirebase, getUsername, isFirebaseUserLoggedIn } from "../actions/UserActions";
 import { toggleContrastMode, toggleMetricMode, callToast, toggleScraper } from "../actions/SettingsActions";
 
 // Variable imports
@@ -294,32 +294,39 @@ class DevPage extends React.Component
 
     renderContent()
     {
+        let content = null;
+        
+        if(isFirebaseUserLoggedIn())
+            content = (<span>
+                {/* Call functions */}
+                {this.renderFunctionButtons()} 
+
+                {/* Skripts for doing backend jobs */}
+                <Panel title={SCRIPT_PANEL} contrastmode={this.props.contrastmode}>
+                    {this.renderScriptsPanel()}
+                </Panel>
+
+                {/* Testing functionality */}
+                <Panel title={FUNCTIONALITY_TEST_PANEL} contrastmode={this.props.contrastmode}>
+                    {this.renderTestPanel()}   
+                </Panel>
+
+                {/* Testing functionality */}
+                <Panel title={"Register Source TODO"} contrastmode={this.props.contrastmode}>
+                    {this.renderRegisterSource()}   
+                </Panel>
+            </span>);
+        
         return (
             <div>
                 <ClickableImage image={require("../resources/pictures/vegetable-market-shelf.png")} alttext={METADATA} title={this.renderMetadata()}
                     coverText={true} cursor="cursor" contrastmode={this.props.contrastmode}/>
 
                 <div>
-                    {/* Call functions */}
-                    {this.renderFunctionButtons()} 
+                    {content}
 
                     {/* Login for doing dev things */}
                     {this.renderLogin()}   
-
-                    {/* Skripts for doing backend jobs */}
-                    <Panel title={SCRIPT_PANEL} contrastmode={this.props.contrastmode}>
-                        {this.renderScriptsPanel()}
-                    </Panel>
-
-                    {/* Testing functionality */}
-                    <Panel title={FUNCTIONALITY_TEST_PANEL} contrastmode={this.props.contrastmode}>
-                        {this.renderTestPanel()}   
-                    </Panel>
-
-                    {/* Testing functionality */}
-                    <Panel title={"Register Source TODO"} contrastmode={this.props.contrastmode}>
-                        {this.renderRegisterSource()}   
-                    </Panel>
                 </div>
             </div>);
     }

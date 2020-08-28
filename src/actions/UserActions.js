@@ -1,8 +1,11 @@
 
 import * as firebase from "firebase";
 import store from "../store";
-import { USER_LOADING, USER_LOGIN_SUCCESS, USER_LOGIN_FAIL, USER_LOGIN_FAIL_EMAIL, USER_LOGIN_FAIL_REQUESTS, USER_LOGOUT_SUCCESS, USER_LOGOUT_FAIL } from "./types";
+import { USER_LOADING, USER_LOGIN_SUCCESS, USER_LOGIN_FAIL, USER_LOGIN_FAIL_EMAIL, USER_LOGIN_FAIL_REQUESTS, USER_LOGOUT_SUCCESS, USER_LOGOUT_FAIL, USER_ERROR,
+    } from "./types";
 import { confirmUserPermissions } from "../resources/Shared";
+import { USER_NOT_LOGGED_IN } from "../resources/language";
+
 
 require('firebase/auth');
 
@@ -67,7 +70,7 @@ const logoutFirebase = async() =>
         {
             console.log("User logged out succesfully.");
             store.dispatch({ type: USER_LOGOUT_SUCCESS });
-            localStorage.setItem(firebaseUserStorageKey, null);
+            localStorage.setItem(firebaseUserStorageKey, undefined);
         })
         .catch((err) => 
         {
@@ -76,13 +79,24 @@ const logoutFirebase = async() =>
         });
 };
 
+export const isFirebaseUserLoggedIn = () =>
+{
+    return store.getState().user.user != undefined;
+}
+
 export const userCanEditFirebase = async(uid) =>
 {
     return await confirmUserPermissions("firebase", "write", uid);
 };
 
 export const getUsername = (splitAt = true) =>
-{
+{   
+    if(!isFirebaseUserLoggedIn())
+    {
+        store.dispatch({ type: USER_ERROR, payload: USER_NOT_LOGGED_IN });
+        return;
+    }     
+
     const res = store.getState().user.user.user.email;
     return splitAt ? res.split("@")[0] : res;
 };
