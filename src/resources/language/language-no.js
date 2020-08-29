@@ -98,6 +98,12 @@ export const SUGAR = "Sukker";
 export const FAT = "Fett";
 export const SATURATED_FAT = "Mettet fett";
 export const SALT = "Salt";
+export const ABORT = "Avbryt";
+
+// User
+export const WELCOME = "Velkommen";
+export const EMAIL = "Epost";
+export const PASSWORD = "Passord";
 
 // Upload
 export const GENERAL_UPLOAD_INFORMATION = "På denne siden kan du laste opp ingredienser og oppskrifter til databasen. Alle ingredienser og oppskrifter har noen krav som må oppfylles før de godkjennes. Det finnes mer informasjon i panelene under.";

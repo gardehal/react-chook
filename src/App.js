@@ -3,6 +3,8 @@ import firebase from "firebase/app";
 import { Provider } from "react-redux";
 import store from "./store";
 import { BrowserRouter, Route } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.scss";
 
 // Redux imports
 import { SETTINGS_TOGGLE_CONTRASTMODE, SETTINGS_TOGGLE_METRIC, USER_LOGIN_SUCCESS, USER_LOGIN_FAIL, SETTINGS_TOGGLE_SCRAPER } from "./actions/types";

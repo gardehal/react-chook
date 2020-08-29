@@ -2,9 +2,15 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
-// Variable imports
-import {MAIN_TITLE, SEARCH, SEARCH_SOMETHING, HOME, ALL_RECIPES, UPLOAD, PROFILE, SETTINGS, RELOAD, DEV_OPTIONS, LOG_OUT, LOG_IN} from "../../resources/language";
-import { getAccentColor, getTextColor } from "../../resources/colors";
+import {MAIN_TITLE, SEARCH, SEARCH_SOMETHING, HOME, ALL_RECIPES, UPLOAD, PROFILE, SETTINGS, RELOAD, DEV_OPTIONS, WELCOME, 
+    EMAIL, PASSWORD, LOG_OUT, LOG_IN, ABORT,
+    } from "../../resources/language";
+import { getAccentColor, getTextColor, getLightBackgroundColor } from "../../resources/colors";
+import { login, logout, isFirebaseUserLoggedIn, getUsername } from "../../actions/UserActions";
+
+import { Row, Col, Modal } from "react-bootstrap";
+import { Spinner } from "./Spinner";
+import { Button } from "./Button";
 
 class Header extends React.Component
 {
@@ -26,17 +32,15 @@ class Header extends React.Component
         this.gotoProfile = this.gotoProfile.bind(this);
         this.gotoSettings = this.gotoSettings.bind(this);
         this.doReload = this.doReload.bind(this);
-        this.toggleLogin = this.toggleLogin.bind(this);
         this.toggleDropdown = this.toggleDropdown.bind(this);
+        this.toggleLoginModal = this.toggleLoginModal.bind(this);
     }
 
-    // Default state
     initState()
     {
-        return { showDropdown: false };
+        return { showDropdown: false, showLoginModal: false };
     }
 
-    // Default STATIC style
     initStyle()
     {
         this.bannerStyle =
@@ -144,48 +148,91 @@ class Header extends React.Component
         };
     }
 
-    // Calling a search and moving to searchresult page
     doSearch()
     {
         let term = encodeURIComponent(this.refs.searchFieldHeader.value);
 
         window.location.assign("/search/?term=" + term);
     }
-
-    // Go to profile page 
+ 
     gotoProfile()
     {
         // this.props.history.push("/");
     }
 
-    // Go to settings page
     gotoSettings()
     {
         // this.props.history.push("/");
     }
 
-    // Reload page
     doReload()
     {
         window.location.reload();
     }
 
-    // TODO rename or find out what to do
-    toggleLogin()
+    toggleLoginModal() { this.setState({ showLoginModal: !this.state.showLoginModal }) };
+
+    renderLogin()
     {
-        // this.props.history.push("/");
+        let uInput = "";
+        let pInput = "";
+        let showLoginModal = this.state.showLoginModal;
+        
+        let header = LOG_IN;
+        if(isFirebaseUserLoggedIn())
+            header = WELCOME + ", " + getUsername();
+        
+        let userError = null;
+        if(isFirebaseUserLoggedIn())
+            userError = <span className="text-danger">{this.props.userError}</span>;
+        
+        let actions = null;
+        if(this.props.userLoading)
+            actions = <Spinner />;
+        else if(isFirebaseUserLoggedIn())
+            actions = (<>
+                    <Button onClick={() => logout("firebase")} text={LOG_OUT}
+                        contrastmode={this.props.contrastmode} />
+                    <Button onClick={() => this.toggleLoginModal()} text={ABORT}
+                        contrastmode={this.props.contrastmode} />
+                    </>);
+        else
+            actions = (<>
+                <Button onClick={() => login(uInput, pInput, "firebase")} text={LOG_IN}
+                    contrastmode={this.props.contrastmode} />
+                <Button onClick={() => this.toggleLoginModal()} text={ABORT}
+                    contrastmode={this.props.contrastmode} />
+                </>);
+
+        return (
+            <Modal show={showLoginModal} onHide={() => this.toggleLoginModal()}>
+                <Modal.Header style={{ ...getLightBackgroundColor(this.props.contrastmode) }} closeButton>
+                    <Modal.Title style={{ ...getTextColor(this.props.contrastmode) }}>{header}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
+                    <Row>
+                        <Col style={{ ...getTextColor(this.props.contrastmode) }}>{EMAIL}</Col>
+                        <Col><input type="email" onChange={e => uInput = e.target.value} /></Col>
+                    </Row>
+                    <Row>
+                        <Col style={{ ...getTextColor(this.props.contrastmode) }}>{PASSWORD}</Col>
+                        <Col><input type="password" onChange={e => pInput = e.target.value} /></Col>
+                    </Row>
+                </Modal.Body>
+                <Modal.Footer style={{ ...getLightBackgroundColor(this.props.contrastmode) }}>
+                    {userError}
+                    {actions}
+                </Modal.Footer>
+            </Modal>);
     }
     
-    // Toggle settings dropdown menu
     toggleDropdown()
     {
         this.setState({showDropdown: !this.state.showDropdown});
     }
 
-    // Render the dropdown with options
     renderSettings()
     {
-        // Chage the cog, alt: make 2 images
         let filter = (this.props.contrastmode ? { filter: "invert(89%) sepia(0%) saturate(4%) hue-rotate(150deg) brightness(99%) contrast(94%)"} : (null));
 
         return (
@@ -209,7 +256,7 @@ class Header extends React.Component
 
                         <Link className="btn-with-shadow" style={{ ...this.dropdownContainerItemStyle, ...getTextColor(this.props.contrastmode) }}  to="/dev">{DEV_OPTIONS}</Link>
                         
-                        <div className="btn-with-shadow" style={{ ...this.dropdownContainerItemStyle, ...getTextColor(this.props.contrastmode) }} onClick={() => this.toggleLogin()}>
+                        <div className="btn-with-shadow" style={{ ...this.dropdownContainerItemStyle, ...getTextColor(this.props.contrastmode) }} onClick={() => this.toggleLoginModal()}>
                             {this.props.user ? LOG_OUT : LOG_IN}
                         </div>
                     </div>
@@ -220,7 +267,6 @@ class Header extends React.Component
         );
     }
 
-    // Render search functionality in header
     renderSearch()
     {
         return (
@@ -235,7 +281,6 @@ class Header extends React.Component
         );
     }
 
-    // Render section of links under header
     renderLinks()
     {
         return (
@@ -269,7 +314,8 @@ class Header extends React.Component
                 </div> 
 
                 {useDropdown ? this.renderSettings() : (null)}
-                {useLinks ? this.renderLinks() : (null)}                
+                {useLinks ? this.renderLinks() : (null)}     
+                {this.renderLogin()}           
             </div>
         );
     }
@@ -278,7 +324,9 @@ class Header extends React.Component
 const mapStateToProps = state => 
 {
     const { contrastmode } = state.settings;
-    return { contrastmode };
+    const { user } = state.user;
+    return { contrastmode,
+        user, };
 };
 
 export default connect(
